@@ -1,4 +1,9 @@
+/* includes stdint.h and stddef.h */
 #include "hblk_crypto.h"
+/* SHA256_DIGEST_LENGTH SHA256_CTX SHA256_Init SHA256_Update SHA256_Final */
+#include <openssl/sha.h>
+/* fprintf */
+#include <stdio.h>
 
 
 /**
@@ -13,4 +18,42 @@
 uint8_t *sha256(int8_t const *s, size_t len,
 		uint8_t digest[SHA256_DIGEST_LENGTH])
 {
+	SHA256_CTX ctx;
+
+	if (!digest)
+	{
+		fprintf(stderr, "sha256: NULL digest\n");
+		return (NULL);
+	}
+
+	if (SHA256_Init(&ctx) == 0)
+	{
+		fprintf(stderr, "sha256: SHA256_Init failure\n");
+		return (NULL);
+	}
+
+	if (SHA256_Update(&ctx, (const void *)s, (unsigned long)len) == 0)
+	{
+		fprintf(stderr, "sha256: SHA256_Update failure\n");
+		return (NULL);
+	}
+
+	/* *_Final also erases context, per sha(3) */
+	if (SHA256_Final((unsigned char *)digest, &ctx) == 0)
+	{
+		fprintf(stderr, "sha256: SHA256_Final failure\n");
+		return (NULL);
+	}
+
+	return (digest);
 }
+
+
+/*
+ * The three SHA256_* functions above were chosen to make the process more
+ * explicit for learning purposes and to track errors, but the same could be
+ * achieved with a single call to:
+ *      return ((uint8_t *)SHA256((const unsigned char *)s,
+ *				  (unsigned long)len,
+ *				  (unsigned char *)digest));
+ */
