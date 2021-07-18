@@ -52,6 +52,8 @@ EC_KEY *ec_create(void)
 		return (NULL);
 	}
 
+	EC_GROUP_free(ec_group);
+
 	/*
 	 * per https://www.openssl.org/docs/man1.1.1/man3/EC_KEY_new.html:
 	 * The private key is a random integer (0 < priv_key < order, where
