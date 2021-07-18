@@ -6,6 +6,19 @@
 #include <stdio.h>
 
 
+/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
+/* OPENSSL_VERSION_NUMBER: 0x01000106F */
+/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+
+/*
+ * The three SHA256_* functions were chosen to make the process more explicit
+ * for learning purposes and to track errors, but the same could be achieved
+ * with a single call to:
+ *      return ((uint8_t *)SHA256((const unsigned char *)s,
+ *				  (unsigned long)len,
+ *				  (unsigned char *)digest));
+ */
+
 /**
  * sha256 - computes the hash of a sequence of bytes
  *
@@ -47,13 +60,3 @@ uint8_t *sha256(int8_t const *s, size_t len,
 
 	return (digest);
 }
-
-
-/*
- * The three SHA256_* functions above were chosen to make the process more
- * explicit for learning purposes and to track errors, but the same could be
- * achieved with a single call to:
- *      return ((uint8_t *)SHA256((const unsigned char *)s,
- *				  (unsigned long)len,
- *				  (unsigned char *)digest));
- */
