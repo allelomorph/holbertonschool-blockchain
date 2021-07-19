@@ -62,6 +62,8 @@ uint8_t *byteArrayFromEC_POINT(const EC_POINT *ec_point,
 uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]);
 
 /* ec_from_pub.c */
+EC_POINT *byteArrayToEC_POINT(const EC_GROUP *ec_group, BN_CTX *bn_ctx,
+			      const uint8_t pub[EC_PUB_LEN]);
 EC_KEY *ec_from_pub(uint8_t const pub[EC_PUB_LEN]);
 
 /* ec_save.c */
