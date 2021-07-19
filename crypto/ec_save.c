@@ -67,6 +67,19 @@ FILE *FILE_FromDir(char const *folder, const char *filename)
 }
 
 
+/*
+ * Is a callback function needed for sending password protected keys to
+ * PEM_write_ECPrivateKey? See "PEM FUNCTION ARGUMENTS" in
+ * `https://www.openssl.org/docs/man1.1.1/man3/pem_password_cb.html`.
+ * Relevant function prototypes constructed from openssl/pem.h macros:
+ *
+ * int PEM_write_bio_ECPrivateKey(BIO *bp, EC_KEY *x, const EVP_CIPHER *enc,
+ *			       unsigned char *kstr, int klen,
+ *			       pem_password_cb *cb, void *u);
+ * int PEM_write_ECPrivateKey(FILE *fp, EC_KEY *x, const EVP_CIPHER *enc,
+ *			   unsigned char *kstr, int klen,
+ *			   pem_password_cb *cb, void *u);
+ */
 /**
  * ec_save - saves an existing EC key pair on the disk
  *
@@ -86,39 +99,40 @@ FILE *FILE_FromDir(char const *folder, const char *filename)
  */
 int ec_save(EC_KEY *key, char const *folder)
 {
-	FILE *public_key_file, *private_key_file;
+	FILE *pub_key_file, *pri_key_file;
 
 	if (!key || !folder)
 	{
 		fprintf(stderr, "ec_save: NULL parameter(s)\n");
 		return (0);
 	}
-
 	if (!EC_KEY_check_key(key))
 	{
 		fprintf(stderr, "ec_save: key verification failed\n");
 		return (0);
 	}
-
-	private_key_file = FILE_FromDir(folder, "key.pem");
-	public_key_file = FILE_FromDir(folder, "key_pub.pem");
-	if (!public_key_file || !private_key_file)
+	if (mkdir(folder, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1 &&
+	    errno != EEXIST)
+	{
+		perror("ec_save: mkdir");
 		return (0);
-	/* need callback function for password protected keys? */
-	if (PEM_write_ECPrivateKey(private_key_file, key,
+	}
+	pri_key_file = FILE_FromDir(folder, PRI_FILENAME);
+	pub_key_file = FILE_FromDir(folder, PUB_FILENAME);
+	if (!pub_key_file || !pri_key_file)
+		return (0);
+	if (PEM_write_ECPrivateKey(pri_key_file, key,
 				   NULL, NULL, 0, NULL, NULL) == 0)
 	{
 		fprintf(stderr, "ec_save: PEM_write_ECPrivateKey failure\n");
 		return (0);
 	}
-
-	if (PEM_write_EC_PUBKEY(public_key_file, key) == 0)
+	if (PEM_write_EC_PUBKEY(pub_key_file, key) == 0)
 	{
 		fprintf(stderr, "ec_save: PEM_write_EC_PUBKEY failure\n");
 		return (0);
 	}
-
-	if (fclose(private_key_file) != 0 || fclose(public_key_file) != 0)
+	if (fclose(pri_key_file) != 0 || fclose(pub_key_file) != 0)
 	{
 		perror("ec_save: fclose");
 		return (0);
