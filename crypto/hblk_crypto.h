@@ -15,6 +15,8 @@
 #include <openssl/sha.h>
 /* EC_KEY */
 #include <openssl/ec.h>
+/* NID_secp256k1 (used in project correction test mains) */
+#include <openssl/obj_mac.h>
 
 
 /* EC_PUB_LEN not found in /usr/include/openssl/ */
