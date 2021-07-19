@@ -18,7 +18,7 @@
 /* NID_secp256k1 */
 #include <openssl/obj_mac.h>
 
-
+#include <signal.h>
 /* EC_PUB_LEN not found in /usr/include/openssl/ */
 /* project example outputs are 130 chars, or 65 bytes in 2-digit hex */
 #define EC_PUB_LEN 65
@@ -27,9 +27,9 @@
 #define EC_CURVE NID_secp256k1
 
 /* sig_t appears in glibc signal.h 207-210 as BSD equivalent to sighandler_t */
-/* `#if defined (__USE_BSD) && defined (sig_t)` not allowed by linter */
+/* `#if defined (__USE_BSD) && defined (_SIGNAL_H)` not allowed by linter */
 #ifdef __USE_BSD
-#ifdef sig_t
+#ifdef _SIGNAL_H
 #error "hblk_crypto.h definition of sig_t can conflict with BSD signal.h sig_t"
 #endif
 #endif
