@@ -1,6 +1,12 @@
 #ifndef HBLK_CRYPTO_H
 #define HBLK_CRYPTO_H
 
+
+/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
+/* OPENSSL_VERSION_NUMBER: 0x01000106F */
+/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+
+
 /* int8_t uint8_t */
 #include <stdint.h>
 /* size_t */
@@ -10,7 +16,31 @@
 /* EC_KEY */
 #include <openssl/ec.h>
 
+
 /* EC_PUB_LEN not found in /usr/include/openssl/ */
+/* project example outputs are 130 chars, or 65 bytes in 2-digit hex */
+#define EC_PUB_LEN 65
+
+/* sig_t appears in glibc signal.h 207-210 as BSD equivalent to sighandler_t */
+/* `#if defined (__USE_BSD) && defined (sig_t)` not allowed by linter */
+#ifdef __USE_BSD
+#ifdef sig_t
+#error "hblk_crypto.h definition of sig_t can conflict with BSD signal.h sig_t"
+#endif
+#endif
+
+
+/**
+ * struct sig_s - used to store signature performed by EC_KEY key pair
+ *
+ * @sig: unsigned byte array representing signature
+ * @len: amount of bytes in `sig`
+ */
+typedef struct sig_s
+{
+	uint8_t *sig;
+	size_t len;
+} sig_t;
 
 
 /* sha256.c */
@@ -21,6 +51,9 @@ uint8_t *sha256(int8_t const *s, size_t len,
 EC_KEY *ec_create(void);
 
 /* ec_to_pub.c */
+uint8_t *byteArrayFromEC_POINT(const EC_POINT *ec_point,
+			       const EC_GROUP *ec_group,
+			       BN_CTX *bn_ctx, uint8_t pub[EC_PUB_LEN]);
 uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]);
 
 /* ec_from_pub.c */
@@ -39,6 +72,5 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 /* ec_verify.c */
 int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 	      sig_t const *sig);
-
 
 #endif /* HBLK_CRYPTO_H */
