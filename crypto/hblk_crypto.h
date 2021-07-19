@@ -18,7 +18,6 @@
 /* NID_secp256k1 */
 #include <openssl/obj_mac.h>
 
-#include <signal.h>
 /* EC_PUB_LEN not found in /usr/include/openssl/ */
 /* project example outputs are 130 chars, or 65 bytes in 2-digit hex */
 #define EC_PUB_LEN 65
