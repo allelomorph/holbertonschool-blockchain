@@ -15,13 +15,16 @@
 #include <openssl/sha.h>
 /* EC_KEY */
 #include <openssl/ec.h>
-/* NID_secp256k1 (used in project correction test mains) */
+/* NID_secp256k1 */
 #include <openssl/obj_mac.h>
 
 
 /* EC_PUB_LEN not found in /usr/include/openssl/ */
 /* project example outputs are 130 chars, or 65 bytes in 2-digit hex */
 #define EC_PUB_LEN 65
+
+/* used in project correction test mains */
+#define EC_CURVE NID_secp256k1
 
 /* sig_t appears in glibc signal.h 207-210 as BSD equivalent to sighandler_t */
 /* `#if defined (__USE_BSD) && defined (sig_t)` not allowed by linter */
