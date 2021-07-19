@@ -66,6 +66,7 @@ EC_POINT *byteArrayToEC_POINT(const EC_GROUP *ec_group, BN_CTX *bn_ctx,
 EC_KEY *ec_from_pub(uint8_t const pub[EC_PUB_LEN]);
 
 /* ec_save.c */
+FILE *FILE_FromDir(char const *folder, const char *filename);
 int ec_save(EC_KEY *key, char const *folder);
 
 /* ec_load.c */
