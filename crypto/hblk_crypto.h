@@ -24,6 +24,8 @@
 
 /* used in project correction test mains */
 #define EC_CURVE NID_secp256k1
+#define PUB_FILENAME "pub_key.pem"
+#define PRI_FILENAME "key.pem"
 
 /* sig_t appears in glibc signal.h 207-210 as BSD equivalent to sighandler_t */
 /* `#if defined (__USE_BSD) && defined (_SIGNAL_H)` not allowed by linter */
