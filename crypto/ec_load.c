@@ -46,20 +46,20 @@ FILE *R_FILE_FromDir(char const *folder, const char *filename)
 
 	if (!folder || !filename)
 	{
-		fprintf(stderr, "FILE_FromDir: NULL parameter(s)\n");
+		fprintf(stderr, "R_FILE_FromDir: NULL parameter(s)\n");
 		return (NULL);
 	}
 
 	if (lstat(folder, &st) == -1)
 	{
-		perror("FILE_FromDir: lstat");
+		perror("R_FILE_FromDir: lstat");
 		return (NULL);
 	}
 
 	if (!S_ISDIR(st.st_mode))
 	{
 		fprintf(stderr,
-			"FILE_FromDir: `folder` is not a directory\n");
+			"R_FILE_FromDir: `folder` is not a directory\n");
 		return (NULL);
 	}
 
@@ -68,7 +68,7 @@ FILE *R_FILE_FromDir(char const *folder, const char *filename)
 	dest_file = fopen(file_path, "r");
 	if (!dest_file)
 	{
-		perror("FILE_FromDir: fopen");
+		perror("R_FILE_FromDir: fopen");
 		return (NULL);
 	}
 
