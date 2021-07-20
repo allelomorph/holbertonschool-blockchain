@@ -6,7 +6,6 @@
 /* OPENSSL_VERSION_NUMBER: 0x01000106F */
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
-
 /* int8_t uint8_t */
 #include <stdint.h>
 /* size_t */
@@ -17,6 +16,7 @@
 #include <openssl/ec.h>
 /* NID_secp256k1 */
 #include <openssl/obj_mac.h>
+
 
 /* EC_PUB_LEN not found in /usr/include/openssl/ */
 /* project example outputs are 130 chars, or 65 bytes in 2-digit hex */
@@ -68,11 +68,11 @@ EC_POINT *byteArrayToEC_POINT(const EC_GROUP *ec_group, BN_CTX *bn_ctx,
 EC_KEY *ec_from_pub(uint8_t const pub[EC_PUB_LEN]);
 
 /* ec_save.c */
-void applicationGlobalCleanup(void) __attribute__ ((destructor));
-FILE *FILE_FromDir(char const *folder, const char *filename, const char *mode);
+FILE *W_FILE_FromDir(char const *folder, const char *filename);
 int ec_save(EC_KEY *key, char const *folder);
 
 /* ec_load.c */
+FILE *R_FILE_FromDir(char const *folder, const char *filename);
 EC_KEY *ec_load(char const *folder);
 
 /* ec_sign.c */

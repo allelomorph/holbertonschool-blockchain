@@ -1,71 +1,50 @@
+/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
+/* OPENSSL_VERSION_NUMBER: 0x01000106F */
+/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+
 /* (includes stdint.h and stddef.h) */
 #include "hblk_crypto.h"
 /* FILE fprintf perror sprintf fopen fclose */
 #include <stdio.h>
 #include <errno.h>
+/* EC_KEY EC_KEY_check_key */
+#include <openssl/ec.h>
+/* PEM_write_ECPrivateKey PEM_write_EC_PUBKEY */
+#include <openssl/pem.h>
 /* `struct stat` lstat */
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 /* PATH_MAX */
 #include <linux/limits.h>
-/* EC_KEY EC_KEY_check_key */
-#include <openssl/ec.h>
-/* PEM_write_ECPrivateKey PEM_write_EC_PUBKEY */
-#include <openssl/pem.h>
-/* CRYPTO_cleanup_all_ex_data */
-#include <openssl/crypto.h>
 /* strlen */
 #include <string.h>
+/* CRYPTO_cleanup_all_ex_data */
+#include <openssl/crypto.h>
 
 
-/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
-/* OPENSSL_VERSION_NUMBER: 0x01000106F */
-/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
-
-
-/**
- * applicationGlobalCleanup - runs "brutal" (thread unsafe) application-global
- *   cleanup functions to free any internal tables allocated by OpenSSL
- *
- * Note: In cases such as PEM_write_*(), calls to BIO_new -> BIO_set -> ... ->
- *   CRYPTO_malloc -> malloc will allocate data not freed by BIO_free or
- *   BIO_free_all. At `https://www.openssl.org/docs/faq.html#PROG14`,
- *   "I think I've detected a memory leak...", this is described as "an OpenSSL
- *   internal table that is allocated when an application starts up". Chosen
- *   for its presumed relationship to CRYPTO_malloc, CRYPTO_cleanup_all_ex_data
- *   is mentioned as an application-global, non-thread safe option, however
- *   it is not in the 1.1.1 man pages.
+/*
+ * highly redundant with R_FILE_FromDir, mode could just be a parameter, but
+ * for grading purposes ec_save.c and ec_load.c need to both be independent
+ * translation units
  */
-void applicationGlobalCleanup(void)
-{
-	/* ERR_free_strings(); */
-
-	/* EVP_cleanup(); */
-
-	/* after any calls to CRYPTO_malloc */
-	CRYPTO_cleanup_all_ex_data();
-}
-
-
 /**
- * FILE_FromDir - given a folder and filename, produces an open FILE pointer
+ * W_FILE_FromDir - given a folder and filename, produces an open FILE pointer
  *   to a new file, or for overwriting the existing one in the same file path
  *
  * @folder: path to folder containing file to create/overwrite
  * @filename: name of file to create/overwrite
- * @mode: file open mode string, see fopen(3)
  *
  * Return: FILE pointer to file on success, NULL on failure
  */
-FILE *FILE_FromDir(char const *folder, const char *filename, const char *mode)
+FILE *W_FILE_FromDir(char const *folder, const char *filename)
 {
 	struct stat st;
 	char file_path[PATH_MAX];
 	FILE *dest_file;
 	int end_slash;
 
-	if (!folder || !filename || !mode)
+	if (!folder || !filename)
 	{
 		fprintf(stderr, "FILE_FromDir: NULL parameter(s)\n");
 		return (NULL);
@@ -86,7 +65,7 @@ FILE *FILE_FromDir(char const *folder, const char *filename, const char *mode)
 
 	end_slash = (folder[strlen(folder) - 1] == '/');
 	sprintf(file_path, end_slash ? "%s%s" : "%s/%s", folder, filename);
-	dest_file = fopen(file_path, mode);
+	dest_file = fopen(file_path, "w");
 	if (!dest_file)
 	{
 		perror("FILE_FromDir: fopen");
@@ -116,6 +95,15 @@ FILE *FILE_FromDir(char const *folder, const char *filename, const char *mode)
  * @key: points to the EC key pair to be saved on disk
  * @folder:  path to the folder in which to save the keys
  *
+ * Note: In cases such as PEM_write_*(), calls to BIO_new -> BIO_set -> ... ->
+ *   CRYPTO_malloc -> malloc will allocate data not freed by BIO_free or
+ *   BIO_free_all. At `https://www.openssl.org/docs/faq.html#PROG14`,
+ *   "I think I've detected a memory leak...", this is described as "an OpenSSL
+ *   internal table that is allocated when an application starts up". Chosen
+ *   for its presumed relationship to CRYPTO_malloc, CRYPTO_cleanup_all_ex_data
+ *   is mentioned as an application-global, non-thread safe option, however
+ *   it is not in the 1.1.1 man pages.
+ *
  * Return: 1 on success, 0 on failure
  */
 int ec_save(EC_KEY *key, char const *folder)
@@ -138,8 +126,8 @@ int ec_save(EC_KEY *key, char const *folder)
 		perror("ec_save: mkdir");
 		return (0);
 	}
-	pri_key_file = FILE_FromDir(folder, PRI_FILENAME, "w");
-	pub_key_file = FILE_FromDir(folder, PUB_FILENAME, "w");
+	pri_key_file = W_FILE_FromDir(folder, PRI_FILENAME);
+	pub_key_file = W_FILE_FromDir(folder, PUB_FILENAME);
 	if (!pub_key_file || !pri_key_file)
 		return (0);
 	if (PEM_write_ECPrivateKey(pri_key_file, key,
@@ -158,5 +146,6 @@ int ec_save(EC_KEY *key, char const *folder)
 		perror("ec_save: fclose");
 		return (0);
 	}
+	CRYPTO_cleanup_all_ex_data(); /* thread-unsafe global cleanup */
 	return (1);
 }

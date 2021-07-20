@@ -1,25 +1,79 @@
+/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
+/* OPENSSL_VERSION_NUMBER: 0x01000106F */
+/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+
 /* (includes stdint.h and stddef.h) */
 #include "hblk_crypto.h"
 /* FILE fprintf perror sprintf fopen fclose */
 #include <stdio.h>
 #include <errno.h>
+/* EC_KEY EC_KEY_check_key */
+#include <openssl/ec.h>
+/* PEM_read_ECPrivateKey PEM_read_EC_PUBKEY */
+#include <openssl/pem.h>
 /* `struct stat` lstat */
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 /* PATH_MAX */
 #include <linux/limits.h>
-/* EC_KEY EC_KEY_check_key */
-#include <openssl/ec.h>
-/* PEM_write_ECPrivateKey PEM_write_EC_PUBKEY */
-#include <openssl/pem.h>
+/* strlen */
+#include <string.h>
 /* CRYPTO_cleanup_all_ex_data */
 #include <openssl/crypto.h>
 
 
-/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
-/* OPENSSL_VERSION_NUMBER: 0x01000106F */
-/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+/*
+ * highly redundant with W_FILE_FromDir, mode could just be a parameter, but
+ * for grading purposes ec_save.c and ec_load.c need to both be independent
+ * translation units
+ */
+/**
+ * R_FILE_FromDir - given a folder and filename, produces an open FILE pointer
+ *   to read a file
+ *
+ * @folder: path to folder containing file to create/overwrite
+ * @filename: name of file to create/overwrite
+ *
+ * Return: FILE pointer to file on success, NULL on failure
+ */
+FILE *R_FILE_FromDir(char const *folder, const char *filename)
+{
+	struct stat st;
+	char file_path[PATH_MAX];
+	FILE *dest_file;
+	int end_slash;
+
+	if (!folder || !filename)
+	{
+		fprintf(stderr, "FILE_FromDir: NULL parameter(s)\n");
+		return (NULL);
+	}
+
+	if (lstat(folder, &st) == -1)
+	{
+		perror("FILE_FromDir: lstat");
+		return (NULL);
+	}
+
+	if (!S_ISDIR(st.st_mode))
+	{
+		fprintf(stderr,
+			"FILE_FromDir: `folder` is not a directory\n");
+		return (NULL);
+	}
+
+	end_slash = (folder[strlen(folder) - 1] == '/');
+	sprintf(file_path, end_slash ? "%s%s" : "%s/%s", folder, filename);
+	dest_file = fopen(file_path, "r");
+	if (!dest_file)
+	{
+		perror("FILE_FromDir: fopen");
+		return (NULL);
+	}
+
+	return (dest_file);
+}
 
 
 /*
@@ -38,6 +92,15 @@
  *
  * @folder: path to the folder from which to load the keys
  *
+ * Note: In cases such as PEM_ASN1_read, calls to BIO_new -> BIO_set -> ... ->
+ *   CRYPTO_malloc -> malloc will allocate data not freed by BIO_free or
+ *   BIO_free_all. At `https://www.openssl.org/docs/faq.html#PROG14`,
+ *   "I think I've detected a memory leak...", this is described as "an OpenSSL
+ *   internal table that is allocated when an application starts up". Chosen
+ *   for its presumed relationship to CRYPTO_malloc, CRYPTO_cleanup_all_ex_data
+ *   is mentioned as an application-global, non-thread safe option, however
+ *   it is not in the 1.1.1 man pages.
+ *
  * Return: pointer to the created EC key pair upon success, or NULL upon
  *   failure
  */
@@ -52,8 +115,8 @@ EC_KEY *ec_load(char const *folder)
 		return (NULL);
 	}
 
-	pri_key_file = FILE_FromDir(folder, PRI_FILENAME, "r");
-	pub_key_file = FILE_FromDir(folder, PUB_FILENAME, "r");
+	pri_key_file = R_FILE_FromDir(folder, PRI_FILENAME);
+	pub_key_file = R_FILE_FromDir(folder, PUB_FILENAME);
 	if (!pub_key_file || !pri_key_file)
 		return (NULL);
 
@@ -77,5 +140,6 @@ EC_KEY *ec_load(char const *folder)
 		return (NULL);
 	}
 
+	CRYPTO_cleanup_all_ex_data(); /* thread-unsafe global cleanup */
 	return (ec_key);
 }
