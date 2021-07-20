@@ -49,13 +49,15 @@ FILE *R_FILE_FromDir(char const *folder, const char *filename)
 		fprintf(stderr, "R_FILE_FromDir: NULL parameter(s)\n");
 		return (NULL);
 	}
-
 	if (lstat(folder, &st) == -1)
 	{
-		perror("R_FILE_FromDir: lstat");
+		if (errno == ENOENT)
+			fprintf(stderr, "R_FILE_FromDir: fopen: '%s': %s\n",
+				folder, strerror(ENOENT));
+		else
+			perror("R_FILE_FromDir: fopen");
 		return (NULL);
 	}
-
 	if (!S_ISDIR(st.st_mode))
 	{
 		fprintf(stderr,
@@ -68,10 +70,13 @@ FILE *R_FILE_FromDir(char const *folder, const char *filename)
 	dest_file = fopen(file_path, "r");
 	if (!dest_file)
 	{
-		perror("R_FILE_FromDir: fopen");
+		if (errno == ENOENT)
+			fprintf(stderr, "R_FILE_FromDir: fopen: '%s': %s\n",
+				file_path, strerror(ENOENT));
+		else
+			perror("R_FILE_FromDir: fopen");
 		return (NULL);
 	}
-
 	return (dest_file);
 }
 

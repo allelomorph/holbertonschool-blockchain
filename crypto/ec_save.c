@@ -52,7 +52,11 @@ FILE *W_FILE_FromDir(char const *folder, const char *filename)
 
 	if (lstat(folder, &st) == -1)
 	{
-		perror("W_FILE_FromDir: lstat");
+		if (errno == ENOENT)
+			fprintf(stderr, "W_FILE_FromDir: fopen: '%s': %s\n",
+				folder, strerror(ENOENT));
+		else
+			perror("W_FILE_FromDir: fopen");
 		return (NULL);
 	}
 
