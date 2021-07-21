@@ -1,10 +1,10 @@
 #ifndef HBLK_CRYPTO_H
 #define HBLK_CRYPTO_H
 
-
 /* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
 /* OPENSSL_VERSION_NUMBER: 0x01000106F */
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+
 
 /* int8_t uint8_t */
 #include <stdint.h>
@@ -16,17 +16,17 @@
 #include <openssl/ec.h>
 /* NID_secp256k1 */
 #include <openssl/obj_mac.h>
+/* expected by project correction test mains */
+#include <openssl/ecdsa.h>
 
-
-/* used in project correction test mains */
+/* expected by project correction test mains */
 #define EC_CURVE NID_secp256k1
 #define PUB_FILENAME "pub_key.pem"
 #define PRI_FILENAME "key.pem"
+#define SIG_MAX_LEN 72 /* ECDSA_size() for EC_KEY with secp256k1 EC_GROUP */
 
 /* project example public key outputs = 130 chars (65 bytes in 2-digit hex) */
 #define EC_PUB_LEN 65
-/* ECDSA_size() return for an EC_KEY with a NID_secp256k1 EC_GROUP */
-#define EC_SIG_LEN 72
 
 /* sig_t appears in glibc signal.h 207-210 as BSD equivalent to sighandler_t */
 /* `#if defined (__USE_BSD) && defined (_SIGNAL_H)` not allowed by linter */
@@ -45,7 +45,7 @@
  */
 typedef struct sig_s
 {
-	uint8_t sig[EC_SIG_LEN];
+	uint8_t sig[SIG_MAX_LEN];
 	uint8_t len;
 } sig_t;
 

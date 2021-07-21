@@ -63,14 +63,14 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 
 	ec_group = EC_KEY_get0_group(key);
 	if (!ec_group || EC_GROUP_get_curve_name(ec_group) != EC_CURVE ||
-	    ECDSA_size(key) != EC_SIG_LEN)
+	    ECDSA_size(key) != SIG_MAX_LEN)
 	{
 		fprintf(stderr,
 			"ec_sign: expecting key with secp256k1 curve\n");
 		return (NULL);
 	}
 
-	memset(sig->sig, 0, EC_SIG_LEN);
+	memset(sig->sig, 0, SIG_MAX_LEN);
 	/*
 	 * `https://www.openssl.org/docs/man1.1.1/man3/ECDSA_sign.html`:
 	 * "The parameter type is currently ignored." (parameter 1, `int type`)
