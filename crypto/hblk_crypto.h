@@ -18,14 +18,15 @@
 #include <openssl/obj_mac.h>
 
 
-/* EC_PUB_LEN not found in /usr/include/openssl/ */
-/* project example outputs are 130 chars, or 65 bytes in 2-digit hex */
-#define EC_PUB_LEN 65
-
 /* used in project correction test mains */
 #define EC_CURVE NID_secp256k1
 #define PUB_FILENAME "pub_key.pem"
 #define PRI_FILENAME "key.pem"
+
+/* project example public key outputs = 130 chars (65 bytes in 2-digit hex) */
+#define EC_PUB_LEN 65
+/* ECDSA_size() return for an EC_KEY with a NID_secp256k1 EC_GROUP */
+#define EC_SIG_LEN 72
 
 /* sig_t appears in glibc signal.h 207-210 as BSD equivalent to sighandler_t */
 /* `#if defined (__USE_BSD) && defined (_SIGNAL_H)` not allowed by linter */
@@ -44,8 +45,8 @@
  */
 typedef struct sig_s
 {
-	uint8_t *sig;
-	size_t len;
+	uint8_t sig[EC_SIG_LEN];
+	uint8_t len;
 } sig_t;
 
 
