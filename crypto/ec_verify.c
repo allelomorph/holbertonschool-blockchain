@@ -81,15 +81,14 @@ int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 		return (0);
 	}
 
-	if (sig->len > SIG_MAX_LEN)
+	if (sig->len > SIG_MAX_LEN || sig->len == 0)
 	{
-		fprintf(stderr, "ec_verify: signature longer than expected\n");
+		fprintf(stderr, sig->len ?
+			"ec_verify: signature over max length\n" :
+			"ec_verify: signature length of 0\n");
 		return (0);
 	}
-	/*
-	 * int ECDSA_verify(int type, const unsigned char *dgst, int dgstlen,
-	 *		 const unsigned char *sig, int siglen, EC_KEY *eckey);
-	 */
+
 	if (ECDSA_verify(0, msg, (int)msglen, sig->sig,
 			 (int)sig->len, (EC_KEY *)key) == 0)
 	{
