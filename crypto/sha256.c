@@ -1,3 +1,8 @@
+/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
+/* OPENSSL_VERSION_NUMBER: 0x01000106F */
+/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+
+
 /* includes stdint.h and stddef.h */
 #include "hblk_crypto.h"
 /* SHA256_DIGEST_LENGTH SHA256_CTX SHA256_Init SHA256_Update SHA256_Final */
@@ -5,10 +10,6 @@
 /* fprintf */
 #include <stdio.h>
 
-
-/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
-/* OPENSSL_VERSION_NUMBER: 0x01000106F */
-/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 /*
  * The three SHA256_* functions were chosen to make the process more explicit
@@ -18,7 +19,6 @@
  *				  (unsigned long)len,
  *				  (unsigned char *)digest));
  */
-
 /**
  * sha256 - computes the hash of a sequence of bytes
  *

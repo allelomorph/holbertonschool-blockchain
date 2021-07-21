@@ -1,3 +1,7 @@
+/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
+/* OPENSSL_VERSION_NUMBER: 0x01000106F */
+/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+
 /* includes stdint.h and stddef.h */
 #include "hblk_crypto.h"
 /* NID_secp256k1 */
@@ -9,16 +13,12 @@
 #include <stdio.h>
 
 
-/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
-/* OPENSSL_VERSION_NUMBER: 0x01000106F */
-/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 /*
  * EC_KEY generation done incrementally here for learning purposes, but the
  * first three steps could also be achieved with:
  *      ec_key = EC_KEY_new_by_curve_name(NID_secp256k1);
  */
-
 /**
  * ec_create - creates a new EC key pair using the secp256k1
  *   (https://en.bitcoin.it/wiki/Secp256k1) elliptic curve

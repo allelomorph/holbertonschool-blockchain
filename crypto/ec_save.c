@@ -2,6 +2,7 @@
 /* OPENSSL_VERSION_NUMBER: 0x01000106F */
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
+
 /* (includes stdint.h and stddef.h) */
 #include "hblk_crypto.h"
 /* FILE fprintf perror sprintf fopen fclose */
@@ -19,14 +20,12 @@
 #include <linux/limits.h>
 /* strlen */
 #include <string.h>
-/* CRYPTO_cleanup_all_ex_data */
-#include <openssl/crypto.h>
 
 
 /*
- * highly redundant with R_FILE_FromDir, mode could just be a parameter, but
- * for grading purposes ec_save.c and ec_load.c need to both be independent
- * translation units
+ * highly redundant with R_FILE_FromDir, fopen mode could just be a parameter,
+ * but for automatic grading purposes ec_save.c and ec_load.c need to both be
+ * independent translation units
  */
 /**
  * W_FILE_FromDir - given a folder and filename, produces an open FILE pointer
@@ -99,14 +98,9 @@ FILE *W_FILE_FromDir(char const *folder, const char *filename)
  * @key: points to the EC key pair to be saved on disk
  * @folder:  path to the folder in which to save the keys
  *
- * Note: In cases such as PEM_write_*(), calls to BIO_new -> BIO_set -> ... ->
- *   CRYPTO_malloc -> malloc will allocate data not freed by BIO_free or
- *   BIO_free_all. At `https://www.openssl.org/docs/faq.html#PROG14`,
- *   "I think I've detected a memory leak...", this is described as "an OpenSSL
- *   internal table that is allocated when an application starts up". Chosen
- *   for its presumed relationship to CRYPTO_malloc, CRYPTO_cleanup_all_ex_data
- *   is mentioned as an application-global, non-thread safe option, however
- *   it is not in the 1.1.1 man pages.
+ * Note: See OpenSSLGlobalCleanup.c for how to address memory leak of `still
+ *   reachable: 416 bytes in 6 blocks` reported by valgrind after PEM_write*
+ *   subroutine calls.
  *
  * Return: 1 on success, 0 on failure
  */
@@ -150,6 +144,5 @@ int ec_save(EC_KEY *key, char const *folder)
 		perror("ec_save: fclose");
 		return (0);
 	}
-	CRYPTO_cleanup_all_ex_data(); /* thread-unsafe global cleanup */
 	return (1);
 }

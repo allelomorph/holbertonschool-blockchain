@@ -1,3 +1,8 @@
+/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
+/* OPENSSL_VERSION_NUMBER: 0x01000106F */
+/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
+
+
 /* (includes stdint.h and stddef.h) EC_PUB_LEN */
 #include "hblk_crypto.h"
 /* EC_POINT EC_GROUP EC_KEY_get0_public_key EC_KEY_get0_group */
@@ -15,9 +20,6 @@
 #include <openssl/crypto.h>
 
 
-/* assumes openssl and libssl-dev versions "1.0.1f-1ubuntu2.27 amd64" */
-/* OPENSSL_VERSION_NUMBER: 0x01000106F */
-/* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 /**
  * byteArrayFromEC_POINT - derives representation of EC_POINT public key as an
