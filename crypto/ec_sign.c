@@ -78,6 +78,7 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 	if (ECDSA_sign(0, msg, msglen, sig->sig,
 		       &sig_len, (EC_KEY *)key) == 0)
 	{
+		sig->len = 0;
 		fprintf(stderr, "ec_sign: ECDSA_sign failure\n");
 		return (NULL);
 	}
