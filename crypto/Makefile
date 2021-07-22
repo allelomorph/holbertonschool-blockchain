@@ -7,8 +7,9 @@
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -pedantic -c
 
+# OpenSSLGlobalCleanup.c temporarily omitted for project grading of task 8
 SRC = sha256.c ec_create.c ec_to_pub.c ec_from_pub.c \
-	ec_save.c ec_load.c ec_sign.c ec_verify.c OpenSSLGlobalCleanup.c
+	ec_save.c ec_load.c ec_sign.c ec_verify.c # OpenSSLGlobalCleanup.c
 OBJ = $(SRC:.c=.o)
 
 .PHONY: libhblk_crypto.a clean oclean flcean
