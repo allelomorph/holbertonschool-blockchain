@@ -21,7 +21,7 @@
 
 /* expected by project correction test mains */
 #define EC_CURVE NID_secp256k1
-#define PUB_FILENAME "pub_key.pem"
+#define PUB_FILENAME "key_pub.pem"
 #define PRI_FILENAME "key.pem"
 #define SIG_MAX_LEN 72 /* ECDSA_size() for EC_KEY with secp256k1 EC_GROUP */
 
