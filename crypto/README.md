@@ -7,10 +7,11 @@ Specializations > System programming & Algorithm > Blockchain
 Alexandre Gautier
 
 ### Assignment dates
--
+07-14-2021 to 07-23-2021
 
 ### Description
--
+Introduction to Blockchains and their encryption, including concepts like hash algorithms (SHA in particular,) Elliptic Curve Cryptography (ECC,) and Elliptic Curve Digital Signature Algorithm (ECDSA;) all in the context of using the OpenSSL C API.
+
 
 ### Provided file(s)
 * [_print_hex_buffer.c](./provided/_print_hex_buffer.c)
@@ -27,7 +28,7 @@ Alexandre Gautier
 
 ## Mandatory Tasks
 
-### :white_large_square: 0. SHA256
+### :white_check_mark: 0. SHA256
 Write a function that computes the hash of a sequence of bytes
 
 * Prototype: `uint8_t *sha256(int8_t const *s, size_t len, uint8_t digest[SHA256_DIGEST_LENGTH]);`, where
@@ -41,7 +42,7 @@ Write a function that computes the hash of a sequence of bytes
 File(s): [`sha256.c`](./sha256.c) [`hblk_crypto.h`](./hblk_crypto.h)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o sha256-test test/sha256-main.c provided/_print_hex_buffer.c sha256.c -lssl -lcrypto`
 
-### :white_large_square: 1. EC_KEY creation
+### :white_check_mark: 1. EC_KEY creation
 Write a function that creates a new EC key pair.
 
 * Prototype: `EC_KEY *ec_create(void);`
@@ -52,7 +53,7 @@ Write a function that creates a new EC key pair.
 File(s): [`ec_create.c`](./ec_create.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o ec_create-test test/ec_create-main.c ec_create.c -lssl -lcrypto`
 
-### :white_large_square: 2. EC_KEY to public key
+### :white_check_mark: 2. EC_KEY to public key
 Write a function that extracts the public key from an `EC_KEY` opaque structure
 
 * Prototype: `uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]);`, where:
@@ -66,7 +67,7 @@ Write a function that extracts the public key from an `EC_KEY` opaque structure
 File(s): [`ec_to_pub.c`](./ec_to_pub.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o ec_to_pub-test test/ec_to_pub-main.c provided/_print_hex_buffer.c ec_to_pub.c ec_create.c -lssl -lcrypto`
 
-### :white_large_square: 3. EC_KEY from public key
+### :white_check_mark: 3. EC_KEY from public key
 Write a function that creates an `EC_KEY` structure given a public key
 
 * Prototype: `EC_KEY *ec_from_pub(uint8_t const pub[EC_PUB_LEN]);`, where:
@@ -77,7 +78,7 @@ Write a function that creates an `EC_KEY` structure given a public key
 File(s): [`ec_from_pub.c`](./ec_from_pub.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o ec_from_pub-test test/ec_from_pub-main.c provided/_print_hex_buffer.c ec_from_pub.c ec_to_pub.c ec_create.c -lssl -lcrypto`
 
-### :white_large_square: 4. EC_KEY - Save to file
+### :white_check_mark: 4. EC_KEY - Save to file
 Write a function that saves an existing EC key pair on the disk.
 
 * Prototype: `int ec_save(EC_KEY *key, char const *folder);`, where
@@ -91,7 +92,7 @@ Write a function that saves an existing EC key pair on the disk.
 File(s): [`ec_save.c`](./ec_save.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o ec_save-test test/ec_save-main.c ec_save.c ec_create.c ec_to_pub.c provided/_print_hex_buffer.c -lssl -lcrypto`
 
-### :white_large_square: 5. EC_KEY - Load from file
+### :white_check_mark: 5. EC_KEY - Load from file
 Write a function that loads an EC key pair from the disk.
 
 * Prototype: `EC_KEY *ec_load(char const *folder);`, where
@@ -119,7 +120,7 @@ Write a function that signs a given set of bytes, using a given EC_KEY **private
 File(s): [`ec_sign.c`](./ec_sign.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o ec_sign-test test/ec_sign-main.c provided/_print_hex_buffer.c ec_sign.c ec_create.c -lssl -lcrypto`
 
-### :white_large_square: 7. Signature verification
+### :white_check_mark: 7. Signature verification
 Write a function that verifies the signature of a given set of bytes, using a given EC_KEY **public key**
 
 * Prototype: `int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen, sig_t const *sig);`, where:
@@ -132,7 +133,7 @@ Write a function that verifies the signature of a given set of bytes, using a gi
 File(s): [`ec_verify.c`](./ec_verify.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o ec_verify-test test/ec_verify-main.c provided/_print_hex_buffer.c ec_verify.c ec_sign.c ec_create.c -lssl -lcrypto`
 
-### :white_large_square: 8. Library
+### :white_check_mark: 8. Library
 Write a Makefile that compiles all the previous functions and archives them into a static library for future use.
 
 The library must be called `libhblk_crypto.a`, and your Makefile must define a rule for this file.
