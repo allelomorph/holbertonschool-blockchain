@@ -16,10 +16,10 @@
 #include <openssl/ec.h>
 /* NID_secp256k1 */
 #include <openssl/obj_mac.h>
-/* expected by project correction test mains */
+/* header expected by project correction test mains */
 #include <openssl/ecdsa.h>
 
-/* expected by project correction test mains */
+/* macros expected by project correction test mains */
 #define EC_CURVE NID_secp256k1
 #define PUB_FILENAME "key_pub.pem"
 #define PRI_FILENAME "key.pem"

@@ -5,17 +5,18 @@
 
 /* (includes stdint.h and stddef.h) */
 #include "hblk_crypto.h"
-/* FILE fprintf perror sprintf fopen fclose */
-#include <stdio.h>
-#include <errno.h>
-/* EC_KEY EC_KEY_check_key */
-#include <openssl/ec.h>
-/* PEM_read_ECPrivateKey PEM_read_EC_PUBKEY */
-#include <openssl/pem.h>
 /* `struct stat` lstat */
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+/* FILE fprintf perror sprintf fopen fclose */
+#include <stdio.h>
+/* ENOENT */
+#include <errno.h>
+/* EC_KEY */
+#include <openssl/ec.h>
+/* PEM_read_ECPrivateKey PEM_read_EC_PUBKEY */
+#include <openssl/pem.h>
 /* PATH_MAX */
 #include <linux/limits.h>
 /* strlen */
@@ -96,7 +97,7 @@ FILE *R_FILE_FromDir(char const *folder, const char *filename)
  *
  * @folder: path to the folder from which to load the keys
  *
- * Note: See OpenSSLGlobalCleanup.c for how to address memory leak of `still
+ * Note: See OpenSSLGlobalCleanup for how to address memory leak of `still
  *   reachable: 416 bytes in 6 blocks` reported by valgrind after PEM_read*
  *   subroutine calls.
  *
@@ -110,7 +111,7 @@ EC_KEY *ec_load(char const *folder)
 
 	if (!folder)
 	{
-		fprintf(stderr, "ec_load: NULL parameter(s)\n");
+		fprintf(stderr, "ec_load: NULL parameter\n");
 		return (NULL);
 	}
 
@@ -122,7 +123,7 @@ EC_KEY *ec_load(char const *folder)
 	ec_key = PEM_read_EC_PUBKEY(pub_key_file, NULL, NULL, NULL);
 	if (!ec_key)
 	{
-		fprintf(stderr, "ec_save: PEM_read_EC_PUBKEY failure\n");
+		fprintf(stderr, "ec_load: PEM_read_EC_PUBKEY failure\n");
 		return (NULL);
 	}
 

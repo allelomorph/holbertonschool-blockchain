@@ -2,16 +2,14 @@
 /* OPENSSL_VERSION_NUMBER: 0x01000106F */
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
-/* includes stdint.h and stddef.h */
+
+/* EC_CURVE */
 #include "hblk_crypto.h"
-/* NID_secp256k1 */
-#include <openssl/obj_mac.h>
 /* EC_KEY EC_GROUP EC_KEY_new EC_GROUP_new_by_curve_name */
-/* EC_KEY_set_group EC_KEY_generate_key */
+/* EC_KEY_set_group EC_KEY_generate_key EC_GROUP_free */
 #include <openssl/ec.h>
 /* fprintf */
 #include <stdio.h>
-
 
 
 /*
@@ -38,7 +36,7 @@ EC_KEY *ec_create(void)
 		return (NULL);
 	}
 
-	ec_group = EC_GROUP_new_by_curve_name(NID_secp256k1);
+	ec_group = EC_GROUP_new_by_curve_name(EC_CURVE);
 	if (!ec_group)
 	{
 		fprintf(stderr,

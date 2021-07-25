@@ -3,7 +3,6 @@
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 
-/* includes stdint.h and stddef.h */
 #include "hblk_crypto.h"
 /* SHA256_DIGEST_LENGTH SHA256_CTX SHA256_Init SHA256_Update SHA256_Final */
 #include <openssl/sha.h>

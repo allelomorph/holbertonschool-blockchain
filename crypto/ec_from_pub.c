@@ -3,12 +3,16 @@
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 
-/* (includes stdint.h and stddef.h) EC_CURVE */
+/* EC_CURVE EC_PUB_LEN */
 #include "hblk_crypto.h"
-/* EC_KEY EC_GROUP EC_KEY_new EC_GROUP_new_by_curve_name */
-/* EC_KEY_set_group EC_KEY_generate_key */
+/* EC_POINT EC_POINT_new EC_POINT_hex2point EC_KEY EC_GROUP EC_POINT_free */
+/* EC_KEY_new_by_curve_name EC_KEY_get0_group EC_KEY_set_public_key */
 #include <openssl/ec.h>
-/* fprintf */
+/* BN_CTX  BN_CTX_new BN_CTX_free */
+#include <openssl/bn.h>
+/* OPENSSL_malloc OPENSSL_free */
+#include <openssl/crypto.h>
+/* fprintf sprintf */
 #include <stdio.h>
 /* memset */
 #include <string.h>

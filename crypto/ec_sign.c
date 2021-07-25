@@ -3,11 +3,12 @@
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 
-/* (includes stdint.h and stddef.h) */
+/* sig_t EC_CURVE SIG_MAX_LEN */
 #include "hblk_crypto.h"
 /* fprintf */
 #include <stdio.h>
-/* EC_KEY EC_KEY_check_key */
+/* EC_KEY EC_GROUP EC_KEY_check_key */
+/* EC_KEY_get0_group EC_GROUP_get_curve_name */
 #include <openssl/ec.h>
 /* ECDSA_size ECDSA_sign */
 #include <openssl/ecdsa.h>
@@ -26,7 +27,7 @@
  *   need to be zero-terminated. If it is, `sig->len` should hold the size of
  *   the signature without the trailing zero byte
  *
- * Note: See OpenSSLGlobalCleanup.c for how to address memory leak of `still
+ * Note: See OpenSSLGlobalCleanup for how to address memory leak of `still
  *   reachable: 416 bytes in 6 blocks` reported by valgrind after ECDSA_sign
  *   subroutine calls.
  *

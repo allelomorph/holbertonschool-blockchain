@@ -3,16 +3,14 @@
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 
-/* (includes stdint.h and stddef.h) */
+/* sig_t EC_CURVE SIG_MAX_LEN */
 #include "hblk_crypto.h"
 /* fprintf */
 #include <stdio.h>
-/* EC_KEY EC_KEY_check_key */
+/* EC_KEY E_GROUP EC_KEY_check_key EC_KEY_get0_group EC_GROUP_get_curve_name */
 #include <openssl/ec.h>
 /* ECDSA_size ECDSA_sign */
 #include <openssl/ecdsa.h>
-/* memset */
-#include <string.h>
 
 
 /**
@@ -25,7 +23,7 @@
  * @msglen: count of characters in `msg`
  * @sig: points to the signature to be checked
  *
- * Note: See OpenSSLGlobalCleanup.c for how to address memory leak of `still
+ * Note: See OpenSSLGlobalCleanup for how to address memory leak of `still
  *   reachable: 416 bytes in 6 blocks` reported by valgrind after ECDSA_sign
  *   subroutine calls.
  *
@@ -68,7 +66,7 @@ int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 	if (ECDSA_verify(0, msg, (int)msglen, sig->sig,
 			 (int)sig->len, (EC_KEY *)key) == 0)
 	{
-		fprintf(stderr, "ec_sign: ECDSA_verify failure\n");
+		fprintf(stderr, "ec_verify: ECDSA_verify failure\n");
 		return (0);
 	}
 

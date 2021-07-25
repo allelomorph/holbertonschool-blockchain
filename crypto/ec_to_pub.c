@@ -3,22 +3,21 @@
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 
-/* (includes stdint.h and stddef.h) EC_PUB_LEN */
+/* EC_PUB_LEN */
 #include "hblk_crypto.h"
 /* EC_POINT EC_GROUP EC_KEY_get0_public_key EC_KEY_get0_group */
 /* EC_POINT_point2hex POINT_CONVERSION_UNCOMPRESSED */
 #include <openssl/ec.h>
-/* BN_CTX BN_CTX_start BN_CTX_end */
+/* BN_CTX BN_CTX_new BN_CTX_free */
 #include <openssl/bn.h>
+/* OPENSSL_free */
+#include <openssl/crypto.h>
 /* fprintf sscanf perror */
 #include <stdio.h>
 /* errno */
 #include <errno.h>
 /* memset */
 #include <string.h>
-/* OPENSSL_free */
-#include <openssl/crypto.h>
-
 
 
 /**
