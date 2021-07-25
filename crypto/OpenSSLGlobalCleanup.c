@@ -3,6 +3,7 @@
 /* SSLEAY_VERSION: 'OpenSSL 1.0.1f 6 Jan 2014' */
 
 
+#include "hblk_crypto.h"
 /* ERR_free_strings */
 /* #include <openssl/err.h> */
 /* EVP_cleanup */
@@ -15,20 +16,24 @@
  * OpenSSLGlobalCleanup - runs "brutal" (thread unsafe) application-global
  *   cleanup functions to free any internal tables allocated by OpenSSL
  *
- * Note: It has been observed that the following function subroutine calls:
+ * Note: It has been observed with valgrind that the following function
+ *   subroutine calls:
  *     - PEM_write* -> BIO_new -> BIO_set -> ...
  *     - PEM_read* -> PEM_ASN1_read -> BIO_new -> ...
  *     - ECDSA_sign -> ECDSA_sign_ex -> ECDSA_do_sign_ex -> ...
  *   all end with -> CRYPTO_malloc -> malloc, allocating data that persists
  *   until the process ends with a seeming leak of `still reachable: 416
- *   bytes in 6 blocks`. At `https://www.openssl.org/docs/faq.html#PROG14`,
- *   "I think I've detected a memory leak...", this is described as "an OpenSSL
- *   internal table that is allocated when an application starts up". The three
+ *   bytes in 6 blocks`.
+ *
+ *   At `https://www.openssl.org/docs/faq.html#PROG14`, "I think I've
+ *   detected a memory leak...", this is described as "an OpenSSL internal
+ *   table that is allocated when an application starts up". The three
  *   functions below are listed there as application-global, non-thread safe
  *   options for freeing these tables.
  *
- *   See also `https://stackoverflow.com/a/29927669` regarding best practices
- *   for OpenSSL 1.0.1 initialization/uninitialization.
+ *   See also `https://wiki.openssl.org/index.php/Library_Initialization` and
+ *   `https://stackoverflow.com/a/29927669` regarding best practices
+ *   for OpenSSL initialization/uninitialization.
  */
 void OpenSSLGlobalCleanup(void)
 {
