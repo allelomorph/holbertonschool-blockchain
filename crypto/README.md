@@ -105,7 +105,7 @@ Write a function that loads an EC key pair from the disk.
 File(s): [`ec_load.c`](./ec_load.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o ec_load-test test/ec_load-main.c ec_load.c ec_save.c ec_create.c ec_to_pub.c provided/_print_hex_buffer.c -lssl -lcrypto`
 
-### :white_large_square: 6. Signature
+### :white_check_mark: 6. Signature
 Write a function that signs a given set of bytes, using a given EC_KEY **private key**
 
 * Prototype: `uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen, sig_t *sig);`, where:
