@@ -15,9 +15,11 @@
 
 
 #define BLOCKCHAIN_DATA_MAX 1024
-#define GEN_BLK_TS     1537578000
-#define GEN_BLK_DT_BUF "Holberton School"
-#define GEN_BLK_DT_LEN 16
+#define HBLK_MAG            "HBLK"
+#define HBLK_VER            "0.1"
+#define GEN_BLK_TS          1537578000
+#define GEN_BLK_DT_BUF      "Holberton School"
+#define GEN_BLK_DT_LEN      16
 #define GEN_BLK_HSH \
 	"\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d" \
 	"\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03"
@@ -102,6 +104,26 @@ typedef struct block_s
 	block_data_t data; /* This must stay second */
 	uint8_t      hash[SHA256_DIGEST_LENGTH];
 } block_t;
+
+/**
+ * struct bc_file_hdr_s - blockchain file header structure
+ *
+ * @hblk_magic: Identifies the file as a valid serialized blockchain format;
+ *   "HBLK" (ASCII 48 42 4c 4b); these four bytes constitute the magic number
+ * @hblk_version: Identifies the version at which the blockchain has been
+ *   serialized. The format is X.Y, where both X and Y are ASCII characters
+ *   between 0 and 9
+ * @hblk_endian: This byte is set to either 1 or 2 to signify little or big
+ *   endianness, respectively. This affects interpretation of multi-byte fields
+ * @hblk_blocks: Number of blocks in the blockchain
+ */
+typedef struct bc_file_hdr_s
+{
+	int8_t   hblk_magic[4];
+	int8_t   hblk_version[3];
+	uint8_t  hblk_endian;
+	uint32_t hblk_blocks;
+} bc_file_hdr_t;
 
 
 /* blockchain_create.c */

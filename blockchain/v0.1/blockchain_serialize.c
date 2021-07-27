@@ -1,4 +1,163 @@
+/* block_t blockchain_t strE_LLIST bc_file_hdr_t HBLK_MAG HBLK_VER */
 #include "blockchain.h"
+/* lstat `struct stat` S_ISDIR */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+/* errno ENOENT */
+#include <errno.h>
+/* fprintf perror write */
+#include <stdio.h>
+/* open O_* S_* close */
+#include <fcntl.h>
+/* _get_endianness */
+#include "provided/endianness.h"
+/* llist_* */
+#include <llist.h>
+
+
+/**
+ * writeFileFromPath - validates a path and opens a file descriptor in
+ *   write-only mode at that path
+ *
+ * @path: contains the potential path to a file to open
+ *
+ * Return: file descriptor upon success, or -1 upon failure
+ */
+int writeFileFromPath(char const *path)
+{
+	struct stat st;
+	int fd;
+
+	if (lstat(path, &st) == -1)
+	{
+		if (errno != ENOENT)
+		{
+			perror("writeFileFromPath: lstat");
+			return (-1);
+		}
+	}
+	else if (S_ISDIR(st.st_mode))
+	{
+		fprintf(stderr, "writeFileFromPath: path is a directory\n");
+		return (-1);
+	}
+
+	fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, /* 0664 */
+		  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+	if (fd == -1)
+	{
+		if (errno == ENOENT)
+		{
+			fprintf(stderr, "writeFileFromPath: %s\n",
+				"some directory in path does not exist");
+		}
+		else
+			perror("writeFileFromPath: open");
+		return (-1);
+	}
+
+	return (fd);
+}
+
+
+/**
+ * writeBlkchnFileHdr - writes a serialized file header to a file for storage
+ *   of a blockchain
+ *
+ * @fd: file descriptor open for writing
+ * @blockchain: pointer to the blockchain to be serialized
+ *
+ * Return: 0 on success, or 1 upon failure
+ */
+int writeBlkchnFileHdr(int fd, const blockchain_t *blockchain)
+{
+	bc_file_hdr_t header = { HBLK_MAG, HBLK_VER, 0, 0 };
+	int block_ct;
+
+	if (!blockchain)
+	{
+		fprintf(stderr, "writeBlkchnFileHdr: NULL parameter\n");
+		return (1);
+	}
+
+	header.hblk_endian = _get_endianness();
+	if (header.hblk_endian == 0)
+	{
+		fprintf(stderr,
+			"writeBlkchnFileHdr: _get_endianness failure\n");
+		return (1);
+	}
+
+	block_ct = llist_size(blockchain->chain);
+	if (block_ct == -1)
+	{
+		fprintf(stderr, "writeBlkchnFileHdr: llist_size: %s\n",
+			strE_LLIST(llist_errno));
+		return (1);
+	}
+	header.hblk_blocks = (uint32_t)block_ct;
+
+	if (write(fd, &header, sizeof(bc_file_hdr_t)) == -1)
+	{
+		perror("writeBlkchnFileHdr: write");
+		return (1);
+	}
+
+	return (0);
+}
+
+
+/**
+ * writeBlocks - writes serialized blocks to a file for storage of a blockchain
+ *
+ * @fd: file descriptor open for writing
+ * @blockchain: pointer to the blockchain to be serialized
+ *
+ * Return: 0 on success, or 1 upon failure
+ */
+int writeBlocks(int fd, const blockchain_t *blockchain)
+{
+	int i, block_ct;
+	block_t *block = NULL;
+
+	if (!blockchain)
+	{
+		fprintf(stderr, "writeBlocks: NULL parameter\n");
+		return (1);
+	}
+
+	block_ct = llist_size(blockchain->chain);
+	if (block_ct == -1)
+	{
+		fprintf(stderr, "writeBlocks: llist_size: %s\n",
+			strE_LLIST(llist_errno));
+		return (1);
+	}
+
+	/* assumes header has already been written to fd */
+	for (i = 0; i < block_ct; i++)
+	{
+		block = (block_t *)llist_get_node_at(blockchain->chain, i);
+		if (!block)
+		{
+			fprintf(stderr, "writeBlocks: llist_get_node_at: %s\n",
+				strE_LLIST(llist_errno));
+			return (1);
+		}
+
+		if (write(fd, &(block->info), sizeof(block_info_t)) == -1 ||
+		    write(fd, &(block->data.len), sizeof(uint32_t)) == -1 ||
+		    write(fd, &(block->data.buffer), block->data.len) == -1 ||
+		    write(fd, &(block->hash), SHA256_DIGEST_LENGTH) == -1)
+		{
+			perror("writeBlocks: write");
+			return (1);
+		}
+	}
+
+	return (0);
+}
 
 
 /**
@@ -41,4 +200,24 @@
  */
 int blockchain_serialize(blockchain_t const *blockchain, char const *path)
 {
+	int fd;
+
+	if (!blockchain || !path)
+	{
+		fprintf(stderr, "blockchain_serialize: NULL parameter(s)\n");
+		return (-1);
+	}
+
+	fd = writeFileFromPath(path);
+	if (fd == -1)
+		return (-1);
+
+	if (writeBlkchnFileHdr(fd, blockchain) != 0)
+		return (-1);
+
+	if (writeBlocks(fd, blockchain) != 0)
+		return (-1);
+
+	close(fd);
+	return (0);
 }
