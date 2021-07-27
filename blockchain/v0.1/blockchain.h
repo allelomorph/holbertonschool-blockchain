@@ -6,7 +6,7 @@
 #include <llist.h>
 /* [u]intN_t */
 #include <stdint.h>
-/* SHA256_DIGEST_LENGTH and all libhblk_crypto.a functions */
+/* SHA256_DIGEST_LENGTH */
 #include "../../crypto/hblk_crypto.h"
 #ifdef DECLARE_PROVIDED
 /* size_t */
