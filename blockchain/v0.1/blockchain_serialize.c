@@ -17,14 +17,14 @@
 
 
 /**
- * writeFileFromPath - validates a path and opens a file descriptor in
+ * pathToWriteFD - validates a path and opens a file descriptor in
  *   write-only mode at that path
  *
  * @path: contains the potential path to a file to open
  *
  * Return: file descriptor upon success, or -1 upon failure
  */
-int writeFileFromPath(char const *path)
+int pathToWriteFD(char const *path)
 {
 	struct stat st;
 	int fd;
@@ -33,13 +33,13 @@ int writeFileFromPath(char const *path)
 	{
 		if (errno != ENOENT)
 		{
-			perror("writeFileFromPath: lstat");
+			perror("pathToWriteFD: lstat");
 			return (-1);
 		}
 	}
 	else if (S_ISDIR(st.st_mode))
 	{
-		fprintf(stderr, "writeFileFromPath: path is a directory\n");
+		fprintf(stderr, "pathToWriteFD: path is a directory\n");
 		return (-1);
 	}
 
@@ -49,11 +49,11 @@ int writeFileFromPath(char const *path)
 	{
 		if (errno == ENOENT)
 		{
-			fprintf(stderr, "writeFileFromPath: %s\n",
+			fprintf(stderr, "pathToWriteFD: %s\n",
 				"some directory in path does not exist");
 		}
 		else
-			perror("writeFileFromPath: open");
+			perror("pathToWriteFD: open");
 		return (-1);
 	}
 
@@ -208,15 +208,21 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
 		return (-1);
 	}
 
-	fd = writeFileFromPath(path);
+	fd = pathToWriteFD(path);
 	if (fd == -1)
 		return (-1);
 
 	if (writeBlkchnFileHdr(fd, blockchain) != 0)
+	{
+		close(fd);
 		return (-1);
+	}
 
 	if (writeBlocks(fd, blockchain) != 0)
+	{
+		close(fd);
 		return (-1);
+	}
 
 	close(fd);
 	return (0);

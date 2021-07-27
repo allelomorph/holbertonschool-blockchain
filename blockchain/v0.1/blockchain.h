@@ -145,6 +145,9 @@ uint8_t *block_hash(block_t const *block,
 		    uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 
 /* blockchain_serialize.c */
+int pathToWriteFD(char const *path);
+int writeBlkchnFileHdr(int fd, const blockchain_t *blockchain);
+int writeBlocks(int fd, const blockchain_t *blockchain);
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
 
 /* blockchain_deserialize.c */
