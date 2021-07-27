@@ -105,6 +105,7 @@ typedef struct block_s
 
 
 /* blockchain_create.c */
+char *strE_LLIST(E_LLIST code);
 blockchain_t *blockchain_create(void);
 
 /* block_create.c */

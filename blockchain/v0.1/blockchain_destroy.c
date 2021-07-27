@@ -9,4 +9,19 @@
  */
 void blockchain_destroy(blockchain_t *blockchain)
 {
+	if (!blockchain)
+	{
+		fprintf(stderr, "blockchain_destroy: NULL parameter\n");
+		return;
+	}
+
+	/* could also potentially cast block_destroy to node_dtor_t */
+	if (llist_destroy(blockchain->chain, 1, NULL) != 0)
+	{
+		fprintf(stderr, "blockchain_destroy: llist_destroy: %s\n",
+			strE_LLIST(llist_errno));
+		return;
+	}
+
+	free(blockchain);
 }
