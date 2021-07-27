@@ -1,14 +1,41 @@
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
 
+/* libllist.so installed in /usr/local/lib/ */
+/* llist_t */
+#include <llist.h>
 /* [u]intN_t */
 #include <stdint.h>
-/* SHA256_DIGEST_LENGTH */
-#include <opnessl/sha.h>
-/* llist_t defined by linking to liblist.so */
+/* SHA256_DIGEST_LENGTH and all libhblk_crypto.a functions */
+#include "../../crypto/hblk_crypto.h"
+#ifdef DECLARE_PROVIDED
+/* size_t */
+#include <stddef.h>
+#endif
 
 
 #define BLOCKCHAIN_DATA_MAX 1024
+#define GEN_BLK_TS     1537578000
+#define GEN_BLK_DT_BUF "Holberton School"
+#define GEN_BLK_DT_LEN 16
+#define GEN_BLK_HSH \
+	"\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d" \
+	"\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03"
+#define GEN_BLK { \
+	{ /* info */ \
+		0 /* index */, \
+		0, /* difficulty */ \
+		1537578000, /* timestamp */ \
+		0, /* nonce */ \
+		{0} /* prev_hash */ \
+	}, \
+	{ /* data */ \
+		"Holberton School", /* buffer */ \
+		16 /* len */ \
+	}, /* hash */ \
+	"\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d" \
+	"\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03" \
+}
 
 
 /**
@@ -76,20 +103,6 @@ typedef struct block_s
 	uint8_t      hash[SHA256_DIGEST_LENGTH];
 } block_t;
 
-
-#ifdef DECLARE_PROVIDED
-/* provided/_blockchain_destroy.c */
-void _blockchain_destroy(blockchain_t *blockchain);
-
-/* provided/_blockchain_print.c */
-static void _print_hex_buffer(uint8_t const *buf, size_t len);
-static int _block_print(block_t const *block, unsigned int index,
-			char const *indent);
-void _blockchain_print_brief(blockchain_t const *blockchain);
-
-/* provided/_genesis.c */
-block_t const _genesis;
-#endif
 
 /* blockchain_create.c */
 blockchain_t *blockchain_create(void);
