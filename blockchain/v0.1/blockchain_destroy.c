@@ -1,4 +1,11 @@
+/* blockchain_t */
 #include "blockchain.h"
+/* llist_errno llist_destroy */
+#include <llist.h>
+/* fprintf */
+#include <stdio.h>
+/* free */
+#include <stdlib.h>
 
 
 /**
