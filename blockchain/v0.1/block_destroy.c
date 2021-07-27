@@ -1,4 +1,9 @@
+/* block_t */
 #include "blockchain.h"
+/* fprintf */
+#include <stdio.h>
+/* free */
+#include <stdlib.h>
 
 
 /**
@@ -8,4 +13,11 @@
  */
 void block_destroy(block_t *block)
 {
+	if (!block)
+	{
+		fprintf(stderr, "block_destroy: NULL parameter\n");
+		return;
+	}
+
+	free(block);
 }
