@@ -1,22 +1,23 @@
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
 
+
 /* libllist.so installed in /usr/local/lib/ */
-/* llist_t */
+/* E_LLIST */
 #include <llist.h>
 /* [u]intN_t */
 #include <stdint.h>
 /* SHA256_DIGEST_LENGTH */
 #include "../../crypto/hblk_crypto.h"
-#ifdef DECLARE_PROVIDED
-/* size_t */
-#include <stddef.h>
-#endif
 
 
 #define BLOCKCHAIN_DATA_MAX 1024
+
 #define HBLK_MAG            "HBLK"
+#define HBLK_MAG_LEN        4
 #define HBLK_VER            "0.1"
+#define HBLK_VER_LEN        3
+
 #define GEN_BLK_TS          1537578000
 #define GEN_BLK_DT_BUF      "Holberton School"
 #define GEN_BLK_DT_LEN      16
@@ -38,6 +39,11 @@
 	"\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d" \
 	"\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03" \
 }
+/*
+ * sizeof(block_t.info) + sizeof(block_t.data.len) +
+ * GEN_BLK.data.len + sizeof(block_t.hash)
+ */
+#define GEN_BLK_SERIAL_SZ 108
 
 
 /**
