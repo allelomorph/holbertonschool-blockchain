@@ -153,8 +153,8 @@ void bswapBlock(block_t *block)
  *   data structure
  *
  * @fd: file descriptor already open for reading
- * @blockchain: pointer to the blockchain struct to contain the deserialized
- *   blocks
+ * @blockchain: pointer to an empty blockchain struct (Genesis Block removed)
+ *   to contain the deserialized blocks
  * @local_endianness: 1 for little endian, 2 for big endian
  * @file_endianness: 1 for little endian, 2 for big endian
  * @block_ct: count of blocks in blockchain
@@ -166,20 +166,20 @@ int readBlocks(int fd, const blockchain_t *blockchain,
 		uint32_t block_ct)
 {
 	uint32_t i;
-	block_t *block, *genesis;
+	block_t *block;
 
 	if (!blockchain)
 	{
 		fprintf(stderr, "readBlocks: NULL parameter\n");
 		return (1);
 	}
-	/* remove preloaded Genesis Block (warning!) no sanity check */
-	genesis = (block_t *)llist_pop(blockchain->chain);
-	if (genesis)
-		free(genesis);
-	/* assumes header has already been read from fd */
-	for (i = 0; i < block_ct; i++)
+	if (!llist_is_empty(blockchain->chain))
 	{
+		fprintf(stderr, "readBlocks: target blockchain not empty\n");
+		return (1);
+	}
+	for (i = 0; i < block_ct; i++)
+	{ /* assumes header has already been read from fd */
 		block = calloc(1, sizeof(block_t));
 		if (!block)
 		{
@@ -222,18 +222,11 @@ blockchain_t *blockchain_deserialize(char const *path)
 	uint8_t local_endianness, file_endianness;
 	uint32_t block_ct;
 	blockchain_t *blockchain;
+	block_t *genesis;
 
 	if (!path)
 	{
 		fprintf(stderr, "blockchain_deserialize: NULL parameter\n");
-		return (NULL);
-	}
-
-	local_endianness = _get_endianness();
-	if (local_endianness == 0)
-	{
-		fprintf(stderr,
-			"blockchain_deserialize: _get_endianness failure\n");
 		return (NULL);
 	}
 
@@ -246,6 +239,12 @@ blockchain_t *blockchain_deserialize(char const *path)
 		close(fd);
 		return (NULL);
 	}
+	/* remove preloaded Genesis Block at head of list */
+	genesis = (block_t *)llist_pop(blockchain->chain);
+	if (genesis)
+		free(genesis);
+	local_endianness = _get_endianness();
+
 	if (readBlkchnFileHdr(fd, local_endianness, &file_endianness,
 			      &block_ct) != 0 ||
 	    readBlocks(fd, blockchain, local_endianness, file_endianness,

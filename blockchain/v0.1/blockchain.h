@@ -157,6 +157,13 @@ int writeBlocks(int fd, const blockchain_t *blockchain);
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
 
 /* blockchain_deserialize.c */
+int pathToReadFD(char const *path);
+int readBlkchnFileHdr(int fd, uint8_t local_endianness,
+		      uint8_t *file_endianness, uint32_t *block_ct);
+void bswapBlock(block_t *block);
+int readBlocks(int fd, const blockchain_t *blockchain,
+	       uint8_t local_endianness, uint8_t file_endianness,
+	       uint32_t block_ct);
 blockchain_t *blockchain_deserialize(char const *path);
 
 /* block_is_valid.c */
