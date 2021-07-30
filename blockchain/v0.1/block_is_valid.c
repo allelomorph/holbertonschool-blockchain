@@ -83,6 +83,13 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		return (1);
 	}
 
+	if (block->info.index != prev_block->info.index + 1)
+	{
+		fprintf(stderr, "block_is_valid: %s\n",
+			"block index should be prev_block index + 1");
+		return (1);
+	}
+
 	if (!prev_block)
 	{
 		fprintf(stderr, "block_is_valid: %s\n",
