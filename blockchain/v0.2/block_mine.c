@@ -1,3 +1,4 @@
+/* stdint.h block_t SHA256_DIGEST_LENGTH */
 #include "blockchain.h"
 /* ULONG_MAX */
 #include <limits.h>

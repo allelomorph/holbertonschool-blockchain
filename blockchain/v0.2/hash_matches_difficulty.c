@@ -1,5 +1,7 @@
 /* stdint.h SHA256_DIGEST_LENGTH */
 #include "blockchain.h"
+/* fprintf */
+#include <stdio.h>
 
 
 /**
