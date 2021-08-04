@@ -11,6 +11,11 @@
 #include "../../crypto/hblk_crypto.h"
 
 
+/* how often (in seconds) a block should be found */
+#define BLOCK_GENERATION_INTERVAL 1
+/* how often (in blocks) the difficulty should be adjusted */
+#define DIFFICULTY_ADJUSTMENT_INTERVAL 5
+/* max size (in bytes) of the data payload in a block */
 #define BLOCKCHAIN_DATA_MAX 1024
 
 #define HBLK_MAG            "HBLK"
@@ -181,6 +186,8 @@ int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
 void block_mine(block_t *block);
 
 /* blockchain_difficulty.c */
+uint8_t adjustDifficulty(const blockchain_t *blockchain,
+			 const block_t *latest_blk, uint32_t *difficulty);
 uint32_t blockchain_difficulty(blockchain_t const *blockchain);
 
 
