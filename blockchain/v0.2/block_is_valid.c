@@ -42,6 +42,13 @@ int validateBlockHashes(block_t const *block, block_t const *prev_block)
 		return (1);
 	}
 
+	if (!hash_matches_difficulty(block->hash, block->info.difficulty))
+	{
+		fprintf(stderr, "block_is_valid: %s\n",
+			"block difficulty not met by block hash");
+		return (1);
+	}
+
 	if (memcmp(block->info.prev_hash, prev_hash_buf,
 		   SHA256_DIGEST_LENGTH) != 0)
 	{
