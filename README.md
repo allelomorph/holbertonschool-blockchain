@@ -1,7 +1,7 @@
 # holbertonschool-blockchain
 
 ## Description
-Final project of the Holberton School's System Programming & Algorithm 2nd year curriculum.
+Final project cycle of the Holberton school System Programming & Algorithm specialization curriculum.
 
 ---
 
