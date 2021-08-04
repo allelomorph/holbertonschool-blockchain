@@ -7,10 +7,10 @@ Specializations > System programming & Algorithm > Blockchain
 Alexandre Gautier
 
 ### Assignment dates
-
+07-26-2021 to 08-04-2021
 
 ### Description
-
+Introduction to data structures used to store each block's info profile and payload of data.
 
 ### Provided file(s)
 [`provided/`](./provided/) (all originally [here](https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/blockchain/v0.1/provided)):
@@ -36,7 +36,7 @@ Alexandre Gautier
 
 ## Mandatory Tasks
 
-### :white_large_square: 0. Create blockchain
+### :white_check_mark: 0. Create blockchain
 Write a function that creates a blockchain structure, and initializes it.
 
 * Prototype: `blockchain_t *blockchain_create(void);`
@@ -52,7 +52,7 @@ Write a function that creates a blockchain structure, and initializes it.
 File(s): [`blockchain_create.c`](./blockchain_create.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o blockchain_create-test blockchain_create.c test/blockchain_create-main.c provided/_blockchain_print.c provided/_blockchain_destroy.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 1. Create block
+### :white_check_mark: 1. Create block
 Write a function that creates a block structure and initializes it.
 
 * Prototype: `block_t *block_create(block_t const *prev, int8_t const *data, uint32_t data_len);`, where:
@@ -68,7 +68,7 @@ Write a function that creates a block structure and initializes it.
 File(s): [`block_create.c`](./block_create.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o block_create-test blockchain_create.c block_create.c test/block_create-main.c provided/_blockchain_print.c provided/_blockchain_destroy.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 2. Delete block
+### :white_check_mark: 2. Delete block
 Write a function that deletes an existing block
 
 * Prototype: `void block_destroy(block_t *block);`, where:
@@ -77,7 +77,7 @@ Write a function that deletes an existing block
 File(s): [`block_destroy.c`](./block_destroy.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o block_destroy-test blockchain_create.c block_create.c block_destroy.c test/block_destroy-main.c provided/_blockchain_destroy.c  -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 3. Delete blockchain
+### :white_check_mark: 3. Delete blockchain
 Write a function that deletes an existing blockchain, along with all the blocks it contains
 
 * Prototype: `void blockchain_destroy(blockchain_t *blockchain);`, where:
@@ -87,7 +87,7 @@ Write a function that deletes an existing blockchain, along with all the blocks 
 File(s): [`blockchain_destroy.c`](./blockchain_destroy.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o blockchain_destroy-test blockchain_destroy.c blockchain_create.c block_create.c block_destroy.c test/blockchain_destroy-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 4. Hash block
+### :white_check_mark: 4. Hash block
 Write a function that computes the hash of a block
 
 * Prototype: `uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);`, where:
@@ -100,7 +100,7 @@ Write a function that computes the hash of a block
 File(s): [`block_hash.c`](./block_hash.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o block_hash-test blockchain_create.c block_create.c block_destroy.c blockchain_destroy.c block_hash.c test/block_hash-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 5. Save blockchain
+### :white_check_mark: 5. Save blockchain
 Write a function that serializes a blockchain into a file
 
 * Prototype: `int blockchain_serialize(blockchain_t const *blockchain, char const *path);`, where:
@@ -113,9 +113,7 @@ Write a function that serializes a blockchain into a file
 
 The resulting file should contain exactly the following:
 
-##### File Header
-
-The following table describes the file header:
+**File Header**\
 
 Offset | Size (bytes) | Field | Purpose
 ------ | ------------ | ----- | -------
@@ -125,7 +123,7 @@ Offset | Size (bytes) | Field | Purpose
 0x08 | 4 | hblk_blocks | Number of blocks in the blockchain. Endianness dependent.
 0x0C | ? | blocks | List of blocks
 
-##### Block
+**Block**\
 
 The following table describes how a block is serialized. The blocks are serialized contiguously, the first one starting at offset 0x0C:
 
@@ -143,7 +141,7 @@ Offset | Size (bytes) | Field | Purpose
 File(s): [`blockchain_serialize.c`](./blockchain_serialize.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o blockchain_serialize-test blockchain_create.c block_create.c block_destroy.c blockchain_destroy.c block_hash.c blockchain_serialize.c provided/_endianness.c test/blockchain_serialize-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 6. Load blockchain
+### :white_check_mark: 6. Load blockchain
 Write a function that deserializes a blockchain from a file
 
 * Prototype: `blockchain_t *blockchain_deserialize(char const *path);`, where:
@@ -159,7 +157,7 @@ Write a function that deserializes a blockchain from a file
 File(s): [`blockchain_deserialize.c`](./blockchain_deserialize.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -o blockchain_deserialize-test blockchain_create.c block_create.c block_destroy.c blockchain_destroy.c block_hash.c blockchain_deserialize.c provided/_blockchain_print.c provided/_endianness.c test/blockchain_deserialize-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 7. Block validity
+### :white_check_mark: 7. Block validity
 Write a function that verifies that a block is valid
 
 * Prototype: `int block_is_valid(block_t const *block, block_t const *prev_block);`, where:
