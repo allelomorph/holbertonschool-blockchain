@@ -132,6 +132,8 @@ typedef struct bc_file_hdr_s
 } bc_file_hdr_t;
 
 
+/* v0.1 */
+
 /* blockchain_create.c */
 char *strE_LLIST(E_LLIST code);
 blockchain_t *blockchain_create(void);
@@ -169,8 +171,17 @@ blockchain_t *blockchain_deserialize(char const *path);
 /* block_is_valid.c */
 int block_is_valid(block_t const *block, block_t const *prev_block);
 
+/* v0.2 */
+
 /* hash_matches_difficulty.c */
 int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
 			    uint32_t difficulty);
+
+/* block_mine.c */
+void block_mine(block_t *block);
+
+/* blockchain_difficulty.c */
+uint32_t blockchain_difficulty(blockchain_t const *blockchain);
+
 
 #endif /* BLOCKCHAIN_H */
