@@ -169,5 +169,8 @@ blockchain_t *blockchain_deserialize(char const *path);
 /* block_is_valid.c */
 int block_is_valid(block_t const *block, block_t const *prev_block);
 
+/* hash_matches_difficulty.c */
+int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
+			    uint32_t difficulty);
 
 #endif /* BLOCKCHAIN_H */
