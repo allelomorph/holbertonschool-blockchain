@@ -39,7 +39,7 @@ Introduction to block mining, block difficulty, and proof of work.
 
 ## Mandatory Tasks
 
-### :white_large_square: 0. Proof of work
+### :white_check_mark: 0. Proof of work
 Write a function that checks whether a given hash matches a given difficulty
 
 * Prototype: `int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH], uint32_t difficulty);`, where:
@@ -51,13 +51,13 @@ Write a function that checks whether a given hash matches a given difficulty
 File(s): [`hash_matches_difficulty.c`](./hash_matches_difficulty.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -I../../crypto -o hash_matches_difficulty-test hash_matches_difficulty.c test/hash_matches_difficulty-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 1. Block is valid v0.2
+### :white_check_mark: 1. Block is valid v0.2
 Modify the function `int block_is_valid(block_t const *block, block_t const *prev_block);` so that it checks that a block’s hash matches its difficulty
 
 File(s): [`block_is_valid.c`](./block_is_valid.c)\
 Compiled: (from v0.1) `gcc -Wall -Wextra -Werror -pedantic -I. -o block_is_valid-test blockchain_create.c block_create.c block_destroy.c blockchain_destroy.c block_hash.c block_is_valid.c test/block_is_valid-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 2. Block mining
+### :white_check_mark: 2. Block mining
 Write a function that mines a block in order to insert it in the blockchain
 
 * Prototype: `void block_mine(block_t *block);`, where:
@@ -67,7 +67,7 @@ Write a function that mines a block in order to insert it in the blockchain
 File(s): [`block_mine.c`](./block_mine.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -I. -I../../crypto -o block_mine-test blockchain_create.c block_create.c block_destroy.c blockchain_destroy.c block_hash.c block_is_valid.c hash_matches_difficulty.c block_mine.c provided/_genesis.c provided/_blockchain_print.c test/block_mine-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 3. Adjust difficulty
+### :white_check_mark: 3. Adjust difficulty
 Write a function that computes the difficulty to assign to a potential next block in the blockchain.
 
 * Prototype: `uint32_t blockchain_difficulty(blockchain_t const *blockchain);`, where:
