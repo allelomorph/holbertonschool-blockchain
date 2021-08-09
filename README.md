@@ -15,7 +15,7 @@ Introduction to data structures used to store each block's info profile and payl
 Introduction to block mining, block difficulty, and proof of work.
 
 ### [(458) 0x03. Blockchain - Transactions](./blockchain/v0.3/)
-Introduction to UXTO and coinbase transactions in the blockchain.
+Introduction to UXTO and coinbase transactions.
 
 ---
 

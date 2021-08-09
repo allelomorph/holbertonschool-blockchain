@@ -10,7 +10,7 @@ Alexandre Gautier
 08-09-2021 to 08-25-2021
 
 ### Description
-Introduction to UXTO and coinbase transactions in the blockchain.
+Introduction to UXTO and coinbase transactions.
 
 ### Provided file(s)
 [`provided/`](./provided/) (all originally [here](https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/blockchain/v0.3/provided)):
@@ -257,7 +257,7 @@ Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided
 ### :white_large_square: 15. Update: blockchain serialization & deserialization
 Update the functions `blockchain_serialize` and `blockchain_deserialize`, to serialize each block’s transactions list.
 
-**blockchain_serialize**\
+**blockchain_serialize**
 
 * Prototype: `int blockchain_serialize(blockchain_t const *blockchain, char const *path);`, where:
     * `blockchain` points to the blockchain to be serialized,
@@ -265,7 +265,7 @@ Update the functions `blockchain_serialize` and `blockchain_deserialize`, to ser
 * If `path` points to an existing file, it must be overwritten
 * Your function must return 0 upon success, or -1 upon failure
 
-**blockchain_deserialize**\
+**blockchain_deserialize**
 
 * Prototype: `blockchain_t *blockchain_deserialize(char const *path);`, where:
     * `path` contains the path to a file to deserialize the blockchain from
@@ -275,7 +275,7 @@ Update the functions `blockchain_serialize` and `blockchain_deserialize`, to ser
 
 The resulting file should contain exactly the following:
 
-**File Header**\
+**File Header**
 
 Offset | Size (bytes) | Field | Purpose
 ------ | ------------ | ----- | -------
@@ -287,7 +287,7 @@ Offset | Size (bytes) | Field | Purpose
 0x10 | ? | blocks | List of blocks
 0x10 + ? | 165 * hblk_unspent | unspent | List of unspent transaction outputs
 
-**Block**\
+**Block**
 
 The following table describes how a block is serialized. The blocks are serialized contiguously, the first one starting at offset 0x10:
 
@@ -304,7 +304,7 @@ Offset | Size (bytes) | Field | Purpose
 0x5C + `data_len` | 4 | nb_transactions | Number of transactions in the block. Endianness dependent. -1 is for `NULL` (e.g. Genesis Block), 0 is for empty list.
 0x60 + `data_len` | ? | transactions | List of transactions
 
-**Transaction**\
+**Transaction**
 
 The following table describes how a transaction is serialized. The transactions of a block are serialized contiguously, the first one starting at offset 0x60 + data_len:
 
@@ -316,7 +316,7 @@ Offset | Size (bytes) | Field | Purpose
 0x28 | 169 * `nb\_inputs` | inputs | List of transaction inputs
 0x28 + 169 * `nb\_inputs` | 101 * `nb\_outputs` | outputs | List of transaction outputs
 
-**Transaction input**\
+**Transaction input**
 
 The following table describes how a transaction input is serialized. The transaction inputs of a transaction are serialized contiguously, the first one starting at offset 0x28. Each transaction input is stored on exactly 169 bytes:
 
@@ -328,7 +328,7 @@ Offset | Size (bytes) | Field | Purpose
 0x60 | 72 | sig.sig | Transaction input signature buffer
 0xA8 | 1 | sig.len | Transaction input signature length
 
-**Transaction output**\
+**Transaction output**
 
 The following table describes how a transaction output is serialized. The transaction outputs of a transaction are serialized contiguously, the first one starting after the last transaction input. Each transaction output is stored on exactly 101 bytes:
 
@@ -338,7 +338,7 @@ Offset | Size (bytes) | Field | Purpose
 0x04 | 65 | pub	| Receiver’s public key
 0x45 | 32 | hash | Transaction output hash
 
-**Unspent transaction output**\
+**Unspent transaction output**
 
 The following table describes how an unspent transaction output is serialized. The unspent transaction outputs are serialized contiguously, the first one starting right after the last block serialized. Each serialized unspent transaction output is stored on exactly 165 bytes:
 
