@@ -60,7 +60,7 @@ Write a function that allocates and initializes a transaction output structure
 
 * Prototype: `tx_out_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN]);`, where:
     * `amount` is the amount of the transaction
-    * `pub` is the public key of the transaction receiver
+    * `pub` is the public key of the transaction recipient
 * Your function must return a pointer to the created transaction output upon success, or `NULL` upon failure
 
 File(s): [`transaction/tx_out_create.c`](./transaction/tx_out_create.c)\
@@ -111,7 +111,7 @@ Write a function that signs a transaction input, given the transaction id it is 
 * Prototype: `sig_t *tx_in_sign(tx_in_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender, llist_t *all_unspent);`, where:
     * `in` points to the transaction input structure to sign
     * `tx_id` contains the ID (hash) of the transaction the transaction input to sign is stored in
-    * `sender` contains the private key of the receiver of the coins contained in the transaction output referenced by the transaction input
+    * `sender` contains the private key of the recipient of the coins contained in the transaction output referenced by the transaction input
     * `all_unspent` is the list of all unspent transaction outputs to date
 * Your function must verify the public key derived from the private key in `sender` matches the public key stored in the transaction output referenced by the transaction input to be signed
 * Your function must sign the ID of the transaction `tx_id` the transaction input is stored in, using `sender`'s private key
@@ -125,7 +125,7 @@ Write a function that creates a transaction
 
 * Prototype: `transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount, llist_t *all_unspent);`, where:
     * `sender` contains the private key of the transaction sender
-    * `receiver` contains the public key of the transaction receiver
+    * `receiver` contains the public key of the transaction recipient
     * `amount` is the amount to send
     * `all_unspent` is the list of all the unspent outputs to date
 * Your function must return a pointer to the created transaction upon success, or `NULL` upon failure
@@ -335,7 +335,7 @@ The following table describes how a transaction output is serialized. The transa
 Offset | Size (bytes) | Field | Purpose
 ------ | ------------ | ----- | -------
 0x00 | 4 | amount | Transaction output amount. Endianness dependent.
-0x04 | 65 | pub	| Receiver’s public key
+0x04 | 65 | pub	| Recipient’s public key
 0x45 | 32 | hash | Transaction output hash
 
 **Unspent transaction output**
@@ -347,7 +347,7 @@ Offset | Size (bytes) | Field | Purpose
 0x00 | 32 | block_hash | Hash of the block the referenced transaction output belongs to
 0x20 | 32 | tx_id | ID of the transaction the referenced transaction output belongs to
 0x40 | 4 | out.amount | Amount of the referenced transaction output. Endianness dependent.
-0x44 | 65 | out.pub | Receiver’s public key of the referenced transaction output
+0x44 | 65 | out.pub | Recipient’s public key of the referenced transaction output
 0x85 | 32 | out.hash | Hash of the referenced transaction output
 
 File(s): [`blockchain_serialize.c`](./blockchain_serialize.c) [`blockchain_deserialize.c`](./blockchain_deserialize.c)
