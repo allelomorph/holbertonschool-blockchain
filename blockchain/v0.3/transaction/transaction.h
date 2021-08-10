@@ -89,6 +89,12 @@ unspent_tx_out_t *unspent_tx_out_create(
 tx_in_t *tx_in_create(unspent_tx_out_t const *unspent);
 
 /* transaction_hash.c */
+uint8_t *createTxDataBuff(const transaction_t *transaction,
+			  int *input_ct, int *output_ct,
+			  size_t *tx_IO_buf_sz);
+int populateTxDataBuff(const transaction_t *transaction,
+		       int input_ct, int output_ct,
+		       uint8_t *tx_IO_buf);
 uint8_t *transaction_hash(transaction_t const *transaction,
 			  uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 
