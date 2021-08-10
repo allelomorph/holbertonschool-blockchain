@@ -9,6 +9,8 @@
 #include <stdint.h>
 /* SHA256_DIGEST_LENGTH */
 #include "../../crypto/hblk_crypto.h"
+/* expected by v0.3 checker mains that only include this header */
+#include "transaction/transaction.h"
 
 
 /* how often (in seconds) a block should be found */
