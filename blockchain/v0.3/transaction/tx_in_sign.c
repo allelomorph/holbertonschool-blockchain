@@ -3,8 +3,6 @@
 #include "transaction.h"
 /* fprintf */
 #include <stdio.h>
-/* malloc free */
-#include <stdlib.h>
 /* memcmp */
 #include <string.h>
 
