@@ -39,14 +39,8 @@ tx_in_t *tx_in_create(unspent_tx_out_t const *unspent)
 	       SHA256_DIGEST_LENGTH);
 	memcpy(&(new_tx_in->tx_id), unspent->tx_id,
 	       SHA256_DIGEST_LENGTH);
-
-	if (!sha256((const int8_t *)&(unspent->out), sizeof(tx_out_t),
-		   new_tx_in->tx_out_hash))
-	{
-		fprintf(stderr, "tx_in_create: sha256 failure\n");
-		free(new_tx_in);
-		return (NULL);
-	}
+	memcpy(&(new_tx_in->tx_out_hash), unspent->out.hash,
+	       SHA256_DIGEST_LENGTH);
 
 	bzero(&(new_tx_in->sig), sizeof(sig_t));
 
