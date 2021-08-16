@@ -77,6 +77,23 @@ typedef struct unspent_tx_out_s
 } unspent_tx_out_t;
 
 
+typedef struct su_info_s
+{
+	llist_t *sender_unspent;
+	uint8_t  sender_pub[EC_PUB_LEN];
+	uint32_t send_amt;
+	uint32_t total_unspent_amt;
+} su_info_t;
+
+
+typedef struct sign_info_s
+{
+	uint8_t       tx_id[SHA256_DIGEST_LENGTH];
+	const EC_KEY *sender;
+	llist_t      *all_unspent;
+} sign_info_t;
+
+
 /* tx_out_create.c */
 tx_out_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
 
