@@ -15,6 +15,8 @@
 /* memset */
 #include <string.h>
 
+#include <openssl/objects.h>
+
 
 /**
  * ec_sign - signs a given set of bytes, using a given EC_KEY private key
@@ -53,6 +55,12 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 	}
 
 	ec_group = EC_KEY_get0_group(key);
+	fprintf(stderr, "Provided key EC_GROUP NID:%i SN:'%s' ECDSA_size:%i\n",
+		EC_GROUP_get_curve_name(ec_group),
+		OBJ_nid2sn(EC_GROUP_get_curve_name(ec_group)),
+		ECDSA_size(key));
+	fprintf(stderr, "Expected key EC_GROUP NID:%i SN:'%s' ECDSA_size:%i\n",
+	        EC_CURVE, OBJ_nid2sn(EC_CURVE), SIG_MAX_LEN);
 	if (!ec_group || EC_GROUP_get_curve_name(ec_group) != EC_CURVE ||
 	    ECDSA_size(key) != SIG_MAX_LEN)
 	{
