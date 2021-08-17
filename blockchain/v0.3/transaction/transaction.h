@@ -76,7 +76,20 @@ typedef struct unspent_tx_out_s
 	tx_out_t    out;
 } unspent_tx_out_t;
 
-
+/**
+ * struct su_info_s - spender unspent info
+ *
+ * Desription: Used to contain all the parameters necessary for collating a
+ *   list of a sender's unspent outputs. Necessary for llist_for_each, as it
+ *   only takes one void pointer as an outside parameter to its `action`
+ *   function.
+ *
+ * @sender_unspent: list of unspent outputs matching the sender's public key
+ * @sender_pub: sender's public key
+ * @send_amt: proposed amount to send
+ * @total_unspent_amt: total of all unspent outputs combined to be used as
+ *   inputs
+ */
 typedef struct su_info_s
 {
 	llist_t *sender_unspent;
@@ -85,7 +98,17 @@ typedef struct su_info_s
 	uint32_t total_unspent_amt;
 } su_info_t;
 
-
+/**
+ * struct sign_info_s - input signing info
+ *
+ * Description: Used to contain all the parameters necessary for signing a
+ *   list of inputs. Necessary for llist_for_each, as it only takes one void
+ *   pointer as an outside parameter to its `action` function.
+ *
+ * @tx_id: hash of new transaction
+ * @sender: sender's key pair
+ * @all_unspent: list of all unspent outputs
+ */
 typedef struct sign_info_s
 {
 	uint8_t       tx_id[SHA256_DIGEST_LENGTH];

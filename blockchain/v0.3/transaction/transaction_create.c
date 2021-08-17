@@ -1,10 +1,13 @@
 /* -> blockchain.h -> */
 /* llist.h stdint.h hblk_crypto.h */
+/* su_info_t tx_in_create tx_in_sign sign_info tx_out_create transaction_hash*/
 #include "transaction.h"
 /* fprintf */
 #include <stdio.h>
 /* memcmp */
 #include <string.h>
+/* malloc free */
+#include <stdlib.h>
 
 
 /**
@@ -18,6 +21,8 @@
  *   iterated through by llist_for_each
  * @su_info: pointer to struct containing all parameters necessary to build a
  *   second list of unspent transactions for a particular public key
+ *
+ * Return: 0 on success, 1 on failure
  */
 static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 			     unsigned int idx, su_info_t *su_info)
@@ -30,7 +35,7 @@ static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 		return (1);
 	}
 
-        if (memcmp(unspent_tx_out->out.pub, su_info->sender_pub,
+	if (memcmp(unspent_tx_out->out.pub, su_info->sender_pub,
 		   EC_PUB_LEN) == 0)
 	{
 		if (llist_add_node(su_info->sender_unspent,
@@ -56,6 +61,13 @@ static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
  *   transaction in a list of those avaialble for a particular sender, to be
  *   converted into inputs for a new transaction
  *
+ * @unspent_tx_out: pointer to unspent transaction in blockchain->unspent list,
+ *   as iterated through by llist_for_each
+ * @idx: index of `unspent_tx_out` in blockchain->unspent list, as
+ *   iterated through by llist_for_each
+ * @tx_inputs: pointer to list of inputs generated from unspent outputs
+ *
+ * Return: 0 on success, 1 on failure
  */
 static int convertSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 				unsigned int idx, llist_t *tx_inputs)
@@ -90,8 +102,17 @@ static int convertSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 
 
 /**
- * signTxIn - used as `action` for llist_for_each
+ * signTxIn - used as `action` for llist_for_each, to sign all the inpputs for
+ *   a given transaction
  *
+ * @tx_in: pointer to input in a transaction->inputs list, as iterated through
+ *   by llist_for_each
+ * @idx: index of `tx_in` in transaction->inputs list, as iterated through by
+ *   llist_for_each
+ * @sign_info: pointer to struct containing all other parameters necessary to
+ *   sign a transaction input
+ *
+ * Return: 0 on success, 1 on failure
  */
 static int signTxIn(tx_in_t *tx_in, unsigned int idx,
 		    sign_info_t *sign_info)
@@ -104,7 +125,7 @@ static int signTxIn(tx_in_t *tx_in, unsigned int idx,
 		return (1);
 	}
 
-        if (!tx_in_sign(tx_in, sign_info->tx_id, sign_info->sender,
+	if (!tx_in_sign(tx_in, sign_info->tx_id, sign_info->sender,
 			sign_info->all_unspent))
 	{
 		fprintf(stderr, "signTxIn: tx_in_sign failure\n");
@@ -115,6 +136,19 @@ static int signTxIn(tx_in_t *tx_in, unsigned int idx,
 }
 
 
+/**
+ * setTxInputs - populates list of valid transaction inputs: checks list of
+ *   all unspent for the sender's unspent outputs, verifies that there is a
+ *   positive balance in excess of the new transaction amount, and converts
+ *   those unspent outputs to a list of transaction inputs.
+ *
+ * @all_unspent: list of all the unspent outputs to date
+ * @su_info:  pointer to "sender unspent" info struct, containing parameters
+ *   used and populated during the collation of a list of the sender's unspent
+ *   outputs
+ *
+ * Return: 0 on success, 1 on failure
+ */
 llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info)
 {
 	llist_t *tx_inputs;
@@ -125,10 +159,6 @@ llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info)
 		return (NULL);
 	}
 
-	/*
-	Select a set of unspent transaction outputs from all_unspent, which
-	public keys match sender‘s private key
-	*/
 	if (llist_for_each(all_unspent,
 			   (node_func_t)findSenderUnspent, su_info) == -1)
 	{
@@ -136,10 +166,6 @@ llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info)
 		return (NULL);
 	}
 
-	/*
-        The function must fail if sender does not possess enough coins (total
-	amount of selected unspent outputs lower than amount)
-	*/
 	if (su_info->total_unspent_amt < su_info->send_amt)
 	{
 		fprintf(stderr, "setTxInputs: %s\n",
@@ -154,9 +180,6 @@ llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info)
 		return (NULL);
 	}
 
-	/*
-	Create transaction inputs from these selected unspent transaction outputs
-	*/
 	if (llist_for_each(su_info->sender_unspent,
 			   (node_func_t)convertSenderUnspent, tx_inputs) == -1)
 	{
@@ -169,6 +192,18 @@ llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info)
 }
 
 
+/**
+ * setTxOutputs - populates list of outputs for a new transaction: creates
+ *   output to recipient in the amount requested by sender, and if necessary a
+ *   second output sending the excess back to the sender.
+ *
+ * @sender_pub: sender's public key
+ * @recv_pub: recipient's public key
+ * @su_info: pointer to "sender unspent" info struct, containing other
+ *   parameters necessary to calculate the second output
+ *
+ * Return: 0 on success, 1 on failure
+ */
 llist_t *setTxOutputs(const uint8_t sender_pub[EC_PUB_LEN],
 		      const uint8_t recv_pub[EC_PUB_LEN], su_info_t *su_info)
 {
@@ -182,40 +217,36 @@ llist_t *setTxOutputs(const uint8_t sender_pub[EC_PUB_LEN],
 		return (NULL);
 	}
 
-	/*
-	Create a transaction output, sending amount coins to receiver’s public key
-	*/
-	tx_outputs = llist_create(MT_SUPPORT_FALSE);
-	if (!tx_outputs)
-	{
-		fprintf(stderr, "setTxOutputs: llist_create failure\n");
-		return (NULL);
-	}
-
 	output = tx_out_create(su_info->send_amt, recv_pub);
 	if (!output)
 	{
 		fprintf(stderr, "setTxOutputs: tx_out_create failure\n");
 		return (NULL);
 	}
-
+	tx_outputs = llist_create(MT_SUPPORT_FALSE);
+	if (!tx_outputs)
+	{
+		fprintf(stderr, "setTxOutputs: llist_create failure\n");
+		free(output);
+		return (NULL);
+	}
 	if (llist_add_node(tx_outputs, output, ADD_NODE_REAR) != 0)
 	{
 		fprintf(stderr, "setTxOutputs: llist_add_node failure\n");
 		free(output);
+		llist_destroy(tx_outputs, 1, NULL);
 		return (NULL);
 	}
 
-	/* If the total amount of the selected unspent outputs is greater than
-	   amount, create a second transaction output, sending the leftover back to sender
-	*/
 	leftover = su_info->total_unspent_amt - su_info->send_amt;
 	if (leftover)
 	{
 		output = tx_out_create(leftover, sender_pub);
 		if (!output)
 		{
-			fprintf(stderr, "setTxOutputs: tx_out_create failure\n");
+			fprintf(stderr, "setTxOutputs: %s\n",
+				"tx_out_create failure");
+			llist_destroy(tx_outputs, 1, NULL);
 			return (NULL);
 		}
 
@@ -224,12 +255,67 @@ llist_t *setTxOutputs(const uint8_t sender_pub[EC_PUB_LEN],
 			fprintf(stderr, "setTxOutputs: %s\n",
 				"llist_add_node failure");
 			free(output);
+			llist_destroy(tx_outputs, 1, NULL);
 			return (NULL);
 		}
 	}
 
 	return (tx_outputs);
 }
+
+
+/**
+ * newTransaction - creates a new transaction from lists of inputs and outputs
+ *
+ * @tx_inputs: list of transaction inputs
+ * @tx_outputs: list of transaction outputs
+ * @sender: contains the private key of the transaction sender
+ * @all_unspent: list of all the unspent outputs to date
+ *
+ * Return: pointer to the created transaction upon success, or NULL upon
+ *   failure
+ */
+transaction_t *newTransaction(llist_t *tx_inputs, llist_t *tx_outputs,
+			      const EC_KEY *sender, llist_t *all_unspent)
+{
+	transaction_t *tx;
+	sign_info_t sign_info;
+
+	if (!tx_inputs || !tx_outputs)
+	{
+		fprintf(stderr, "newTransaction: NULL parameter(s)\n");
+		return (NULL);
+	}
+
+	tx = malloc(sizeof(transaction_t));
+	if (!tx)
+	{
+		fprintf(stderr, "newTransaction: malloc failure\n");
+		return (NULL);
+	}
+	tx->inputs = tx_inputs;
+	tx->outputs = tx_outputs;
+
+	if (transaction_hash(tx, tx->id) == NULL)
+	{
+		fprintf(stderr, "newTransaction: transaction_hash failure\n");
+		free(tx);
+		return (NULL);
+	}
+
+	memcpy(sign_info.tx_id, tx->id, SHA256_DIGEST_LENGTH);
+	sign_info.sender = sender;
+	sign_info.all_unspent = all_unspent;
+	if (llist_for_each(tx->inputs, (node_func_t)signTxIn, &sign_info) == -1)
+	{
+		fprintf(stderr, "newTransaction: llist_for_each failure\n");
+		free(tx);
+		return (NULL);
+	}
+
+	return (tx);
+}
+
 
 /**
  * transaction_create - creates a transaction
@@ -239,13 +325,13 @@ llist_t *setTxOutputs(const uint8_t sender_pub[EC_PUB_LEN],
  * @amount: amount to send
  * @all_unspent: list of all the unspent outputs to date
  *
- * Return: pointer to the created transaction upon success, or NULL upon failure
+ * Return: pointer to the created transaction upon success, or NULL upon
+ *   failure
  */
 transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 				  uint32_t amount, llist_t *all_unspent)
 {
 	su_info_t su_info;
-	sign_info_t sign_info;
 	transaction_t *tx;
 	llist_t *tx_inputs, *tx_outputs;
 	uint8_t recv_pub[EC_PUB_LEN];
@@ -262,7 +348,6 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 		fprintf(stderr, "transaction_create: ec_to_pub failure\n");
 		return (NULL);
 	}
-
 	su_info.sender_unspent = llist_create(MT_SUPPORT_FALSE);
 	if (!(su_info.sender_unspent))
 	{
@@ -281,45 +366,14 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 	if (!tx_outputs)
 	{
 		llist_destroy(tx_inputs, 1, NULL);
-		llist_destroy(tx_outputs, 1, NULL);
 		return (NULL);
 	}
 
-	tx = malloc(sizeof(transaction_t));
+	tx = newTransaction(tx_inputs, tx_outputs, sender, all_unspent);
 	if (!tx)
 	{
-		fprintf(stderr, "transaction_create: malloc failure\n");
 		llist_destroy(tx_inputs, 1, NULL);
 		llist_destroy(tx_outputs, 1, NULL);
-		return (NULL);
-	}
-	tx->inputs = tx_inputs;
-	tx->outputs = tx_outputs;
-
-	/*
-	Compute transaction ID (hash)
-	*/
-	if (transaction_hash(tx, tx->id) == NULL)
-	{
-		fprintf(stderr, "transaction_create: transaction_hash failure\n");
-		llist_destroy(tx_inputs, 1, NULL);
-		llist_destroy(tx_outputs, 1, NULL);
-		free(tx);
-		return (NULL);
-	}
-
-	/*
-	Sign transaction inputs using the previously computed transaction ID
-	*/
-	memcpy(sign_info.tx_id, tx->id, SHA256_DIGEST_LENGTH);
-	sign_info.sender = sender;
-	sign_info.all_unspent = all_unspent;
-	if (llist_for_each(tx->inputs, (node_func_t)signTxIn, &sign_info) == -1)
-	{
-		fprintf(stderr, "transaction_create: llist_for_each failure\n");
-		llist_destroy(tx_inputs, 1, NULL);
-		llist_destroy(tx_outputs, 1, NULL);
-		free(tx);
 		return (NULL);
 	}
 
