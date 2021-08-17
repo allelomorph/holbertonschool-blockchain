@@ -116,6 +116,22 @@ typedef struct sign_info_s
 	llist_t      *all_unspent;
 } sign_info_t;
 
+/**
+ * struct iv_info_s - input validation info
+ *
+ * Description: Used to contain all the parameters necessary for validating a
+ *   list of inputs. Necessary for llist_for_each, as it only takes one void
+ *   pointer as an outside parameter to its `action` function.
+ *
+ */
+typedef struct iv_info_s
+{
+	uint8_t  tx_id[SHA256_DIGEST_LENGTH];
+	uint32_t tl_input_amt;
+	llist_t *all_unspent;
+} iv_info_t;
+
+
 
 /* tx_out_create.c */
 tx_out_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
