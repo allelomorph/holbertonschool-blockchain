@@ -15,7 +15,7 @@
  *   unspent output in the blockchain, and add unspent outputs
  *   with a matching public key to a collated list of potential inputs
  *
- * @unspent_tx_out: pointer to unspent transaction in blockchain->unspent list,
+ * @unspent_tx_out: pointer to unspent output in blockchain->unspent list,
  *   as iterated through by llist_for_each
  * @idx: index of `unspent_tx_out` in blockchain->unspent list, as
  *   iterated through by llist_for_each
@@ -63,7 +63,7 @@ static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
  *   transaction in a list of those avaialble for a particular sender, to be
  *   converted into inputs for a new transaction
  *
- * @unspent_tx_out: pointer to unspent transaction in blockchain->unspent list,
+ * @unspent_tx_out: pointer to unspent output in blockchain->unspent list,
  *   as iterated through by llist_for_each
  * @idx: index of `unspent_tx_out` in blockchain->unspent list, as
  *   iterated through by llist_for_each
@@ -382,9 +382,34 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 	return (tx);
 }
 
-
 /*
  * strE_LLIST needs blockchain_create.c, which is not used in automatic grading
- *		fprintf(stderr, "tx_in_sign: llist_find_node: %s\n",
- *                      strE_LLIST(llist_errno));
+ *
+ * line 46
+ *			fprintf(stderr, "findSenderUnspent: %s: %s\n",
+ *				"llist_add_node", strE_LLIST(llist_errno));
+ * 96
+ *		fprintf(stderr, "convertSenderUnspent: %s: %s\n",
+ *			"llist_add_node", strE_LLIST(llist_errno));
+ * 167
+ *		fprintf(stderr, "setTxInputs: llist_for_each: %s\n",
+ *			strE_LLIST(llist_errno));
+ * 188
+ *		fprintf(stderr, "setTxInputs: llist_for_each: %s\n",
+ *			strE_LLIST(llist_errno));
+ * 231
+ *		fprintf(stderr, "setTxOutputs: llist_create: %s\n",
+ *			strE_LLIST(llist_errno));
+ * 237
+ * 		fprintf(stderr, "setTxOutputs: llist_add_node: %s\n",
+ *			strE_LLIST(llist_errno));
+ * 257
+ *			fprintf(stderr, "setTxOutputs: %s: %s\n",
+ *				"llist_add_node", strE_LLIST(llist_errno));
+ * 313
+ *		fprintf(stderr, "newTransaction: llist_for_each: %s\n",
+ *			strE_LLIST(llist_errno));
+ * 356
+ *		fprintf(stderr, "transaction_create: llist_create: %s\n",
+ *			strE_LLIST(llist_errno));
  */
