@@ -15,8 +15,6 @@
 /* memset */
 #include <string.h>
 
-#include <openssl/objects.h>
-
 
 /**
  * ec_sign - signs a given set of bytes, using a given EC_KEY private key
@@ -40,7 +38,6 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 		 sig_t *sig)
 {
 	unsigned int sig_len;
-	const EC_GROUP *ec_group;
 
 	if (!key || !msg || !sig)
 	{
@@ -51,21 +48,6 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 	if (!EC_KEY_check_key(key))
 	{
 		fprintf(stderr, "ec_sign: key verification failed\n");
-		return (NULL);
-	}
-
-	ec_group = EC_KEY_get0_group(key);
-	fprintf(stderr, "Provided key EC_GROUP NID:%i SN:'%s' ECDSA_size:%i\n",
-		EC_GROUP_get_curve_name(ec_group),
-		OBJ_nid2sn(EC_GROUP_get_curve_name(ec_group)),
-		ECDSA_size(key));
-	fprintf(stderr, "Expected key EC_GROUP NID:%i SN:'%s' ECDSA_size:%i\n",
-	        EC_CURVE, OBJ_nid2sn(EC_CURVE), SIG_MAX_LEN);
-	if (!ec_group || EC_GROUP_get_curve_name(ec_group) != EC_CURVE ||
-	    ECDSA_size(key) != SIG_MAX_LEN)
-	{
-		fprintf(stderr,
-			"ec_sign: expecting key with secp256k1 curve\n");
 		return (NULL);
 	}
 
