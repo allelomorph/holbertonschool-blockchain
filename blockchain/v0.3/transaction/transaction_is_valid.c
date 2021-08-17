@@ -9,8 +9,6 @@
 /* malloc free */
 #include <stdlib.h>
 
-void _print_hex_buffer(uint8_t const *buf, size_t len);
-
 
 /**
  * matchUnspentOutHash - used as `identifier` for llist_find_node,
@@ -37,7 +35,17 @@ static int matchUnspentOutHash(unspent_tx_out_t *unspent_tx_out,
 
 
 /**
- * totalOutputAmt - TBD
+ * totalOutputAmt - used as `action` for llist_for_each to visit each
+ *   output in a transaction->outputs list, and find the total coin
+ *
+ * @tx_out: pointer to an output in transaction->outputs list,
+ *   as iterated through by llist_for_each
+ * @idx: index of `tx_out` in transaction->outputs list, as
+ *   iterated through by llist_for_each
+ * @tl_output_amt: pointer to total output amount, modified by reference
+ *
+ * Return: 0 on incremental success (llist_for_each can continue,)
+ *   or -2 on failure (-1 reserved for llist_for_each errors)
  */
 static int totalOutputAmt(tx_out_t *tx_out, unsigned int idx,
 			  uint32_t *tl_output_amt)
@@ -56,9 +64,22 @@ static int totalOutputAmt(tx_out_t *tx_out, unsigned int idx,
 
 
 /**
- * validateTxInput - TBD: "Each input in the transaction must refer to an
- *   unspent output in all_unspent", "Each input’s signature must be verified
- *   using the public key stored in the referenced unspent output"
+ * validateTxInput - used as `action` for llist_for_each to validate each
+ *   input in a transaction->inputs list. Each input in the transaction must
+ *   refer to an unspent output in all_unspent, and each input’s signature
+ *   must be verified using the public key stored in the referenced unspent
+ *   output
+ *
+ * @tx_in: pointer to an input in transaction->inputs list,
+ *   as iterated through by llist_for_each
+ * @idx: index of `tx_in` in transaction->inputs list, as
+ *   iterated through by llist_for_each
+ * @iv_info: pointer to input validation info struct, containing the remaining
+ *   parameters needed to perform transaction input validation
+ *
+ * Return: 0 on incremental success (llist_for_each can continue,)
+ *   -2 on failure (-1 reserved for llist_for_each errors,)
+ *   and -3 when invalid transaction input found
  */
 static int validateTxInput(tx_in_t *tx_in, unsigned int idx,
 			   iv_info_t *iv_info)
@@ -112,19 +133,23 @@ static int validateTxInput(tx_in_t *tx_in, unsigned int idx,
 
 
 /**
- * transaction_is_valid - checks whether a transaction is valid: "The computed
- *   hash of the transaction must match the hash stored in it", "The total
- *   amount of inputs must match the total amount of outputs"
+ * transaction_is_valid - checks whether a transaction is valid:
+ *   - The computed hash of the transaction matches the stored hash
+ *   - Each input in the transaction must refer to an unspent output in
+ *       all_unspent
+ *   - Each input’s signature must be verified using the public key stored in
+ *       the referenced unspent output
+ *   - The total of input amounts must match the total of output amounts
  *
  * @transaction: points to the transaction to verify
  * @all_unspent: list of all unspent transaction outputs to date
  *
  * Return: 1 if the transaction is valid, 0 otherwise
  */
-int transaction_is_valid(transaction_t const *transaction, llist_t *all_unspent)
+int transaction_is_valid(transaction_t const *transaction,
+			 llist_t *all_unspent)
 {
-	iv_info_t iv_info = {{0}, 0, NULL};
-	uint8_t tx_hash[SHA256_DIGEST_LENGTH];
+	iv_info_t iv_info;
 	uint32_t tl_output_amt = 0;
 
 	if (!transaction || !all_unspent)
@@ -140,21 +165,21 @@ int transaction_is_valid(transaction_t const *transaction, llist_t *all_unspent)
 		return (0);
 	}
 
-	if (transaction_hash(transaction, tx_hash) == NULL)
+	if (transaction_hash(transaction, iv_info.tx_id) == NULL)
 	{
 		fprintf(stderr, "transaction_is_valid: %s\n",
 			"transaction_hash failure");
 		return (0);
 	}
-	if (memcmp(transaction->id, tx_hash, SHA256_DIGEST_LENGTH) != 0)
+	if (memcmp(transaction->id, iv_info.tx_id, SHA256_DIGEST_LENGTH) != 0)
 	{
 		fprintf(stderr, "transaction_is_valid: %s\n",
 			"transaction ID does not match hash of transaction");
 		return (0);
 	}
 
+	iv_info.tl_input_amt = 0;
 	iv_info.all_unspent = all_unspent;
-	memcpy(iv_info.tx_id, transaction->id, SHA256_DIGEST_LENGTH);
 	if (llist_for_each(transaction->inputs, (node_func_t)validateTxInput,
 			   &iv_info) < 0)
 	{

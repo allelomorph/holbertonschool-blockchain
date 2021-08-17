@@ -123,6 +123,9 @@ typedef struct sign_info_s
  *   list of inputs. Necessary for llist_for_each, as it only takes one void
  *   pointer as an outside parameter to its `action` function.
  *
+ * @tx_id: id of transaction to be validated
+ * @tl_input_amt: total of every unspent output amount referenced by an input
+ * @all_unspent: list of all unspent outputs in the blockchain
  */
 typedef struct iv_info_s
 {
@@ -155,14 +158,39 @@ uint8_t *transaction_hash(transaction_t const *transaction,
 			  uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 
 /* tx_in_sign.c */
+/*
+ * static int matchUnspentOutHash(unspent_tx_out_t *unspent_tx_out,
+ *				  uint8_t tx_out_hash[SHA256_DIGEST_LENGTH]);
+ */
 sig_t *tx_in_sign(tx_in_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH],
 		  EC_KEY const *sender, llist_t *all_unspent);
 
 /* transaction_create.c */
+/*
+ * static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
+ *				unsigned int idx, su_info_t *su_info);
+ * static int convertSenderUnspent(unspent_tx_out_t *unspent_tx_out,
+ *				   unsigned int idx, llist_t *tx_inputs);
+ * static int signTxIn(tx_in_t *tx_in, unsigned int idx,
+ *		       sign_info_t *sign_info);
+ */
+llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info);
+llist_t *setTxOutputs(const uint8_t sender_pub[EC_PUB_LEN],
+		      const uint8_t recv_pub[EC_PUB_LEN], su_info_t *su_info);
+transaction_t *newTransaction(llist_t *tx_inputs, llist_t *tx_outputs,
+			      const EC_KEY *sender, llist_t *all_unspent);
 transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 				  uint32_t amount, llist_t *all_unspent);
 
 /* transaction_is_valid.c */
+/*
+ * static int matchUnspentOutHash(unspent_tx_out_t *unspent_tx_out,
+ *				  uint8_t tx_out_hash[SHA256_DIGEST_LENGTH]);
+ * static int totalOutputAmt(tx_out_t *tx_out, unsigned int idx,
+ *			     uint32_t *tl_output_amt);
+ * static int validateTxInput(tx_in_t *tx_in, unsigned int idx,
+ *			      iv_info_t *iv_info);
+ */
 int transaction_is_valid(transaction_t const *transaction,
 			 llist_t *all_unspent);
 
