@@ -22,7 +22,9 @@
  * @su_info: pointer to struct containing all parameters necessary to build a
  *   second list of unspent transactions for a particular public key
  *
- * Return: 0 on success, 1 on failure
+ * Return: 0 on incremental success (llist_for_each can continue,)
+ *   1 on total success (llist_for_each can end,)
+ *   and -2 on failure (-1 reserved for llist_for_each errors)
  */
 static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 			     unsigned int idx, su_info_t *su_info)
@@ -32,7 +34,7 @@ static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 	if (!unspent_tx_out || !su_info)
 	{
 		fprintf(stderr, "findSenderUnspent: NULL parameter(s)\n");
-		return (1);
+		return (-2);
 	}
 
 	if (memcmp(unspent_tx_out->out.pub, su_info->sender_pub,
@@ -43,7 +45,7 @@ static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 		{
 			fprintf(stderr, "findSenderUnspent: %s\n",
 				"llist_add_node failure");
-			return (1);
+			return (-2);
 		}
 
 		su_info->total_unspent_amt += unspent_tx_out->out.amount;
@@ -160,7 +162,7 @@ llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info)
 	}
 
 	if (llist_for_each(all_unspent,
-			   (node_func_t)findSenderUnspent, su_info) == -1)
+			   (node_func_t)findSenderUnspent, su_info) < 0)
 	{
 		fprintf(stderr, "setTxInputs: llist_for_each failure\n");
 		return (NULL);
@@ -181,7 +183,7 @@ llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info)
 	}
 
 	if (llist_for_each(su_info->sender_unspent,
-			   (node_func_t)convertSenderUnspent, tx_inputs) == -1)
+			   (node_func_t)convertSenderUnspent, tx_inputs) != 0)
 	{
 		fprintf(stderr, "setTxInputs: llist_for_each failure\n");
 		llist_destroy(tx_inputs, 1, NULL);
@@ -306,7 +308,7 @@ transaction_t *newTransaction(llist_t *tx_inputs, llist_t *tx_outputs,
 	memcpy(sign_info.tx_id, tx->id, SHA256_DIGEST_LENGTH);
 	sign_info.sender = sender;
 	sign_info.all_unspent = all_unspent;
-	if (llist_for_each(tx->inputs, (node_func_t)signTxIn, &sign_info) == -1)
+	if (llist_for_each(tx->inputs, (node_func_t)signTxIn, &sign_info) != 0)
 	{
 		fprintf(stderr, "newTransaction: llist_for_each failure\n");
 		free(tx);
