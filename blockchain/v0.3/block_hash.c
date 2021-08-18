@@ -36,7 +36,7 @@ static int readTxId(transaction_t *tx, unsigned int idx, buf_info_t *buf_info)
 
 	ptr = buf_info->buf + buf_info->idx;
 	memcpy(ptr, &(tx->id), SHA256_DIGEST_LENGTH);
-	buf_info.idx += SHA256_DIGEST_LENGTH;
+	buf_info->idx += SHA256_DIGEST_LENGTH;
 
 	return (0);
 }
@@ -77,7 +77,7 @@ uint8_t *block_hash(block_t const *block,
 	memcpy(buf_info.buf, block, sizeof(block_info_t) + block->data.len);
 	buf_info.idx += (sizeof(block_info_t) + block->data.len);
 	if (llist_for_each(block->transactions,
-			   (node_func_t)readTxId, buf_info) < 0)
+			   (node_func_t)readTxId, &buf_info) < 0)
 	{
 		fprintf(stderr, "block_hash: llist_for_each failure\n");
 		free(buf_info.buf);
