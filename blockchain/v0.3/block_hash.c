@@ -8,8 +8,6 @@
 #include <string.h>
 
 
-void _print_hex_buffer(uint8_t const *buf, size_t len);
-
 /**
  * readTxId - used as `action` for llist_for_each to visit each
  *   transaction in a block, and write the transaction IDs to a data buffer
