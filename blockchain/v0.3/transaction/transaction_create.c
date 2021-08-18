@@ -171,7 +171,7 @@ llist_t *setTxInputs(llist_t *all_unspent, su_info_t *su_info)
 	if (su_info->total_unspent_amt < su_info->send_amt)
 	{
 		fprintf(stderr, "setTxInputs: %s\n",
-			"insufficient unspent outputs to total amount to send");
+			"insufficient unspent outputs to send intended amount");
 		return (NULL);
 	}
 
