@@ -85,7 +85,6 @@ transaction_t *newCoinbaseTx(tx_in_t *cb_input, tx_out_t *cb_output)
 		coinbaseTxCleanup(cb_input, cb_output, cb_tx);
 		return (NULL);
 	}
-
 	return (cb_tx);
 }
 
@@ -112,7 +111,6 @@ transaction_t *coinbase_create(EC_KEY const *receiver, uint32_t block_index)
 		fprintf(stderr, "coinbase_create: NULL parameter\n");
 		return (NULL);
 	}
-
 	if (!ec_to_pub(receiver, recv_pub))
 	{
 		fprintf(stderr, "coinbase_create: ec_to_pub failure\n");
@@ -142,6 +140,5 @@ transaction_t *coinbase_create(EC_KEY const *receiver, uint32_t block_index)
 		fprintf(stderr, "coinbase_create: newCoinbaseTx failure\n");
 		return (NULL);
 	}
-
 	return (cb_tx);
 }
