@@ -4,6 +4,8 @@
 #include <stdio.h>
 /* sha256 */
 #include "../../crypto/hblk_crypto.h"
+/* memcpy */
+#include <string.h>
 
 
 /**
