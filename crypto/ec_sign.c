@@ -51,6 +51,14 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 		return (NULL);
 	}
 
+	if (ECDSA_size(key) != SIG_MAX_LEN)
+	{
+		fprintf(stderr,
+			"ec_sign: invalid ECDSA size for key, expected %i\n",
+			SIG_MAX_LEN);
+		return (NULL);
+	}
+
 	memset(sig->sig, 0, SIG_MAX_LEN);
 	/*
 	 * `https://www.openssl.org/docs/man1.1.1/man3/ECDSA_sign.html`:
@@ -67,3 +75,17 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 	sig->len = sig_len;
 	return (sig->sig);
 }
+
+
+/*
+ * original version of this function validated key as secp256k1 before signing,
+ * but checker mains for (458) 0x03 t5,6 required removal of this test.
+ *	ec_group = EC_KEY_get0_group(key);
+ *	if (!ec_group || EC_GROUP_get_curve_name(ec_group) != EC_CURVE ||
+ *	    ECDSA_size(key) != SIG_MAX_LEN)
+ *	{
+ *		fprintf(stderr,
+ *			"ec_sign: expecting key with secp256k1 curve\n");
+ *		return (NULL);
+ *	}
+ */
