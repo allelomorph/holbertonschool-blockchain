@@ -198,6 +198,7 @@ int transaction_is_valid(transaction_t const *transaction,
 transaction_t *coinbase_create(EC_KEY const *receiver, uint32_t block_index);
 
 /* coinbase_is_valid.c */
+/* static int validCBInput(tx_in_t *cb_input, uint32_t block_index); */
 int coinbase_is_valid(transaction_t const *coinbase, uint32_t block_index);
 
 /* transaction_destroy.c */
