@@ -8,26 +8,34 @@
 
 
 /**
- * matchUnspentOutHash - used as `identifier` for llist_find_node,
- *   compares hashes of unspent out transactions against a given hash
+ * matchUnspentOut - used as `identifier` for llist_find_node to compare block,
+ *   transaction and output hashes of unspent output against those recorded
+ *   in an input
  *
- * @unspent_tx_out: unspent transaction in a blockchain->unspent list, as
+ * @unspent_tx_out: unspent output in a blockchain->unspent list, as
  *   iterated through by llist_find_node
- * @tx_out_hash: hash of the unspent output to find
+ * @tx_in: pointer to input containing references to match
  *
- * Return: 1 if transaction hash matches `tx_out_hash`, 0 if not or on failure
+ * Return: 1 if transaction hash matches `tx_in`, 0 if not or on failure
  */
-static int matchUnspentOutHash(unspent_tx_out_t *unspent_tx_out,
-			       uint8_t tx_out_hash[SHA256_DIGEST_LENGTH])
+static int matchUnspentOut(unspent_tx_out_t *unspent_tx_out, tx_in_t *tx_in)
 {
-	if (!unspent_tx_out || !tx_out_hash)
+	int match;
+
+	if (!unspent_tx_out || !tx_in)
 	{
-		fprintf(stderr, "matchUnspentOutHash: NULL parameter(s)\n");
+		fprintf(stderr, "matchUnspentOut: NULL parameter(s)\n");
 		return (0);
 	}
 
-	return (!memcmp(unspent_tx_out->out.hash, tx_out_hash,
-			SHA256_DIGEST_LENGTH));
+	match = !(memcmp(unspent_tx_out->block_hash, tx_in->block_hash,
+			 SHA256_DIGEST_LENGTH) ||
+		  memcmp(unspent_tx_out->tx_id, tx_in->tx_id,
+			 SHA256_DIGEST_LENGTH) ||
+		  memcmp(unspent_tx_out->out.hash, tx_in->tx_out_hash,
+			 SHA256_DIGEST_LENGTH));
+
+	return (match);
 }
 
 
@@ -63,8 +71,8 @@ sig_t *tx_in_sign(tx_in_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH],
 	}
 
 	unspent_tx_out = llist_find_node(all_unspent,
-					 (node_ident_t)matchUnspentOutHash,
-					 in->tx_out_hash);
+					 (node_ident_t)matchUnspentOut,
+					 in);
 	if (!unspent_tx_out)
 	{
 		fprintf(stderr, "tx_in_sign: llist_find_node failure\n");
