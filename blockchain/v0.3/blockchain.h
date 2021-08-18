@@ -42,10 +42,11 @@
 	{ /* data */ \
 		"Holberton School", /* buffer */ \
 		16 /* len */ \
-	}, /* hash */ \
+	}, \
+	NULL, /* transactions */ \
 	"\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d" \
 	"\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03" \
-}
+}       /* hash */
 /*
  * sizeof(block_t.info) + sizeof(block_t.data.len) +
  * GEN_BLK.data.len + sizeof(block_t.hash)
@@ -144,11 +145,28 @@ typedef struct bc_file_hdr_s
 	uint32_t hblk_blocks;
 } bc_file_hdr_t;
 
+/**
+ * struct buf_info_s - buffer info
+ *
+ * Description: Used to contain all the parameters necessary for writing to a
+ *   uint8_t buffer. Necessary for llist_for_each, as it only takes one void
+ *   pointer as an outside parameter to its `action` function.
+ *
+ * @buf: buffer
+ * @sz: buffer size in bytes
+ * @idx: buffer index
+ */
+typedef struct buf_info_s
+{
+	uint8_t *buf;
+	size_t   sz;
+	uint32_t idx;
+} buf_info_t;
 
-/* v0.1 */
 
 /* blockchain_create.c */
 char *strE_LLIST(E_LLIST code);
+block_t *newGenesisBlk(void);
 blockchain_t *blockchain_create(void);
 
 /* block_create.c */
@@ -162,6 +180,10 @@ void block_destroy(block_t *block);
 void blockchain_destroy(blockchain_t *blockchain);
 
 /* block_hash.c */
+/*
+ * static int readTxId(transaction_t *tx, unsigned int idx,
+ *		    buf_info_t *buf_info);
+ */
 uint8_t *block_hash(block_t const *block,
 		    uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 
@@ -183,8 +205,6 @@ blockchain_t *blockchain_deserialize(char const *path);
 
 /* block_is_valid.c */
 int block_is_valid(block_t const *block, block_t const *prev_block);
-
-/* v0.2 */
 
 /* hash_matches_difficulty.c */
 int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
