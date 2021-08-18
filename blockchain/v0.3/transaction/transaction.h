@@ -134,6 +134,24 @@ typedef struct iv_info_s
 	llist_t *all_unspent;
 } iv_info_t;
 
+/**
+ * struct uo_info_s - unspent output info
+ *
+ * Description: Used to contain all the parameters necessary for updating a
+ *   list of unspent outputs. Necessary for llist_for_each, as it only takes
+ *   one void pointer as an outside parameter to its `action` function.
+ *
+ * @block_hash: hash of block containing transactions to update unpsent list
+ * @tx_id: id of current transaction to scan when updating
+ * @all_unspent: list of all unspent outputs in the blockchain
+ */
+typedef struct uo_info_s
+{
+	uint8_t  block_hash[SHA256_DIGEST_LENGTH];
+	uint8_t  tx_id[SHA256_DIGEST_LENGTH];
+	llist_t *all_unspent;
+} uo_info_t;
+
 
 /* tx_out_create.c */
 tx_out_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
@@ -204,6 +222,16 @@ int coinbase_is_valid(transaction_t const *coinbase, uint32_t block_index);
 void transaction_destroy(transaction_t *transaction);
 
 /* update_unspent.c */
+/*
+ * static int matchUnspentOut(unspent_tx_out_t *unspent_tx_out,
+ *			   tx_in_t *tx_in);
+ * static int addUnspentOutput(tx_out_t *tx_out, unsigned int idx,
+ *			    uo_info_t *uo_info);
+ * static int delRfrncdOutput(tx_in_t *tx_in, unsigned int idx,
+ *			   llist_t *all_unspent);
+ * static int updateRfrncdOutputs(transaction_t *tx, unsigned int idx,
+ *			       uo_info_t *uo_info);
+ */
 llist_t *update_unspent(llist_t *transactions,
 			uint8_t block_hash[SHA256_DIGEST_LENGTH],
 			llist_t *all_unspent);
