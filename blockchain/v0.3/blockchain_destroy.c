@@ -1,6 +1,6 @@
 /* blockchain_t */
 #include "blockchain.h"
-/* llist_errno llist_destroy */
+/* llist_destroy */
 #include <llist.h>
 /* fprintf */
 #include <stdio.h>
@@ -22,13 +22,7 @@ void blockchain_destroy(blockchain_t *blockchain)
 		return;
 	}
 
-	/* could also potentially cast block_destroy to node_dtor_t */
-	if (llist_destroy(blockchain->chain, 1, NULL) != 0)
-	{
-		fprintf(stderr, "blockchain_destroy: llist_destroy: %s\n",
-			strE_LLIST(llist_errno));
-		return;
-	}
+	llist_destroy(blockchain->chain, 1, (node_dtor_t)block_destroy);
 
 	free(blockchain);
 }
