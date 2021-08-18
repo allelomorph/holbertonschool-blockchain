@@ -159,8 +159,8 @@ uint8_t *transaction_hash(transaction_t const *transaction,
 
 /* tx_in_sign.c */
 /*
- * static int matchUnspentOutHash(unspent_tx_out_t *unspent_tx_out,
- *				  uint8_t tx_out_hash[SHA256_DIGEST_LENGTH]);
+ * static int matchUnspentOut(unspent_tx_out_t *unspent_tx_out,
+ *			      tx_in_t *tx_in);
  */
 sig_t *tx_in_sign(tx_in_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH],
 		  EC_KEY const *sender, llist_t *all_unspent);
@@ -184,8 +184,8 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 
 /* transaction_is_valid.c */
 /*
- * static int matchUnspentOutHash(unspent_tx_out_t *unspent_tx_out,
- *				  uint8_t tx_out_hash[SHA256_DIGEST_LENGTH]);
+ * static int matchUnspentOut(unspent_tx_out_t *unspent_tx_out,
+ *			      tx_in_t *tx_in);
  * static int totalOutputAmt(tx_out_t *tx_out, unsigned int idx,
  *			     uint32_t *tl_output_amt);
  * static int validateTxInput(tx_in_t *tx_in, unsigned int idx,

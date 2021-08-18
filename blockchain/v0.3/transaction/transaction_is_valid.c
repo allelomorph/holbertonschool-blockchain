@@ -6,31 +6,39 @@
 #include <stdio.h>
 /* memcmp */
 #include <string.h>
-/* malloc free */
+/* free */
 #include <stdlib.h>
 
 
 /**
- * matchUnspentOutHash - used as `identifier` for llist_find_node,
- *   compares hashes of unspent out transactions against a given hash
+ * matchUnspentOut - used as `identifier` for llist_find_node to compare block,
+ *   transaction and output hashes of unspent output against those recorded
+ *   in an input
  *
- * @unspent_tx_out: unspent transaction in a blockchain->unspent list, as
+ * @unspent_tx_out: unspent output in a blockchain->unspent list, as
  *   iterated through by llist_find_node
- * @tx_out_hash: hash of the unspent output to find
+ * @tx_in: pointer to input containing references to match
  *
- * Return: 1 if transaction hash matches `tx_out_hash`, 0 if not or on failure
+ * Return: 1 if transaction hash matches `tx_in`, 0 if not or on failure
  */
-static int matchUnspentOutHash(unspent_tx_out_t *unspent_tx_out,
-			       uint8_t tx_out_hash[SHA256_DIGEST_LENGTH])
+static int matchUnspentOut(unspent_tx_out_t *unspent_tx_out, tx_in_t *tx_in)
 {
-	if (!unspent_tx_out || !tx_out_hash)
+	int match;
+
+	if (!unspent_tx_out || !tx_in)
 	{
-		fprintf(stderr, "matchUnspentOutHash: NULL parameter(s)\n");
+		fprintf(stderr, "matchUnspentOut: NULL parameter(s)\n");
 		return (0);
 	}
 
-	return (!memcmp(unspent_tx_out->out.hash, tx_out_hash,
-			SHA256_DIGEST_LENGTH));
+	match = !(memcmp(unspent_tx_out->block_hash, tx_in->block_hash,
+			 SHA256_DIGEST_LENGTH) ||
+		  memcmp(unspent_tx_out->tx_id, tx_in->tx_id,
+			 SHA256_DIGEST_LENGTH) ||
+		  memcmp(unspent_tx_out->out.hash, tx_in->tx_out_hash,
+			 SHA256_DIGEST_LENGTH));
+
+	return (match);
 }
 
 
@@ -88,16 +96,14 @@ static int validateTxInput(tx_in_t *tx_in, unsigned int idx,
 	EC_KEY *owner;
 
 	(void)idx;
-
 	if (!tx_in || !iv_info)
 	{
 		fprintf(stderr, "validateTxInput: NULL parameter(s)\n");
 		return (-2);
 	}
-
 	unspent_tx_out = llist_find_node(iv_info->all_unspent,
-					 (node_ident_t)matchUnspentOutHash,
-					 tx_in->tx_out_hash);
+					 (node_ident_t)matchUnspentOut,
+					 tx_in);
 	if (!unspent_tx_out)
 	{
 		if (llist_errno == LLIST_NODE_NOT_FOUND)
@@ -109,14 +115,12 @@ static int validateTxInput(tx_in_t *tx_in, unsigned int idx,
 		fprintf(stderr, "validateTxInput: llist_find_node failure\n");
 		return (-2);
 	}
-
 	owner = ec_from_pub(unspent_tx_out->out.pub);
 	if (!owner)
 	{
 		fprintf(stderr, "validateTxInput: ec_from_pub failure\n");
 		return (-2);
 	}
-
 	if (!ec_verify(owner, iv_info->tx_id,
 		       SHA256_DIGEST_LENGTH, &(tx_in->sig)))
 	{
@@ -125,7 +129,6 @@ static int validateTxInput(tx_in_t *tx_in, unsigned int idx,
 		free(owner);
 		return (-3);
 	}
-
 	iv_info->tl_input_amt += unspent_tx_out->out.amount;
 	free(owner);
 	return (0);
@@ -165,12 +168,7 @@ int transaction_is_valid(transaction_t const *transaction,
 		return (0);
 	}
 
-	if (transaction_hash(transaction, iv_info.tx_id) == NULL)
-	{
-		fprintf(stderr, "transaction_is_valid: %s\n",
-			"transaction_hash failure");
-		return (0);
-	}
+	transaction_hash(transaction, iv_info.tx_id);
 	if (memcmp(transaction->id, iv_info.tx_id, SHA256_DIGEST_LENGTH) != 0)
 	{
 		fprintf(stderr, "transaction_is_valid: %s\n",
@@ -193,6 +191,5 @@ int transaction_is_valid(transaction_t const *transaction,
 			"amounts does not match total of output amounts");
 		return (0);
 	}
-
 	return (1);
 }

@@ -1,10 +1,9 @@
 /* -> blockchain.h -> */
 /* llist.h stdint.h hblk_crypto.h */
-/* iv_info_t */
 #include "transaction.h"
 /* fprintf */
 #include <stdio.h>
-/* memcpy */
+/* memcpy bzero */
 #include <string.h>
 /* free */
 #include <stdlib.h>
