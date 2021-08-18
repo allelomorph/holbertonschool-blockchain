@@ -61,7 +61,12 @@ uint8_t *block_hash(block_t const *block,
 		fprintf(stderr, "block_hash: NULL parameter(s)\n");
 		return (NULL);
 	}
-
+	/* Genesis block */
+	if (block->info.index == 0 && !block->transactions)
+	{
+		memcpy(hash_buf, GEN_BLK_HSH, SHA256_DIGEST_LENGTH);
+		return (hash_buf);
+	}
 	/* hashed data: block info, len bytes of buffer, tx hashes in series */
 	buf_info.sz += sizeof(block_info_t);
 	buf_info.sz += block->data.len;
@@ -74,17 +79,16 @@ uint8_t *block_hash(block_t const *block,
 		fprintf(stderr, "block_hash: malloc failure\n");
 		return (NULL);
 	}
-
 	memcpy(buf_info.buf, block, sizeof(block_info_t) + block->data.len);
 	buf_info.idx += (sizeof(block_info_t) + block->data.len);
 	if (llist_for_each(block->transactions,
 			   (node_func_t)readTxId, &buf_info) < 0)
 	{
-		fprintf(stderr, "block_hash: llist_for_each failure\n");
+		fprintf(stderr, "block_hash: llist_for_each failure: %s\n",
+			strE_LLIST(llist_errno));
 		free(buf_info.buf);
 		return (NULL);
 	}
-
 	if (!sha256((const int8_t *)buf_info.buf, buf_info.sz, hash_buf))
 	{
 		fprintf(stderr, "block_hash: sha256 failure\n");

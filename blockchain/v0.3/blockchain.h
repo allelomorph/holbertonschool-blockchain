@@ -204,7 +204,10 @@ int readBlocks(int fd, const blockchain_t *blockchain,
 blockchain_t *blockchain_deserialize(char const *path);
 
 /* block_is_valid.c */
-int block_is_valid(block_t const *block, block_t const *prev_block);
+int miniumumBlkTxs(const block_t *block);
+int validateBlockHashes(block_t const *block, block_t const *prev_block);
+int block_is_valid(block_t const *block, block_t const *prev_block,
+		   llist_t *all_unspent);
 
 /* hash_matches_difficulty.c */
 int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
