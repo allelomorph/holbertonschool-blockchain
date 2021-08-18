@@ -1,5 +1,8 @@
 /* block_t */
 #include "blockchain.h"
+/* -> blockchain.h -> */
+/* llist.h */
+#include "transaction.h"
 /* fprintf */
 #include <stdio.h>
 /* free */
@@ -18,6 +21,9 @@ void block_destroy(block_t *block)
 		fprintf(stderr, "block_destroy: NULL parameter\n");
 		return;
 	}
+
+	llist_destroy(block->transactions, 1,
+			      (node_dtor_t)transaction_destroy);
 
 	free(block);
 }

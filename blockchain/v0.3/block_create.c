@@ -2,7 +2,7 @@
 #include "blockchain.h"
 /* fprintf */
 #include <stdio.h>
-/* calloc */
+/* calloc free */
 #include <stdlib.h>
 /* time */
 #include <time.h>
@@ -42,9 +42,18 @@ block_t *block_create(block_t const *prev, int8_t const *data,
 	new_blk->info.index = prev->info.index + 1;
 	new_blk->info.timestamp = (uint64_t)time(NULL);
 	memcpy(new_blk->info.prev_hash, prev->hash, SHA256_DIGEST_LENGTH);
+
 	new_blk->data.len = data_len < BLOCKCHAIN_DATA_MAX ?
 		data_len : BLOCKCHAIN_DATA_MAX;
 	memcpy(new_blk->data.buffer, data, new_blk->data.len);
+
+	new_blk->transactions = llist_create(MT_SUPPORT_FALSE);
+	if (!new_blk->transactions)
+	{
+		fprintf(stderr, "block_create: llist_create failure\n");
+		free(new_blk);
+		return (NULL);
+	}
 
 	return (new_blk);
 }
