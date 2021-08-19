@@ -6,7 +6,7 @@
 #include <unistd.h>
 /* errno ENOENT */
 #include <errno.h>
-/* fprintf perror write */
+/* fprintf perror write remove */
 #include <stdio.h>
 /* open O_* S_* close */
 #include <fcntl.h>
@@ -448,6 +448,7 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
 	if (writeBlkchnFileHdr(fd, blockchain) != 0)
 	{
 		close(fd);
+		remove(path);
 		return (-1);
 	}
 
@@ -457,6 +458,7 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
 		fprintf(stderr,
 			"blockchain_serialize: llist_for_each failure\n");
 		close(fd);
+		remove(path);
 		return (-1);
 	}
 
@@ -466,6 +468,7 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
 		fprintf(stderr,
 			"blockchain_serialize: llist_for_each failure\n");
 		close(fd);
+		remove(path);
 		return (-1);
 	}
 

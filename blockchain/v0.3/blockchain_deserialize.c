@@ -536,6 +536,8 @@ blockchain_t *blockchain_deserialize(char const *path)
 	blockchain = blockchain_create();
 	if (!blockchain)
 	{
+		fprintf(stderr,
+			"blockchain_deserialize: blockchain_create failure\n");
 		close(fd);
 		return (NULL);
 	}
@@ -545,10 +547,8 @@ blockchain_t *blockchain_deserialize(char const *path)
 		free(genesis);
 	local_endianness = _get_endianness();
 
-	if (readBlkchnFileHdr(fd, local_endianness, &header) != 0)
-		return (NULL);
-
-	if (readBlocks(fd, blockchain->chain, local_endianness, &header) != 0 ||
+	if (readBlkchnFileHdr(fd, local_endianness, &header) != 0 ||
+	    readBlocks(fd, blockchain->chain, local_endianness, &header) != 0 ||
 	    readUnspent(fd, blockchain->unspent,
 			local_endianness, &header) != 0)
 	{
