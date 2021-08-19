@@ -70,13 +70,12 @@ int pathToReadFD(char const *path)
  * Return: 0 on success, or 1 upon failure
  */
 int readBlkchnFileHdr(int fd, uint8_t local_endianness,
-		      uint8_t *file_endianness, uint32_t *block_ct)
+		      bc_file_hdr_t *header)
 {
-	bc_file_hdr_t header;
 
-	if (!file_endianness || !block_ct)
+	if (!header)
 	{
-		fprintf(stderr, "readBlkchnFileHdr: NULL parameter(s)\n");
+		fprintf(stderr, "readBlkchnFileHdr: NULL parameter\n");
 		return (1);
 	}
 	if (local_endianness != 1 && local_endianness != 2)
@@ -85,7 +84,7 @@ int readBlkchnFileHdr(int fd, uint8_t local_endianness,
 			"readBlkchnFileHdr: invalid local_endianness\n");
 		return (1);
 	}
-	if (read(fd, &header, sizeof(bc_file_hdr_t)) == -1)
+	if (read(fd, header, sizeof(bc_file_hdr_t)) == -1)
 	{
 		perror("readBlkchnFileHdr: read");
 		return (1);
@@ -103,14 +102,16 @@ int readBlkchnFileHdr(int fd, uint8_t local_endianness,
 		return (1);
 	}
 
-	*file_endianness = header.hblk_endian;
-	if (*file_endianness != local_endianness)
+	if (header.hblk_endian != local_endianness)
+	{
 #ifdef __GNUC__ /* compiled with gcc, can use gcc builtins for fast assembly */
 		header.hblk_blocks = __builtin_bswap32(header.hblk_blocks);
+		header.hblk_unspent = __builtin_bswap32(header.hblk_unspent);
 #else /* use function to manually byte swap */
-		_swap_endian(&(header.hblk_blocks), 32);
+		_swap_endian(&(header.hblk_blocks), 4);
+		_swap_endian(&(header.hblk_unspent), 4);
 #endif
-	*block_ct = header.hblk_blocks;
+	}
 	return (0);
 }
 
@@ -124,11 +125,11 @@ int readBlkchnFileHdr(int fd, uint8_t local_endianness,
  *   provided/_endianness.c due to its efficiency, being compiled as only
  *   one assembly instruction.
  */
-void bswapBlock(block_t *block)
+void bswapBlock(block_t *block, uint32_t *nb_transactions)
 {
-	if (!block)
+	if (!block || !nb_transactions)
 	{
-		fprintf(stderr, "bswapBlock: NULL parameter\n");
+		fprintf(stderr, "bswapBlock: NULL parameter(s)\n");
 		return;
 	}
 
@@ -138,12 +139,16 @@ void bswapBlock(block_t *block)
 	block->info.timestamp  = __builtin_bswap64(block->info.timestamp);
 	block->info.nonce      = __builtin_bswap64(block->info.nonce);
 	block->data.len        = __builtin_bswap32(block->data.len);
+
+        *nb_transactions       = __builtin_bswap32(*nb_transactions);
 #else /* use function to manually byte swap */
-	_swap_endian(&(block->info.index), 32);
-	_swap_endian(&(block->info.difficulty), 32);
-	_swap_endian(&(block->info.timestamp), 64);
-	_swap_endian(&(block->info.nonce), 64);
-	_swap_endian(&(block->data.len), 32);
+	_swap_endian(&(block->info.index), 4);
+	_swap_endian(&(block->info.difficulty), 4);
+	_swap_endian(&(block->info.timestamp), 8);
+	_swap_endian(&(block->info.nonce), 8);
+	_swap_endian(&(block->data.len), 4);
+
+	_swap_endian(nb_transactions, 4);
 #endif
 }
 
@@ -161,25 +166,24 @@ void bswapBlock(block_t *block)
  *
  * Return: 0 on success, or 1 upon failure
  */
-int readBlocks(int fd, const blockchain_t *blockchain,
-		uint8_t local_endianness, uint8_t file_endianness,
-		uint32_t block_ct)
+int readBlocks(int fd, const llist_t *chain,
+		uint8_t local_endianness, bc_file_hdr_t *header)
 {
-	uint32_t i;
+	uint32_t i, nb_transactions;
 	block_t *block;
 
-	if (!blockchain)
+	if (!chain || !header)
 	{
 		fprintf(stderr, "readBlocks: NULL parameter\n");
 		return (1);
 	}
-	if (!llist_is_empty(blockchain->chain))
+	if (!llist_is_empty(chain))
 	{
 		fprintf(stderr, "readBlocks: target blockchain not empty\n");
 		return (1);
 	}
-	for (i = 0; i < block_ct; i++)
-	{ /* assumes header has already been read from fd */
+	for (i = 0; i < header->hblk_blks; i++)
+	{
 		block = calloc(1, sizeof(block_t));
 		if (!block)
 		{
@@ -189,17 +193,313 @@ int readBlocks(int fd, const blockchain_t *blockchain,
 		if (read(fd, &(block->info), sizeof(block_info_t)) == -1 ||
 		    read(fd, &(block->data.len), sizeof(uint32_t)) == -1 ||
 		    read(fd, &(block->data.buffer), block->data.len) == -1 ||
-		    read(fd, &(block->hash), SHA256_DIGEST_LENGTH) == -1)
+		    read(fd, &(block->hash), SHA256_DIGEST_LENGTH) == -1 ||
+		    read(fd, &nb_transactions, sizeof(uint32_t)) == -1)
 		{
 			perror("readBlocks: read");
 			return (1);
 		}
-		if (local_endianness != file_endianness)
-			bswapBlock(block);
-		if (llist_add_node(blockchain->chain, (llist_node_t)block,
+		if (local_endianness != header->hblk_endian)
+			bswapBlock(block, &nb_transactions);
+
+		block->transactions = llist_create(MT_SUPPORT_FALSE);
+		if (!block->transactions)
+		{
+			fprintf(stderr, "readBlocks: llist_create failure\n");
+			return (1);
+		}
+		if (readTransactions(fd, block->transactions, nb_transactions,
+				     local_endianness,
+				     header->hblk_endian) != 0)
+		{
+			fprintf(stderr,
+				"readBlocks: readTransactions failure\n");
+			return (1);
+		}
+
+		if (llist_add_node(chain, (llist_node_t)block,
 				   ADD_NODE_REAR) != 0)
 		{
 			fprintf(stderr, "readBlocks: llist_add_node: %s\n",
+				strE_LLIST(llist_errno));
+			return (1);
+		}
+	}
+	return (0);
+}
+
+
+/**
+ * readTransactions - reads serialized blocks from a storage file into a blockchain
+ *   data structure
+ *
+ * @fd: file descriptor already open for reading
+ * @blockchain: pointer to an empty blockchain struct (Genesis Block removed)
+ *   to contain the deserialized blocks
+ * @local_endianness: 1 for little endian, 2 for big endian
+ * @file_endianness: 1 for little endian, 2 for big endian
+ * @block_ct: count of blocks in blockchain
+ *
+ * Return: 0 on success, or 1 upon failure
+ */
+int readTransactions(int fd, const llist_t *transactions,
+		     uint32_t nb_transactions, uint8_t local_endianness,
+		     uint8_t hblk_endian)
+{
+	uint32_t i, nb_inputs, nb_outputs;
+        transaction_t *tx;
+
+	if (!transactions)
+	{
+		fprintf(stderr, "readTransactions: NULL parameter\n");
+		return (1);
+	}
+	if (!llist_is_empty(transactions))
+	{
+		fprintf(stderr,
+			"readTransactions: transaction list not empty\n");
+		return (1);
+	}
+	for (i = 0; i < nb_transactions; i++)
+	{
+	        tx = calloc(1, sizeof(transaction_t));
+		if (!tx)
+		{
+			fprintf(stderr, "readTransactions: calloc failure\n");
+			return (1);
+		}
+		if (read(fd, &(tx->id), SHA256_DIGEST_LENGTH) == -1 ||
+		    read(fd, &nb_inputs, sizeof(uint32_t)) == -1 ||
+		    read(fd, &nb_outputs, sizeof(uint32_t)) == -1)
+		{
+			perror("readTransactions: read");
+			return (1);
+		}
+		if (local_endianness != hblk_endian)
+		{
+#ifdef __GNUC__ /* compiled with gcc, can use gcc builtins for fast assembly */
+			nb_inputs = __builtin_bswap32(nb_inputs);
+			nb_outputs = __builtin_bswap32(nb_outputs);
+#else /* use function to manually byte swap */
+			_swap_endian(&nb_inputs, 4);
+			_swap_endian(&nb_outputs, 4);
+#endif
+		}
+
+		tx->inputs = llist_create(MT_SUPPORT_FALSE);
+		tx->outputs = llist_create(MT_SUPPORT_FALSE);
+		if (!tx->inputs || !tx->outputs)
+		{
+			fprintf(stderr,
+				"readTransactions: llist_create failure\n");
+			return (1);
+		}
+		if (readInputs(fd, tx->inputs, nb_inputs) != 0)
+		{
+			fprintf(stderr,
+				"readTransactions: readInputs failure\n");
+			return (1);
+		}
+		if (readOutputs(fd, tx->outputs, nb_outputs,
+				local_endianness, hblk_endian) != 0)
+		{
+			fprintf(stderr,
+				"readTransactions: readOutputs failure\n");
+			return (1);
+		}
+
+		if (llist_add_node(transactions, (llist_node_t)tx,
+				   ADD_NODE_REAR) != 0)
+		{
+			fprintf(stderr,
+				"readTransactions: llist_add_node: %s\n",
+				strE_LLIST(llist_errno));
+			return (1);
+		}
+	}
+	return (0);
+}
+
+
+/**
+ * readInputs - reads serialized blocks from a storage file into a blockchain
+ *   data structure
+ *
+ * @fd: file descriptor already open for reading
+ * @blockchain: pointer to an empty blockchain struct (Genesis Block removed)
+ *   to contain the deserialized blocks
+ * @local_endianness: 1 for little endian, 2 for big endian
+ * @file_endianness: 1 for little endian, 2 for big endian
+ * @block_ct: count of blocks in blockchain
+ *
+ * Return: 0 on success, or 1 upon failure
+ */
+int readInputs(int fd, const llist_t *inputs, uint32_t nb_inputs)
+{
+	uint32_t i;
+        tx_in_t *tx_in;
+
+	if (!inputs)
+	{
+		fprintf(stderr, "readInputs: NULL parameter\n");
+		return (1);
+	}
+	if (!llist_is_empty(inputs))
+	{
+		fprintf(stderr,
+			"readInputs: inputs list not empty\n");
+		return (1);
+	}
+	for (i = 0; i < nb_inputs; i++)
+	{
+	        tx_in = calloc(1, sizeof(tx_in_t));
+		if (!tx_in)
+		{
+			fprintf(stderr, "readInputs: calloc failure\n");
+			return (1);
+		}
+		if (read(fd, tx_in, sizeof(tx_in_t)) == -1)
+		{
+			perror("readInputs: read");
+			return (1);
+		}
+
+		if (llist_add_node(inputs, (llist_node_t)tx_in,
+				   ADD_NODE_REAR) != 0)
+		{
+			fprintf(stderr,
+				"readInputs: llist_add_node: %s\n",
+				strE_LLIST(llist_errno));
+			return (1);
+		}
+	}
+	return (0);
+}
+
+
+/**
+ * readOutputs - reads serialized blocks from a storage file into a blockchain
+ *   data structure
+ *
+ * @fd: file descriptor already open for reading
+ * @blockchain: pointer to an empty blockchain struct (Genesis Block removed)
+ *   to contain the deserialized blocks
+ * @local_endianness: 1 for little endian, 2 for big endian
+ * @file_endianness: 1 for little endian, 2 for big endian
+ * @block_ct: count of blocks in blockchain
+ *
+ * Return: 0 on success, or 1 upon failure
+ */
+int readOutputs(int fd, const llist_t *outputs, uint32_t nb_outputs,
+		uint8_t local_endianness, uint8_t hblk_endian)
+{
+	uint32_t i;
+        tx_out_t *tx_out;
+
+	if (!outputs)
+	{
+		fprintf(stderr, "readOutputs: NULL parameter\n");
+		return (1);
+	}
+	if (!llist_is_empty(outputs))
+	{
+		fprintf(stderr,
+			"readOutputs: output list not empty\n");
+		return (1);
+	}
+	for (i = 0; i < nb_outputs; i++)
+	{
+	        tx_out = calloc(1, sizeof(tx_out_t));
+		if (!tx_out)
+		{
+			fprintf(stderr, "readOutputs: calloc failure\n");
+			return (1);
+		}
+		if (read(fd, tx_out, sizeof(tx_out_t)) == -1)
+		{
+			perror("readOutputs: read");
+			return (1);
+		}
+
+		if (local_endianness != hblk_endian)
+#ifdef __GNUC__ /* compiled with gcc, can use gcc builtins for fast assembly */
+			tx_out->amount = __builtin_bswap32(tx_out->amount);
+#else /* use function to manually byte swap */
+			_swap_endian(&(tx_out->amount), 4);
+#endif
+
+		if (llist_add_node(outputs, (llist_node_t)tx_out,
+				   ADD_NODE_REAR) != 0)
+		{
+			fprintf(stderr,
+				"readOutputs: llist_add_node: %s\n",
+				strE_LLIST(llist_errno));
+			return (1);
+		}
+	}
+	return (0);
+}
+
+
+/**
+ * readUnspent - reads serialized blocks from a storage file into a blockchain
+ *   data structure
+ *
+ * @fd: file descriptor already open for reading
+ * @blockchain: pointer to an empty blockchain struct (Genesis Block removed)
+ *   to contain the deserialized blocks
+ * @local_endianness: 1 for little endian, 2 for big endian
+ * @file_endianness: 1 for little endian, 2 for big endian
+ * @block_ct: count of blocks in blockchain
+ *
+ * Return: 0 on success, or 1 upon failure
+ */
+int readUnspent(int fd, const llist_t *unspent, uint32_t nb_outputs,
+		uint8_t local_endianness, bc_file_hdr_t *header)
+{
+	uint32_t i;
+        unspent_tx_out_t *unspent_tx_out;
+
+	if (!unspent || !header)
+	{
+		fprintf(stderr, "readUnspent: NULL parameter(s)\n");
+		return (1);
+	}
+	if (!llist_is_empty(unspent))
+	{
+		fprintf(stderr,
+			"readUnspent: unspent output list not empty\n");
+		return (1);
+	}
+	for (i = 0; i < header->hblk_unspent; i++)
+	{
+	        unspent_tx_out = calloc(1, sizeof(unspent_tx_out_t));
+		if (!unspent_tx_out)
+		{
+			fprintf(stderr, "readUnspent: calloc failure\n");
+			return (1);
+		}
+		if (read(fd, unspent_tx_out, sizeof(unspent_tx_out_t)) == -1)
+		{
+			perror("readUnspent: read");
+			return (1);
+		}
+
+		if (local_endianness != header->hblk_endian)
+		{
+#ifdef __GNUC__ /* compiled with gcc, can use gcc builtins for fast assembly */
+			unspent_tx_out->out.amount =
+				__builtin_bswap32(unspent_tx_out->out.amount);
+#else /* use function to manually byte swap */
+			_swap_endian(&(unspent_tx_out->out.amount), 4);
+#endif
+		}
+
+		if (llist_add_node(unspent, (llist_node_t)unspent_tx_out,
+				   ADD_NODE_REAR) != 0)
+		{
+			fprintf(stderr,
+				"readUnspent: llist_add_node: %s\n",
 				strE_LLIST(llist_errno));
 			return (1);
 		}
@@ -219,8 +519,8 @@ int readBlocks(int fd, const blockchain_t *blockchain,
 blockchain_t *blockchain_deserialize(char const *path)
 {
 	int fd;
-	uint8_t local_endianness, file_endianness;
-	uint32_t block_ct;
+	uint8_t local_endianness;
+	bc_file_hdr_t header;
 	blockchain_t *blockchain;
 	block_t *genesis;
 
@@ -245,10 +545,10 @@ blockchain_t *blockchain_deserialize(char const *path)
 		free(genesis);
 	local_endianness = _get_endianness();
 
-	if (readBlkchnFileHdr(fd, local_endianness, &file_endianness,
-			      &block_ct) != 0 ||
-	    readBlocks(fd, blockchain, local_endianness, file_endianness,
-		       block_ct) != 0)
+	if (readBlkchnFileHdr(fd, local_endianness, &header) != 0 ||
+	    readBlocks(fd, blockchain->chain, local_endianness, &header) != 0 ||
+	    readUnspent(fd, blockchain->unspent,
+			local_endianness, &header) != 0)
 	{
 		close(fd);
 		blockchain_destroy(blockchain);

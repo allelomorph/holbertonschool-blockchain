@@ -54,7 +54,6 @@
 #define GEN_BLK_SERIAL_SZ 108
 
 
-/* updated for v0.3 */
 /**
  * struct blockchain_s - Blockchain structure
  *
@@ -108,7 +107,6 @@ typedef struct block_data_s
 	uint32_t len;
 } block_data_t;
 
-/* updated for v0.3 */
 /**
  * struct block_s - Block structure
  *
@@ -136,6 +134,7 @@ typedef struct block_s
  * @hblk_endian: This byte is set to either 1 or 2 to signify little or big
  *   endianness, respectively. This affects interpretation of multi-byte fields
  * @hblk_blocks: Number of blocks in the blockchain
+ * @hblk_unspent: Number of unspent transaction outputs in the blockchain
  */
 typedef struct bc_file_hdr_s
 {
@@ -143,6 +142,7 @@ typedef struct bc_file_hdr_s
 	int8_t   hblk_version[3];
 	uint8_t  hblk_endian;
 	uint32_t hblk_blocks;
+	uint32_t hblk_unspent;
 } bc_file_hdr_t;
 
 /**
