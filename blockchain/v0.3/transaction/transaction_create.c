@@ -401,7 +401,7 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
  *		fprintf(stderr, "setTxOutputs: llist_create: %s\n",
  *			strE_LLIST(llist_errno));
  * 237
- * 		fprintf(stderr, "setTxOutputs: llist_add_node: %s\n",
+ *		fprintf(stderr, "setTxOutputs: llist_add_node: %s\n",
  *			strE_LLIST(llist_errno));
  * 257
  *			fprintf(stderr, "setTxOutputs: %s: %s\n",
