@@ -89,8 +89,9 @@ int pathToWriteFD(char const *path)
  */
 int writeBlkchnFileHdr(int fd, const blockchain_t *blockchain)
 {
-	bc_file_hdr_t header = { HBLK_MAG, HBLK_VER, 0, 0 };
+	bc_file_hdr_t header = { HBLK_MAG, HBLK_VER, 0, 0, 0 };
 	int block_ct, unspent_ct;
+
 
 	if (!blockchain)
 	{
@@ -122,7 +123,7 @@ int writeBlkchnFileHdr(int fd, const blockchain_t *blockchain)
 			strE_LLIST(llist_errno));
 		return (1);
 	}
-	header.hblk_blocks = (uint32_t)unspent_ct;
+	header.hblk_unspent = (uint32_t)unspent_ct;
 
 	if (write(fd, &header, sizeof(bc_file_hdr_t)) == -1)
 	{
@@ -169,16 +170,17 @@ int writeBlkchnFileHdr(int fd, const blockchain_t *blockchain)
  */
 int writeBlock(block_t *block, unsigned int idx, int *fd)
 {
-	int nb_transactions;
+	int nb_transactions = 0;
 
-	(void)idx;
 	if (!block || !fd)
 	{
 		fprintf(stderr, "writeBlock: NULL parameter(s)\n");
 		return (-2);
 	}
 
-	nb_transactions = llist_size(block->transactions);
+	/* transactions is NULL for Genesis block */
+	if (idx > 0 && block->info.index > 0)
+		nb_transactions = llist_size(block->transactions);
 	if (nb_transactions == -1)
 	{
 		fprintf(stderr, "writeBlock: llist_size: %s\n",
@@ -190,13 +192,14 @@ int writeBlock(block_t *block, unsigned int idx, int *fd)
 	    write(*fd, &(block->data.len), sizeof(uint32_t)) == -1 ||
 	    write(*fd, &(block->data.buffer), block->data.len) == -1 ||
 	    write(*fd, &(block->hash), SHA256_DIGEST_LENGTH) == -1 ||
-	    write(*fd, &((uint32_t)nb_transactions), sizeof(uint32_t)) == -1)
+	    write(*fd, &nb_transactions, sizeof(uint32_t)) == -1)
 	{
 		perror("writeBlock: write");
 		return (-2);
 	}
 
-	if (llist_for_each(block->transactions,
+	if (idx > 0 && block->info.index > 0 &&
+	    llist_for_each(block->transactions,
 			   (node_func_t)writeTransaction, fd) < 0)
 	{
 		fprintf(stderr,
@@ -244,14 +247,14 @@ int writeTransaction(transaction_t *tx, unsigned int idx, int *fd)
 		return (-2);
 	}
 
-	nb_inputs = llist_size(transaction->inputs);
+	nb_inputs = llist_size(tx->inputs);
 	if (nb_inputs == -1)
 	{
 		fprintf(stderr, "writeTransaction: llist_size: %s\n",
 			strE_LLIST(llist_errno));
 		return (-2);
 	}
-	nb_outputs = llist_size(transaction->outputs);
+	nb_outputs = llist_size(tx->outputs);
 	if (nb_outputs == -1)
 	{
 		fprintf(stderr, "writeTransaction: llist_size: %s\n",
@@ -260,14 +263,14 @@ int writeTransaction(transaction_t *tx, unsigned int idx, int *fd)
 	}
 
 	if (write(*fd, &(tx->id), SHA256_DIGEST_LENGTH) == -1 ||
-	    write(*fd, &((uint32_t)nb_inputs), sizeof(uint32_t)) == -1 ||
-	    write(*fd, &((uint32_t)nb_outputs), sizeof(uint32_t)) == -1)
+	    write(*fd, &nb_inputs, sizeof(uint32_t)) == -1 ||
+	    write(*fd, &nb_outputs, sizeof(uint32_t)) == -1)
 	{
 		perror("writeTransaction: write");
 		return (-2);
 	}
 
-	if (llist_for_each(transaction->inputs,
+	if (llist_for_each(tx->inputs,
 			   (node_func_t)writeInput, fd) < 0)
 	{
 		fprintf(stderr,
@@ -275,7 +278,7 @@ int writeTransaction(transaction_t *tx, unsigned int idx, int *fd)
 		return (-2);
 	}
 
-	if (llist_for_each(transaction->outputs,
+	if (llist_for_each(tx->outputs,
 			   (node_func_t)writeOutput, fd) < 0)
 	{
 		fprintf(stderr,

@@ -1,11 +1,28 @@
 #ifndef TRANSACTION_H
 #define TRANSACTION_H
 
-/* stdint.h llist.h hblk_crypto.h */
-#include "../blockchain.h"
+/*
+ * Note on include placement in this file: automatic grading mains for this
+ * project sometimes require either blockchain.h or transaction.h to do the
+ * work of both. After the v0.3 refactor of blockchain_serialize and
+ * blockchain_deserialize added function declarations to blockchain.h that
+ * required transaction.h, including it at the top of this file caused a
+ * definition impasse.
+ *
+ * These next three includes are redundant with blockchain.h, but are included
+ * here, with blockchain.h included at the bottom, to circumvent the problem
+ * and again allow either this file or blockchain.h to work alone.
+ */
+/* libllist.so installed in /usr/local/lib/ */
+/* E_LLIST */
+#include <llist.h>
+/* [u]intN_t */
+#include <stdint.h>
+/* SHA256_DIGEST_LENGTH */
+#include "../../crypto/hblk_crypto.h"
 
 
-# define COINBASE_AMOUNT    50
+# define COINBASE_AMOUNT 50
 
 
 /**
@@ -235,6 +252,11 @@ void transaction_destroy(transaction_t *transaction);
 llist_t *update_unspent(llist_t *transactions,
 			uint8_t block_hash[SHA256_DIGEST_LENGTH],
 			llist_t *all_unspent);
+
+
+/* leave this include at end of file, see note at top */
+/* stdint.h llist.h hblk_crypto.h */
+#include "../blockchain.h"
 
 
 #endif /* TRANSACTION_H */

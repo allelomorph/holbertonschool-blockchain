@@ -190,17 +190,28 @@ uint8_t *block_hash(block_t const *block,
 /* blockchain_serialize.c */
 int pathToWriteFD(char const *path);
 int writeBlkchnFileHdr(int fd, const blockchain_t *blockchain);
-int writeBlocks(int fd, const blockchain_t *blockchain);
+int writeBlock(block_t *block, unsigned int idx, int *fd);
+int writeTransaction(transaction_t *tx, unsigned int idx, int *fd);
+int writeInput(tx_in_t *tx_in, unsigned int idx, int *fd);
+int writeOutput(tx_out_t *tx_out, unsigned int idx, int *fd);
+int writeUnspent(unspent_tx_out_t *unspent_tx_out, unsigned int idx, int *fd);
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
 
 /* blockchain_deserialize.c */
 int pathToReadFD(char const *path);
 int readBlkchnFileHdr(int fd, uint8_t local_endianness,
-		      uint8_t *file_endianness, uint32_t *block_ct);
-void bswapBlock(block_t *block);
-int readBlocks(int fd, const blockchain_t *blockchain,
-	       uint8_t local_endianness, uint8_t file_endianness,
-	       uint32_t block_ct);
+		      bc_file_hdr_t *header);
+void bswapBlock(block_t *block, uint32_t *nb_transactions);
+int readBlocks(int fd, llist_t *chain,
+	       uint8_t local_endianness, bc_file_hdr_t *header);
+int readTransactions(int fd, llist_t *transactions,
+		     uint32_t nb_transactions, uint8_t local_endianness,
+		     uint8_t hblk_endian);
+int readInputs(int fd, llist_t *inputs, uint32_t nb_inputs);
+int readOutputs(int fd, llist_t *outputs, uint32_t nb_outputs,
+		uint8_t local_endianness, uint8_t hblk_endian);
+int readUnspent(int fd, llist_t *unspent,
+		uint8_t local_endianness, bc_file_hdr_t *header);
 blockchain_t *blockchain_deserialize(char const *path);
 
 /* block_is_valid.c */
