@@ -201,7 +201,7 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path);
 int pathToReadFD(char const *path);
 int readBlkchnFileHdr(int fd, uint8_t local_endianness,
 		      bc_file_hdr_t *header);
-void bswapBlock(block_t *block, uint32_t *nb_transactions);
+void bswapBlock(block_t *block, int32_t *nb_transactions);
 int readBlocks(int fd, llist_t *chain,
 	       uint8_t local_endianness, bc_file_hdr_t *header);
 int readTransactions(int fd, llist_t *transactions,

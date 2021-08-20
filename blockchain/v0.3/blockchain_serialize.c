@@ -170,7 +170,7 @@ int writeBlkchnFileHdr(int fd, const blockchain_t *blockchain)
  */
 int writeBlock(block_t *block, unsigned int idx, int *fd)
 {
-	int nb_transactions = 0;
+	int32_t nb_transactions;
 
 	if (!block || !fd)
 	{
@@ -178,10 +178,10 @@ int writeBlock(block_t *block, unsigned int idx, int *fd)
 		return (-2);
 	}
 
-	/* transactions is NULL for Genesis block */
-	if (idx > 0 && block->info.index > 0)
-		nb_transactions = llist_size(block->transactions);
-	if (nb_transactions == -1)
+	/* transactions is NULL for Genesis block, encoded as -1 */
+	nb_transactions = llist_size(block->transactions);
+	if (nb_transactions == -1 &&
+	    llist_errno != LLIST_NULL_ARGUMENT)
 	{
 		fprintf(stderr, "writeBlock: llist_size: %s\n",
 			strE_LLIST(llist_errno));

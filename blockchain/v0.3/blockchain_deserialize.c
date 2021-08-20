@@ -125,7 +125,7 @@ int readBlkchnFileHdr(int fd, uint8_t local_endianness,
  *   provided/_endianness.c due to its efficiency, being compiled as only
  *   one assembly instruction.
  */
-void bswapBlock(block_t *block, uint32_t *nb_transactions)
+void bswapBlock(block_t *block, int32_t *nb_transactions)
 {
 	if (!block || !nb_transactions)
 	{
@@ -168,7 +168,8 @@ void bswapBlock(block_t *block, uint32_t *nb_transactions)
 int readBlocks(int fd, llist_t *chain, uint8_t local_endianness,
 	       bc_file_hdr_t *header)
 {
-	uint32_t i, nb_transactions;
+	uint32_t i;
+        int32_t nb_transactions;
 	block_t *block;
 
 	if (!chain || !header)
@@ -193,7 +194,7 @@ int readBlocks(int fd, llist_t *chain, uint8_t local_endianness,
 		    read(fd, &(block->data.len), sizeof(uint32_t)) == -1 ||
 		    read(fd, &(block->data.buffer), block->data.len) == -1 ||
 		    read(fd, &(block->hash), SHA256_DIGEST_LENGTH) == -1 ||
-		    read(fd, &nb_transactions, sizeof(uint32_t)) == -1)
+		    read(fd, &nb_transactions, sizeof(int32_t)) == -1)
 		{
 			perror("readBlocks: read");
 			return (1);
@@ -201,8 +202,10 @@ int readBlocks(int fd, llist_t *chain, uint8_t local_endianness,
 		if (local_endianness != header->hblk_endian)
 			bswapBlock(block, &nb_transactions);
 
-		if (i > 0 && block->info.index > 0)
-		{ /* genesis block transactions stay NULL */
+		if (nb_transactions == -1) /* genesis block */
+			block->transactions = NULL;
+		else
+		{
 			block->transactions = llist_create(MT_SUPPORT_FALSE);
 			if (!block->transactions)
 			{
