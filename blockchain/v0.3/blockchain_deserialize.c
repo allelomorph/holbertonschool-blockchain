@@ -169,7 +169,7 @@ int readBlocks(int fd, llist_t *chain, uint8_t local_endianness,
 	       bc_file_hdr_t *header)
 {
 	uint32_t i;
-        int32_t nb_transactions;
+	int32_t nb_transactions;
 	block_t *block;
 
 	if (!chain || !header)
@@ -362,6 +362,7 @@ int readInputs(int fd, llist_t *inputs, uint32_t nb_inputs)
 			fprintf(stderr, "readInputs: calloc failure\n");
 			return (1);
 		}
+
 		if (read(fd, tx_in, sizeof(tx_in_t)) == -1)
 		{
 			perror("readInputs: read");
@@ -419,7 +420,11 @@ int readOutputs(int fd, llist_t *outputs, uint32_t nb_outputs,
 			fprintf(stderr, "readOutputs: calloc failure\n");
 			return (1);
 		}
-		if (read(fd, tx_out, sizeof(tx_out_t)) == -1)
+
+		/* serialized one member at a time, see blockchain_serialize */
+		if (read(fd, &(tx_out->amount), sizeof(uint32_t)) == -1 ||
+		    read(fd, &(tx_out->pub), EC_PUB_LEN) == -1 ||
+		    read(fd, &(tx_out->hash), SHA256_DIGEST_LENGTH) == -1)
 		{
 			perror("readOutputs: read");
 			return (1);
@@ -482,7 +487,18 @@ int readUnspent(int fd, llist_t *unspent,
 			fprintf(stderr, "readUnspent: calloc failure\n");
 			return (1);
 		}
-		if (read(fd, unspent_tx_out, sizeof(unspent_tx_out_t)) == -1)
+
+		/* serialized one member at a time, see blockchain_serialize */
+		if (read(fd, &(unspent_tx_out->block_hash),
+			 SHA256_DIGEST_LENGTH) == -1 ||
+		    read(fd, &(unspent_tx_out->tx_id),
+			 SHA256_DIGEST_LENGTH) == -1 ||
+		    read(fd, &(unspent_tx_out->out.amount),
+			  sizeof(uint32_t)) == -1 ||
+		    read(fd, &(unspent_tx_out->out.pub),
+			 EC_PUB_LEN) == -1 ||
+		    read(fd, &(unspent_tx_out->out.hash),
+			 SHA256_DIGEST_LENGTH) == -1)
 		{
 			perror("readUnspent: read");
 			return (1);

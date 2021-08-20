@@ -321,6 +321,11 @@ int writeInput(tx_in_t *tx_in, unsigned int idx, int *fd)
 		return (-2);
 	}
 
+	/*
+	 * sizeof(tx_in_t):169 block_hash:32 tx_id:32 tx_out_hash:32
+	 *   sig:sizeof(sig_t):73 sig72 len:1
+	 * no padding observed, size of struct matches total of members
+	 */
 	if (write(*fd, tx_in, sizeof(tx_in_t)) == -1)
 	{
 		perror("writeInput: write");
@@ -358,7 +363,13 @@ int writeOutput(tx_out_t *tx_out, unsigned int idx, int *fd)
 		return (-2);
 	}
 
-	if (write(*fd, tx_out, sizeof(tx_out_t)) == -1)
+	/*
+	 * sizeof(tx_out_t):104 amount:4 pub:65 hash:32
+	 * padded with 3 bytes at end, must serialize manually to total 101
+	 */
+	if (write(*fd, &(tx_out->amount), sizeof(uint32_t)) == -1 ||
+	    write(*fd, &(tx_out->pub), EC_PUB_LEN) == -1 ||
+	    write(*fd, &(tx_out->hash), SHA256_DIGEST_LENGTH) == -1)
 	{
 		perror("writeOutput: write");
 		return (-2);
@@ -401,7 +412,19 @@ int writeUnspent(unspent_tx_out_t *unspent_tx_out, unsigned int idx, int *fd)
 		return (-2);
 	}
 
-	if (write(*fd, unspent_tx_out, sizeof(unspent_tx_out_t)) == -1)
+	/*
+	 * sizeof(unspent_tx_out_t):168 block_hash:32 tx_id:32
+	 *   out.amount:4 out.pub:65 out.hash:32
+	 * (3 bytes of padding at end of tx_out_t requires serializing
+	 *   manually to total 165)
+	 */
+	if (write(*fd, &(unspent_tx_out->block_hash),
+		  SHA256_DIGEST_LENGTH) == -1 ||
+	    write(*fd, &(unspent_tx_out->tx_id), SHA256_DIGEST_LENGTH) == -1 ||
+	    write(*fd, &(unspent_tx_out->out.amount),
+		  sizeof(uint32_t)) == -1 ||
+	    write(*fd, &(unspent_tx_out->out.pub), EC_PUB_LEN) == -1 ||
+	    write(*fd, &(unspent_tx_out->out.hash), SHA256_DIGEST_LENGTH) == -1)
 	{
 		perror("writeUnspent: write");
 		return (-2);
