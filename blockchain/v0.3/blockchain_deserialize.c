@@ -14,7 +14,7 @@
 #include "provided/endianness.h"
 /* llist_* */
 #include <llist.h>
-/* strerror strncmp */
+/* strerror memcmp */
 #include <string.h>
 
 
@@ -86,13 +86,13 @@ int readBlkchnFileHdr(int fd, uint8_t local_endianness,
 		perror("readBlkchnFileHdr: read");
 		return (1);
 	}
-	if (strncmp((char *)(header->hblk_magic), HBLK_MAG, HBLK_MAG_LEN) != 0)
+	if (memcmp(&(header->hblk_magic), HBLK_MAG, HBLK_MAG_LEN) != 0)
 	{
 		fprintf(stderr,
 			"readBlkchnFileHdr: invalid magic number\n");
 		return (1);
 	}
-	if (strncmp((char *)(header->hblk_version), HBLK_VER, HBLK_VER_LEN) != 0)
+	if (memcmp(&(header->hblk_version), HBLK_VER, HBLK_VER_LEN) != 0)
 	{
 		fprintf(stderr, "readBlkchnFileHdr: %s\n",
 			"serialized with incompatible version number");
