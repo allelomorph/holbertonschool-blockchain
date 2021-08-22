@@ -10,7 +10,7 @@
 #       ../../crypto
 #   - OpenSSL 1.0.1f (libssl.so and libcrypto.so)
 #
-#  Note: OpenSSLGlobalCleanup an ((attribute)) __destructor__ function in
+#  Note: OpenSSLGlobalCleanup is an __attribute__ ((destructor)) function in
 #    libhblk_crypto.a which deallocates internal OpenSSL tables after main exits;
 #    as an implicitly called destructor we must force the linker to treat it as
 #    undefined.
@@ -54,7 +54,6 @@ TX_SRC = tx_out_create.c \
 	update_unspent.c
 
 OBJ = $(BLKCHN_SRC:.c=.o) $(addprefix transaction/, $(TX_SRC:.c=.o))
-
 
 .PHONY: clean oclean fclean re
 
