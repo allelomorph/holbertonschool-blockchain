@@ -55,7 +55,7 @@ Introduction to UXTO and coinbase transactions.
 
 ## Mandatory Tasks
 
-### :white_large_square: 0. Create transaction output
+### :white_check_mark: 0. Create transaction output
 Write a function that allocates and initializes a transaction output structure
 
 * Prototype: `tx_out_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN]);`, where:
@@ -66,7 +66,7 @@ Write a function that allocates and initializes a transaction output structure
 File(s): [`transaction/tx_out_create.c`](./transaction/tx_out_create.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/tx_out_create-test transaction/tx_out_create.c provided/_print_hex_buffer.c transaction/test/tx_out_create-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 1. Create unspent transaction output
+### :white_check_mark: 1. Create unspent transaction output
 Write a function that allocates and initializes an unspent transaction output structure
 
 * Prototype: `unspent_tx_out_t *unspent_tx_out_create(uint8_t block_hash[SHA256_DIGEST_LENGTH], uint8_t tx_id[SHA256_DIGEST_LENGTH], tx_out_t const *out);`, where:
@@ -78,7 +78,7 @@ Write a function that allocates and initializes an unspent transaction output st
 File(s): [`transaction/unspent_tx_out_create.c`](./transaction/unspent_tx_out_create.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/unspent_tx_out_create-test transaction/tx_out_create.c transaction/unspent_tx_out_create.c provided/_print_hex_buffer.c transaction/test/unspent_tx_out_create-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 2. Create transaction input
+### :white_check_mark: 2. Create transaction input
 Write a function that allocates and initializes a transaction input structure
 
 * Prototype: `tx_in_t *tx_in_create(unspent_tx_out_t const *unspent);`, where
@@ -89,7 +89,7 @@ Write a function that allocates and initializes a transaction input structure
 File(s): [`transaction/tx_in_create.c`](./transaction/tx_in_create.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/tx_in_create-test transaction/tx_out_create.c transaction/unspent_tx_out_create.c transaction/tx_in_create.c provided/_print_hex_buffer.c transaction/test/tx_in_create-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 3. Transaction ID
+### :white_check_mark: 3. Transaction ID
 Write a function that computes the ID (hash) of a transaction
 
 * Prototype: `uint8_t *transaction_hash(transaction_t const *transaction, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);`, where:
@@ -105,7 +105,7 @@ Write a function that computes the ID (hash) of a transaction
 File(s): [`transaction/transaction_hash.c`](./transaction/transaction_hash.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/transaction_hash-test transaction/tx_out_create.c transaction/unspent_tx_out_create.c transaction/tx_in_create.c transaction/transaction_hash.c provided/_print_hex_buffer.c transaction/test/transaction_hash-main.c provided/_transaction_print.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 4. Sign transaction input
+### :white_check_mark: 4. Sign transaction input
 Write a function that signs a transaction input, given the transaction id it is from
 
 * Prototype: `sig_t *tx_in_sign(tx_in_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender, llist_t *all_unspent);`, where:
@@ -120,7 +120,7 @@ Write a function that signs a transaction input, given the transaction id it is 
 File(s): [`transaction/tx_in_sign.c`](./transaction/tx_in_sign.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/tx_in_sign-test transaction/tx_out_create.c transaction/unspent_tx_out_create.c transaction/tx_in_create.c transaction/transaction_hash.c transaction/tx_in_sign.c provided/_print_hex_buffer.c transaction/test/tx_in_sign-main.c provided/_transaction_print.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 5. Create transaction
+### :white_check_mark: 5. Create transaction
 Write a function that creates a transaction
 
 * Prototype: `transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount, llist_t *all_unspent);`, where:
@@ -141,7 +141,7 @@ Write a function that creates a transaction
 File(s): [`transaction/transaction_create.c`](./transaction/transaction_create.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/transaction_create-test transaction/tx_out_create.c transaction/unspent_tx_out_create.c transaction/tx_in_create.c transaction/transaction_hash.c transaction/tx_in_sign.c transaction/transaction_create.c provided/_print_hex_buffer.c provided/_transaction_print.c transaction/test/transaction_create-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 6. Transaction validation
+### :white_check_mark: 6. Transaction validation
 Write a function that checks whether a transaction is valid
 
 * Prototype: `int transaction_is_valid(transaction_t const *transaction, llist_t *all_unspent);`, where:
@@ -157,7 +157,7 @@ Write a function that checks whether a transaction is valid
 File(s): [`transaction/transaction_is_valid.c`](./transaction/transaction_is_valid.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/transaction_is_valid-test transaction/tx_out_create.c transaction/unspent_tx_out_create.c transaction/tx_in_create.c transaction/transaction_hash.c transaction/tx_in_sign.c transaction/transaction_is_valid.c provided/_print_hex_buffer.c transaction/test/transaction_is_valid-main.c provided/_transaction_print.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 7. Coinbase transaction
+### :white_check_mark: 7. Coinbase transaction
 Write a function that creates a coinbase transaction
 
 * Prototype: `transaction_t *coinbase_create(EC_KEY const *receiver, uint32_t block_index);`, where:
@@ -171,7 +171,7 @@ Write a function that creates a coinbase transaction
 File(s): [`transaction/coinbase_create.c`](./transaction/coinbase_create.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/coinbase_create-test transaction/tx_out_create.c transaction/transaction_hash.c transaction/coinbase_create.c provided/_print_hex_buffer.c transaction/test/coinbase_create-main.c provided/_transaction_print.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 8. Coinbase transaction validation
+### :white_check_mark: 8. Coinbase transaction validation
 Write a function that checks whether a coinbase transaction is valid
 
 * Prototype: `int coinbase_is_valid(transaction_t const *coinbase, uint32_t block_index);`, where:
@@ -189,7 +189,7 @@ Write a function that checks whether a coinbase transaction is valid
 File(s): [`transaction/coinbase_is_valid.c`](./transaction/coinbase_is_valid.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/coinbase_is_valid-test transaction/tx_out_create.c transaction/transaction_hash.c transaction/coinbase_create.c transaction/coinbase_is_valid.c provided/_print_hex_buffer.c transaction/test/coinbase_is_valid-main.c provided/_transaction_print.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 9. Delete transaction
+### :white_check_mark: 9. Delete transaction
 Write a function that deallocates a transaction structure
 
 * Prototype: `void transaction_destroy(transaction_t *transaction);`, where:
@@ -199,7 +199,7 @@ Write a function that deallocates a transaction structure
 File(s): [`transaction/transaction_destroy.c`](./transaction/transaction_destroy.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/transaction_destroy-test transaction/tx_out_create.c transaction/tx_in_create.c transaction/transaction_hash.c transaction/tx_in_sign.c transaction/transaction_create.c transaction/coinbase_create.c transaction/transaction_destroy.c transaction/test/transaction_destroy-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 10. Update blockchain and block creation/deletion
+### :white_check_mark: 10. Update blockchain and block creation/deletion
 
 * Update the function `block_t *block_create(block_t const *prev, int8_t const *data, uint32_t data_len);`.
     * Your function must now initialize the block’s transaction list to an empty linked list.
@@ -208,12 +208,12 @@ Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided
 
 File(s): [`block_create.c`](./block_create.c) [`block_destroy.c`](./block_destroy.c)
 
-### :white_large_square: 11. Create/delete list of unspent
+### :white_check_mark: 11. Create/delete list of unspent
 Update the functions `blockchain_create` and `blockchain_destroy` to respectively create and delete the linked list `unspent` of unspent transaction outputs.
 
 File(s): [`blockchain_create.c`](./blockchain_create.c) [`blockchain_destroy.c`](./blockchain_destroy.c)
 
-### :white_large_square: 12. Update: Hash block
+### :white_check_mark: 12. Update: Hash block
 Update the function `block_hash` to include the list of transactions in a block’s hash.
 
 * Prototype: `uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);`, where
@@ -226,7 +226,7 @@ Update the function `block_hash` to include the list of transactions in a block�
 File(s): [`block_hash.c`](./block_hash.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o block_hash-test blockchain_create.c block_create.c block_destroy.c blockchain_destroy.c block_hash.c transaction/tx_out_create.c transaction/tx_in_create.c transaction/transaction_hash.c transaction/coinbase_create.c transaction/transaction_destroy.c provided/_genesis.c provided/_print_hex_buffer.c provided/_blockchain_print.c provided/_transaction_print.c provided/_transaction_print_brief.c test/block_hash-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 13. Update: block validation
+### :white_check_mark: 13. Update: block validation
 Update the function `block_is_valid` to check that each block’s list of transaction is valid
 
 * Prototype: `int block_is_valid(block_t const *block, block_t const *prev_block, llist_t *all_unspent);`, where:
@@ -239,7 +239,7 @@ Update the function `block_is_valid` to check that each block’s list of transa
 File(s): [`block_is_valid.c`](./block_is_valid.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o block_is_valid-test blockchain_create.c block_create.c block_destroy.c blockchain_destroy.c block_hash.c block_is_valid.c hash_matches_difficulty.c blockchain_difficulty.c block_mine.c transaction/tx_out_create.c transaction/unspent_tx_out_create.c transaction/tx_in_create.c transaction/transaction_hash.c transaction/tx_in_sign.c transaction/transaction_create.c transaction/transaction_is_valid.c transaction/coinbase_create.c transaction/coinbase_is_valid.c transaction/transaction_destroy.c provided/_genesis.c provided/_print_hex_buffer.c test/block_is_valid-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 14. Update all unspent
+### :white_check_mark: 14. Update all unspent
 Write a function that updates the list of all unspent transaction outputs, given a list of processed transactions
 
 * Prototype: `llist_t *update_unspent(llist_t *transactions, uint8_t block_hash[SHA256_DIGEST_LENGTH], llist_t *all_unspent);`, where:
@@ -254,7 +254,7 @@ Write a function that updates the list of all unspent transaction outputs, given
 File(s): [`transaction/update_unspent.c`](./transaction/update_unspent.c)\
 Compiled: `gcc -Wall -Wextra -Werror -pedantic -g3 -I. -Itransaction/ -Iprovided/ -I../../crypto -o transaction/update_unspent-test blockchain_create.c block_create.c block_destroy.c blockchain_destroy.c block_hash.c block_is_valid.c hash_matches_difficulty.c blockchain_difficulty.c block_mine.c transaction/tx_out_create.c transaction/unspent_tx_out_create.c transaction/tx_in_create.c transaction/transaction_hash.c transaction/tx_in_sign.c transaction/transaction_create.c transaction/transaction_is_valid.c transaction/coinbase_create.c transaction/coinbase_is_valid.c transaction/transaction_destroy.c transaction/update_unspent.c provided/_genesis.c provided/_print_hex_buffer.c provided/_blockchain_print.c provided/_transaction_print.c provided/_transaction_print_brief.c transaction/test/update_unspent-main.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread`
 
-### :white_large_square: 15. Update: blockchain serialization & deserialization
+### :white_check_mark: 15. Update: blockchain serialization & deserialization
 Update the functions `blockchain_serialize` and `blockchain_deserialize`, to serialize each block’s transactions list.
 
 **blockchain_serialize**
@@ -352,7 +352,7 @@ Offset | Size (bytes) | Field | Purpose
 
 File(s): [`blockchain_serialize.c`](./blockchain_serialize.c) [`blockchain_deserialize.c`](./blockchain_deserialize.c)
 
-### :white_large_square: 16. Blockchain library
+### :white_check_mark: 16. Blockchain library
 Write a Makefile that compiles all the previous functions and archives them into a static library for future use.
 
 The library must be called `libhblk_blockchain.a`, and your Makefile must define a rule for this file.
