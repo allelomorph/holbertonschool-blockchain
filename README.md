@@ -17,6 +17,9 @@ Introduction to block mining, block difficulty, and proof of work.
 ### [(458) 0x03. Blockchain - Transactions](./blockchain/v0.3/)
 Introduction to UXTO and coinbase transactions.
 
+### [(459) 0x04. Blockchain - CLI](./cli/)
+Creating a REPL command line interface for the features built in 0x00 - 0x03, which can make transactions, mine blocks, and save/load the blockchain.
+
 ---
 
 ## Student
