@@ -1,17 +1,19 @@
 #include "hblk_cli.h"
-/* perror fprintf */
+/* printf fprintf */
 #include <stdio.h>
 /* free */
 #include <stdlib.h>
-/* strncmp strlen */
-#include <string.h>
 /* _exit */
 #include <unistd.h>
+/* strtok */
+#include <string.h>
 
 
 /**
- * cmd_exit - primary REPL loop in hblk_cli
+ * cmd_exit - executes command `exit` from cli REPL
  *
+ * @st_list: head of syntax list lexed from current command input line
+ * @line: current command line
  * @cli_state: pointer to struct containing information about the cli and
  *   blockchain in use
  */
