@@ -165,8 +165,8 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 		/* cli_state->exit_code = cmd_save(arg_1, cli_state); */
 		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
 	else if (strncmp("help", arg_0, strlen("help") + 1) == 0)
-	        /* cli_state->exit_code = cmd_help(arg_1, cli_state); */
-	        printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
+		cli_state->exit_code = cmd_help(st_head->next, cli_state);
+	/* printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);*/
 	else if (strncmp("exit", arg_0, strlen("exit") + 1) == 0)
 	        cmd_exit(st_head, line, cli_state);
 		/*printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2); */

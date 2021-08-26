@@ -11,6 +11,11 @@
 #define WALLET_FILENAME_DEFAULT "hblk_cli_wallet"
 #define WALLET_PATH_DEFAULT WALLET_DIR_DEFAULT WALLET_FILENAME_DEFAULT
 
+#define CMD_CT 8
+#define CMD_NAME_ARRAY {"wallet_load", "wallet_save", "send", "mine", "info", \
+			"load", "save", /* wallet_info? */"exit"}
+#define TAB4 "    "
+
 
 /**
  * struct st_list_s - singly linked list node to contain a CLI syntax token
@@ -83,7 +88,9 @@ void freeSTList(st_list_t *st_list);
 /* cmd_exit.c */
 void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state);
 
-/*  */
+/* cmd_help.c */
+int cmd_help(st_list_t *st_list, cli_state_t *cli_state);
+
 /*  */
 /*  */
 /*  */
