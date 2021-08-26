@@ -80,7 +80,9 @@ st_list_t *lineToSTList(char *line, cli_state_t *cli_state);
 /* cleanup.c */
 void freeSTList(st_list_t *st_list);
 
-/*  */
+/* cmd_exit.c */
+void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state);
+
 /*  */
 /*  */
 /*  */

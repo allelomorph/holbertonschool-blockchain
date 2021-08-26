@@ -70,7 +70,7 @@ void CLILoop(cli_state_t *cli_state)
  */
 char *_readline(char *secondary_prompt, cli_state_t *cli_state)
 {
-	char *line = NULL;
+	char *line_buf = NULL;
 	ssize_t read_bytes = 0;
 	size_t buf_bytes = 0; /* must be intialized or segfault on getline */
 	int tty;
@@ -91,10 +91,10 @@ char *_readline(char *secondary_prompt, cli_state_t *cli_state)
 		return (NULL);
 	}
 
-	if ((read_bytes = getline(&line, &buf_bytes, stdin)) == -1)
+	if ((read_bytes = getline(&line_buf, &buf_bytes, stdin)) == -1)
 	{ /* getline failure or EOF reached / ctrl+d entered by user */
-		if (line)
-			free(line);
+		if (line_buf)
+			free(line_buf);
 		if (errno == EINVAL)
 		{
 			perror("_readline: getline error");
@@ -107,8 +107,8 @@ char *_readline(char *secondary_prompt, cli_state_t *cli_state)
 	}
 
 	/* replace newline char at end */
-	line[read_bytes - 1] = '\0';
-	return (line);
+	line_buf[read_bytes - 1] = '\0';
+	return (line_buf);
 }
 
 
@@ -165,11 +165,11 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 		/* cli_state->exit_code = cmd_save(arg_1, cli_state); */
 		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
 	else if (strncmp("help", arg_0, strlen("help") + 1) == 0)
-		/* cli_state->exit_code = cmd_help(arg_1, cli_state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
+	        /* cli_state->exit_code = cmd_help(arg_1, cli_state); */
+	        printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
 	else if (strncmp("exit", arg_0, strlen("exit") + 1) == 0)
-		/* cli_state->exit_code = cmd_exit(st_head, line, cli_state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
+	        cmd_exit(st_head, line, cli_state);
+		/*printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2); */
 	else
 	{
 		fprintf(stderr, "%s: %i: '%s': unknwown command\n", cli_state->exec_name, cli_state->loop_ct, arg_0);
