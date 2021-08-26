@@ -61,23 +61,25 @@ typedef struct cli_state_s
 
 /* hblk_cli.c */
 cli_state_t *initCLIState(char *exec_name);
-void readArgScript(char *file_path, cli_state_t *cli_state);
 void freeCLIState(cli_state_t *cli_state);
 /* int main(int argc, char **argv); */
 
 /* cli_loop.c */
-void setScriptFd(cli_state_t *cli_state);
-void unsetScriptFd(cli_state_t *cli_state);
-void freeSTList(st_list_t *st_list);
 void CLILoop(cli_state_t *cli_state);
-st_list_t *lineToSTList(char *line, cli_state_t *cli_state);
 char *_readline(char *secondary_prompt, cli_state_t *cli_state);
 void checkBuiltins(st_list_t *st_list, char *line, cli_state_t *cli_state);
 
+/* scripts.c */
+void getArgScriptFd(char *file_path, cli_state_t *cli_state);
+void setScriptFd(cli_state_t *cli_state);
+void unsetScriptFd(cli_state_t *cli_state);
 
-/*  */
-/*  */
-/*  */
+/* lexing.c */
+st_list_t *lineToSTList(char *line, cli_state_t *cli_state);
+
+/* cleanup.c */
+void freeSTList(st_list_t *st_list);
+
 /*  */
 /*  */
 /*  */

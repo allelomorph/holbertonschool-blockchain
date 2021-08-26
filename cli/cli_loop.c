@@ -5,83 +5,8 @@
 #include <stdio.h>
 /* free */
 #include <stdlib.h>
-
-/* strtok */
+/* strncmp strlen */
 #include <string.h>
-
-
-/**
- * setScriptFd - backs up inherited stdin fd and maps fd of arg script to stdin
- *
- * @cli_state: pointer to struct containing information about the cli and
- *   blockchain in use
- */
-void setScriptFd(cli_state_t *cli_state)
-{
-	if (!cli_state)
-	{
-		fprintf(stderr, "setScriptFd: NULL paramter\n");
-		return;
-	}
-
-	if (cli_state->arg_script_fd != -1) /* arg script is open */
-	{
-		/* backup of inherited std fd */
-		if ((cli_state->stdin_bup = dup(STDIN_FILENO)) == -1)
-			perror("setScriptFds: dup error");
-		/* close existing stdin (init script or tty) */
-		if (close(STDIN_FILENO) == -1)
-			perror("setScriptFds: close error");
-		/* map file fd onto std fd */
-		if (dup2(cli_state->arg_script_fd, STDIN_FILENO) == -1)
-			perror("setScriptFds: dup2 error");
-		/* cleanup by closing original once copied */
-		if (close(cli_state->arg_script_fd) == -1)
-			perror("setScriptFds: close error");
-	}
-}
-
-
-/**
- * unsetScriptFd - restores stdin from backup copy after it was remapped by
- *   setScriptFd
- *
- * @cli_state: pointer to struct containing information about the cli and
- *   blockchain in use
- */
-void unsetScriptFd(cli_state_t *cli_state)
-{
-	if (!cli_state)
-	{
-		fprintf(stderr, "unsetScriptFd: NULL paramter\n");
-		return;
-	}
-
-	if (cli_state->arg_script_fd != -1) /* arg script is still open on stdin */
-	{
-		/* REPL is closing on this loop; restoring fd for safety */
-		if (dup2(cli_state->stdin_bup, STDIN_FILENO) == -1)
-			perror("unsetScriptFd: dup2 error");
-		if (close(cli_state->stdin_bup) == -1)
-			perror("unsetScriptFd: close error");
-
-		cli_state->arg_script_fd = -1; /* reset to init value */
-		cli_state->stdin_bup = -1; /* reset to init value */
-	}
-}
-
-void freeSTList(st_list_t *st_list)
-{
-	st_list_t *curr, *next;
-
-	curr = st_list;
-	while (curr)
-	{
-		next = curr->next;
-		free(curr);
-		curr = next;
-	}
-}
 
 
 /**
@@ -128,59 +53,6 @@ void CLILoop(cli_state_t *cli_state)
 
 	} while (line); /* freed pointers will not automatically == NULL */
 }
-
-
-/**
- * lineToSTList - simple lexing of a CLI line into a singly linked list of
- *   tokens
- *
- * @line: line of CLI input
- * @cli_state: pointer to struct containing information about the cli and
- *   blockchain in use
- *
- * Return: head of syntax token list, or NULL on failure
- */
-st_list_t *lineToSTList(char *line, cli_state_t *cli_state)
-{
-	st_list_t *head, *temp;
-	char *next_token;
-
-	if (!line || !cli_state)
-	{
-		fprintf(stderr, "lineToSTList: NULL paramter(s)\n");
-		return (NULL);
-	}
-
-	head = malloc(sizeof(st_list_t));
-	if (!head)
-	{
-		fprintf(stderr, "lineToSTList: malloc failure\n");
-		return (NULL);
-	}
-	head->token = strtok(line, WHITESPACE);
-
-        for (temp = head; temp; temp = temp->next)
-	{
-		next_token = strtok(NULL, WHITESPACE);
-		if (next_token)
-		{
-			temp->next = malloc(sizeof(st_list_t));
-			if (!temp->next)
-			{
-				fprintf(stderr,
-					"lineToSTList: malloc failure\n");
-				freeSTList(head);
-				return (NULL);
-			}
-			temp->next->token = next_token;
-		}
-		else
-			temp->next = NULL;
-	}
-
-	return (head);
-}
-
 
 
 /**

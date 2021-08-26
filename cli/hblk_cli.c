@@ -9,11 +9,6 @@
 /* fprintf perror */
 #include <stdio.h>
 
-/* open */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
 
 /**
  * initCLIState - initializes the cli state struct with its default
@@ -72,44 +67,6 @@ cli_state_t *initCLIState(char *exec_name)
 	}
 
 	return (cli_state);
-}
-
-
-/**
- * getArgScriptFd - When a script is passed to cli as a command line arg,
- *   attempts to open the file and store its fd in the cli state
- *
- * @file_path: path of script passed to main as part of argv
- * @cli_state: pointer to struct containing information about the cli and
- *   blockchain in use
- */
-void getArgScriptFd(char *file_path, cli_state_t *cli_state)
-{
-	if (!file_path || !cli_state)
-	{
-		fprintf(stderr, "getArgScriptFd: NULL parameter(s)\n");
-		cli_state->exit_code = -1;
-		return;
-	}
-
-	cli_state->arg_script_fd = open(file_path, O_RDONLY);
-	if (cli_state->arg_script_fd == -1)
-	{
-		fprintf(stderr, "%s: %u: Can't open %s\n", cli_state->exec_name,
-			cli_state->loop_ct, file_path);
-
-		cli_state->exit_code = -2;
-	}
-	else
-	{
-		cli_state->arg_script_path = strdup(file_path);
-		if (!cli_state->arg_script_path)
-		{
-			perror("getArgScriptFd: strdup error");
-			cli_state->exit_code = -1;
-			return;
-		}
-	}
 }
 
 
