@@ -74,9 +74,9 @@ typedef struct cli_state_s
 
 
 /* hblk_cli.c */
+cli_state_t *initCLIState(void);
 void parseArgs(int argc, char *argv[], cli_state_t *cli_state);
 void initWlltBlkchnMpl(cli_state_t *cli_state);
-cli_state_t *initCLIState(void);
 void freeCLIState(cli_state_t *cli_state);
 /* int main(int argc, char **argv); */
 

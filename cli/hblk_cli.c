@@ -13,6 +13,31 @@
 
 
 /**
+ * initCLIState - initializes the cli state struct with its default
+ *   values and data
+ *
+ * Return: pointer to new cli state struct, or NULL on failure
+ */
+cli_state_t *initCLIState(void)
+{
+	cli_state_t *cli_state;
+
+	cli_state = calloc(1, sizeof(cli_state_t));
+	if (!cli_state)
+	{
+		fprintf(stderr, "initCLIState: calloc failure\n");
+		return (NULL);
+	}
+
+	/* other state values init to 0 or NULL */
+	cli_state->arg_script_fd = -1;
+	cli_state->stdin_bup = -1;
+
+	return (cli_state);
+}
+
+
+/**
  * parseArgs - parses argument vector to main to set values in CLI state
  *
  * @argc: `main` argument count
@@ -151,31 +176,6 @@ void initWlltBlkchnMpl(cli_state_t *cli_state)
 		return;
 	}
 	printf(TAB4 "Created new empty mempool for session\n");
-}
-
-
-/**
- * initCLIState - initializes the cli state struct with its default
- *   values and data
- *
- * Return: pointer to new cli state struct, or NULL on failure
- */
-cli_state_t *initCLIState(void)
-{
-	cli_state_t *cli_state;
-
-	cli_state = calloc(1, sizeof(cli_state_t));
-	if (!cli_state)
-	{
-		fprintf(stderr, "initCLIState: calloc failure\n");
-		return (NULL);
-	}
-
-	/* other state values init to 0 or NULL */
-	cli_state->arg_script_fd = -1;
-	cli_state->stdin_bup = -1;
-
-	return (cli_state);
 }
 
 
