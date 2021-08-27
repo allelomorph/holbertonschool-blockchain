@@ -123,7 +123,7 @@ char *_readline(char *secondary_prompt, cli_state_t *cli_state)
  */
 void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 {
-	char *arg_0 = NULL, *arg_1 = NULL, *arg_2 = NULL;
+	char *cmd = NULL, *arg_1 = NULL, *arg_2 = NULL;
 
 	if (!st_head || !line || !cli_state)
 	{
@@ -132,7 +132,7 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 		return;
 	}
 
-	arg_0 = st_head->token;
+	cmd = st_head->token;
 	if (st_head->next)
 	{
 		arg_1 = st_head->next->token;
@@ -143,36 +143,42 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 	/* wallet_load wallet_save send mine info load save wallet_info? help? exit? */
 	/* cmd_wallet_load cmd_wallet_save cmd_send cmd_mine cmd_info cmd_load cmd_save */
 
-	if (strncmp("wallet_load", arg_0, strlen("wallet_load") + 1) == 0)
+	if (strncmp("wallet_load", cmd, strlen("wallet_load") + 1) == 0)
 		/* cli_state->exit_code = cmd_wallet_load(arg_1, state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
-	else if (strncmp("wallet_save", arg_0, strlen("wallet_save") + 1) == 0)
+		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);
+	else if (strncmp("wallet_save", cmd, strlen("wallet_save") + 1) == 0)
 		/* cli_state->exit_code = cmd_wallet_save(arg_1, state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
-	else if (strncmp("send", arg_0, strlen("send") + 1) == 0)
+		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);
+	else if (strncmp("send", cmd, strlen("send") + 1) == 0)
 		/* cli_state->exit_code = cmd_send(arg_1, arg_2, cli_state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
-	else if (strncmp("mine", arg_0, strlen("mine") + 1) == 0)
+		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);
+	else if (strncmp("mine", cmd, strlen("mine") + 1) == 0)
 		/* cli_state->exit_code = cmd_mine(cli_state);*/
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
-	else if (strncmp("info", arg_0, strlen("info") + 1) == 0)
+		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);
+	else if (strncmp("info", cmd, strlen("info") + 1) == 0)
 		/* cli_state->exit_code = cmd_info(cli_state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
-	else if (strncmp("load", arg_0, strlen("load") + 1) == 0)
+		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);
+	else if (strncmp("load", cmd, strlen("load") + 1) == 0)
 		/* cli_state->exit_code = cmd_load(arg_1, cli_state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
-	else if (strncmp("save", arg_0, strlen("save") + 1) == 0)
+		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);
+	else if (strncmp("save", cmd, strlen("save") + 1) == 0)
 		/* cli_state->exit_code = cmd_save(arg_1, cli_state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);
-	else if (strncmp("help", arg_0, strlen("help") + 1) == 0)
+		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);
+	else if (strncmp("help", cmd, strlen("help") + 1) == 0)
 		cli_state->exit_code = cmd_help(st_head->next, cli_state);
-	/* printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2);*/
-	else if (strncmp("exit", arg_0, strlen("exit") + 1) == 0)
+	/* printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);*/
+	else if (strncmp("exit", cmd, strlen("exit") + 1) == 0)
 	        cmd_exit(st_head, line, cli_state);
-		/*printf("Will call builtin %s with param(s): '%s' '%s'\n", arg_0, arg_1, arg_2); */
+		/*printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2); */
 	else
 	{
-		fprintf(stderr, "%s: %i: '%s': unknwown command\n", cli_state->exec_name, cli_state->loop_ct, arg_0);
+/*
+		printf(TAB4 "'%s' is not a valid command, %s\n",
+		       cmd, "try one of the following:");
+		printf(GENERAL_HELP);
+*/
+		fprintf(stderr, TAB4 "'%s' is not a valid command, %s\n",
+			cmd, "enter `help` for list of commands");
 		cli_state->exit_code = -1;
 	}
 }
