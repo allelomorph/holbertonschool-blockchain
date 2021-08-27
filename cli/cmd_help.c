@@ -12,18 +12,18 @@
 #define WALLET_LOAD_HELP_SUMMARY TAB4 "wallet_load [<path>] - loads a new " \
 	"wallet into the CLI session\n"
 #define WALLET_LOAD_HELP WALLET_LOAD_HELP_SUMMARY \
-	"\n" TAB4 TAB4 "Attempts to load a wallet from the default path if " \
-	"<path> is not given.\nIf no wallet file is found, a new wallet (EC" \
-	" key pair) is created for the\nsession. This command is run once" \
-	" automatically at startup. Further calls\nreplace the session wallet" \
-	" with the loaded one upon success.\n\n"
+	"\n" TAB4 TAB4 "Attempts to load a wallet from the folder at <path>," \
+	" or a default path\nif none is given. If no wallet files are found," \
+	" a new wallet (EC key pair) is\ncreated for the session. This " \
+	"command is run once automatically at startup.\nFurther calls " \
+	"replace the session wallet with the loaded one upon success.\n\n"
 
 #define WALLET_SAVE_HELP_SUMMARY TAB4 "wallet_save [<path>] - saves wallet " \
 	"from CLI session to file\n"
 #define WALLET_SAVE_HELP WALLET_SAVE_HELP_SUMMARY \
 	"\n" TAB4 TAB4 "Saves current session wallet (EC key pair) to the " \
-	"default path if\n<path> is not given. On exit from the CLI the user" \
-	" is given the option to save\nthe wallet.\n\n"
+	"folder at <path>, or\na default if none is given. On exit from " \
+	"the CLI the user is given the option\nto save the wallet.\n\n"
 
 #define SEND_HELP_SUMMARY TAB4 "send <amount> <address> - sends <amount> " \
 	"coin to <address>\n"
