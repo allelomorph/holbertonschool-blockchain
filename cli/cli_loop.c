@@ -144,8 +144,8 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 	/* cmd_wallet_load cmd_wallet_save cmd_send cmd_mine cmd_info cmd_load cmd_save */
 
 	if (strncmp("wallet_load", cmd, strlen("wallet_load") + 1) == 0)
-		/* cli_state->exit_code = cmd_wallet_load(arg_1, state); */
-		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);
+	        cli_state->exit_code = cmd_wallet_load(arg_1, cli_state);
+	/*printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);*/
 	else if (strncmp("wallet_save", cmd, strlen("wallet_save") + 1) == 0)
 		/* cli_state->exit_code = cmd_wallet_save(arg_1, state); */
 		printf("Will call builtin %s with param(s): '%s' '%s'\n", cmd, arg_1, arg_2);

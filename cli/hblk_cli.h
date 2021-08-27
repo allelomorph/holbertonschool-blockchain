@@ -1,5 +1,5 @@
-#ifndef HOLBERTON_H
-#define HOLBERTON_H
+#ifndef HBLK_CLI_H
+#define HBLK_CLI_H
 
 #include "blockchain.h"
 
@@ -8,14 +8,20 @@
 
 #define WHITESPACE " \t\v" /* full set " \t\n\v\f\r" */
 #define CLI_PRIMARY_PROMPT "hblk_cli $"
-#define WALLET_DIR_DEFAULT "hblk_cli_wallets/"
-#define WALLET_FILENAME_DEFAULT "hblk_cli_wallet"
-#define WALLET_PATH_DEFAULT WALLET_DIR_DEFAULT WALLET_FILENAME_DEFAULT
 
 #define CMD_CT 8
 #define CMD_NAME_ARRAY {"wallet_load", "wallet_save", "send", "mine", "info", \
 			"load", "save", /* wallet_info? */"exit"}
 #define TAB4 "    "
+
+#define SAVE_DIR_DFLT "hblk_save/"
+#define WALLET_DIR_DFLT SAVE_DIR_DFLT "wallet/"
+#define WALLET_PUB_PATH_DFLT WALLET_DIR_DFLT PUB_FILENAME
+#define WALLET_PRI_PATH_DFLT WALLET_DIR_DFLT PRI_FILENAME
+#define MEMPOOL_DIR_DFLT SAVE_DIR_DFLT "mempool/"
+#define MEMPOOL_PATH_DFLT MEMPOOL_DIR_DFLT "save.hmpl"
+#define BLKCHN_DIR_DFLT SAVE_DIR_DFLT "blockchain/"
+#define BLKCHN_PATH_DFLT BLKCHN_DIR_DFLT SAVE_DIR_DFLT "save.hblk"
 
 
 /**
@@ -42,7 +48,7 @@ typedef struct st_list_s
  * @stdin_bup: -1 by default, stores backup of stdin fd when executing script
  * @loop_ct: amount of lines entered and fully parsed
  * @exit_code: exit code/return value of last builtin/fail condition
- * @user_wallet: EC keypair for user, created for session or loaded from file
+ * @wallet: EC keypair for user, created for session or loaded from file
  * @blockchain: blockchain created in session or loaded from file
  * @mempool: list of transactions that have been verified but not
  *   confirmed(mined)
@@ -59,7 +65,7 @@ typedef struct cli_state_s
 	int stdin_bup;
 	unsigned int loop_ct;
 	int exit_code;
-	EC_KEY *user_wallet;
+	EC_KEY *wallet;
 	blockchain_t *blockchain;
 	llist_t *mempool;
 } cli_state_t;
@@ -93,13 +99,10 @@ void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state);
 /* cmd_help.c */
 int cmd_help(st_list_t *st_list, cli_state_t *cli_state);
 
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
-/*  */
+/* cmd_wallet_load.c */
+int cmd_wallet_load(char *path, cli_state_t *cli_state);
 
-#endif /* HOLBERTON_H */
+/* _print_hex_buffer.c */
+void _print_hex_buffer(uint8_t const *buf, size_t len);
+
+#endif /* HBLK_CLI_H */

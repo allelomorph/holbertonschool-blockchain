@@ -47,7 +47,7 @@ cli_state_t *initCLIState(char *exec_name)
 	cli_state->stdin_bup = -1;
 	cli_state->loop_ct = 0;
 	cli_state->exit_code = 0;
-	cli_state->user_wallet = NULL; /* dummy init */
+	cli_state->wallet = NULL; /* dummy init */
 /*
 	if (!cmd_wallet_load(cli_state))
 	{
@@ -87,7 +87,7 @@ void freeCLIState(cli_state_t *cli_state)
 	if (cli_state->arg_script_path)
 		free(cli_state->arg_script_path);
 
-	EC_KEY_free(cli_state->user_wallet);
+	EC_KEY_free(cli_state->wallet);
 
 	blockchain_destroy(cli_state->blockchain);
 
