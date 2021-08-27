@@ -5,6 +5,7 @@
 /* strncmp strlen */
 #include <string.h>
 
+
 #define RULER "1        ^-10      ^-20      ^-30      ^-40      ^-50      " \
 	"^-60      ^-70      ^-80\n"
 
@@ -27,9 +28,9 @@
 #define SEND_HELP_SUMMARY TAB4 "send <amount> <address> - sends <amount> " \
 	"coin to <address>\n"
 #define SEND_HELP SEND_HELP_SUMMARY \
-	"\n" TAB4 TAB4 "<amount> is the number of coins to send (whole " \
+	"\n" TAB4 TAB4 "* <amount> is the number of coins to send (whole " \
 	"integers only)\n" \
-	TAB4 TAB4 "<address> is the EC public key of the recipient\n"	\
+	TAB4 TAB4 "* <address> is the EC public key of the recipient\n"	\
 	"\n" TAB4 TAB4 "Creates a new transaction, verifies it (ensures that" \
 	" there are sufficient\nunspent transactions outputs in the current" \
 	" session wallet to fund the\nexpenditure, and adds it to the " \
@@ -42,14 +43,14 @@
 	"\n" TAB4 TAB4 "Creates a new block, reverifies all mempool "	\
 	"transactions and adds valid\nones to the block, adds a coinbase " \
 	"transaction, sets the block difficulty,\nhashes the block, and adds " \
-	"it to the blockchain.\n"
+	"it to the blockchain.\n\n"
 
 #define INFO_HELP_SUMMARY TAB4 "info - displays information about the " \
 	"current CLI session blockchain.\n"
 #define INFO_HELP INFO_HELP_SUMMARY \
-	"\n" TAB4 TAB4 " - number of blocks in the blockchain\n"	\
-	TAB4 TAB4 " - number of unspent transaction outputs\n"		\
-	TAB4 TAB4 " - number of pending transactions in the local "	\
+	"\n" TAB4 TAB4 "* number of blocks in the blockchain\n"	\
+	TAB4 TAB4 "* number of unspent transaction outputs\n"		\
+	TAB4 TAB4 "* number of pending transactions in the local "	\
 	"transaction pool\n\n"
 
 #define LOAD_HELP_SUMMARY TAB4 "load [<path>] - loads a new blockchain into " \
@@ -144,9 +145,9 @@ int cmd_help(st_list_t *st_list, cli_state_t *cli_state)
 			printf(/*"%s%s", RULER, */EXIT_HELP);
 		else
 		{
-			fprintf(stderr,
-				TAB4 "help: '%s' is not a valid command\n",
-				temp->token);
+			printf(TAB4 "help: '%s' is not a valid command, %s\n",
+			       temp->token, "try one of the following:\n");
+			printf(GENERAL_HELP);
 			retval = 1;
 		}
 	}
