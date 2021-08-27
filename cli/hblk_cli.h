@@ -5,6 +5,7 @@
 
 #include <errno.h>
 
+
 #define WHITESPACE " \t\v" /* full set " \t\n\v\f\r" */
 #define CLI_PRIMARY_PROMPT "hblk_cli $"
 #define WALLET_DIR_DEFAULT "hblk_cli_wallets/"
@@ -86,6 +87,7 @@ st_list_t *lineToSTList(char *line, cli_state_t *cli_state);
 void freeSTList(st_list_t *st_list);
 
 /* cmd_exit.c */
+void offerBackupOnExit(cli_state_t *cli_state);
 void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state);
 
 /* cmd_help.c */

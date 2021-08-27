@@ -3,10 +3,73 @@
 #include <stdio.h>
 /* free */
 #include <stdlib.h>
-/* _exit */
+/* _exit isatty */
 #include <unistd.h>
 /* strtok */
 #include <string.h>
+
+
+/**
+ * offerBackupOnExit - offers opportunity to save current session before CLI
+ *   exits
+ *
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ */
+void offerBackupOnExit(cli_state_t *cli_state)
+{
+	char *consent, *file_path;
+
+	if (!cli_state)
+	{
+		fprintf(stderr, "offerBackupOnExit: NULL parameter\n");
+		cli_state->exit_code = -1;
+		return;
+	}
+
+	printf(TAB4 "Save your current wallet before exiting? ");
+	consent = _readline("(y/n):", cli_state);
+	consent = strtok(consent, WHITESPACE);
+	if (consent && (consent[0] == 'y' || consent[0] == 'Y') &&
+	    consent[1] == '\0')
+	{
+		file_path = _readline(TAB4 TAB4 \
+				      "File path to save wallet?",
+				      cli_state);
+		file_path = strtok(file_path, WHITESPACE);
+		printf(TAB4 TAB4 TAB4 "*test* read path: '%s'\n", file_path);
+/*
+		NULL file_path handled inside cmd_wallet_save
+		cmd_wallet_save(file_path, cli_state);
+*/
+		free(file_path);
+	}
+	else
+		printf(TAB4 TAB4 "Not saving current wallet.\n");
+	free(consent);
+
+	printf(TAB4 "Save the current blockchain before exiting? ");
+	consent = _readline("(y/n):", cli_state);
+	consent = strtok(consent, WHITESPACE);
+	if (consent && (consent[0] == 'y' || consent[0] == 'Y') &&
+	    consent[1] == '\0')
+	{
+		file_path = _readline(TAB4 TAB4	\
+				      "File path to save blockchain?",
+				      cli_state);
+		file_path = strtok(file_path, WHITESPACE);
+		printf(TAB4 TAB4 TAB4 "*test* read path: '%s'\n", file_path);
+/*
+		NULL file_path handled inside cmd_save
+		cmd_save(file_path, cli_state);
+*/
+		if (file_path)
+			free(file_path);
+	}
+	else
+		printf(TAB4 TAB4 "Not saving current blockchain.\n");
+	free(consent);
+}
 
 
 /**
@@ -19,7 +82,6 @@
  */
 void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state)
 {
-	char *consent, *file_path;
 	int retval;
 
 	if (!cli_state)
@@ -29,45 +91,7 @@ void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state)
 	}
 
 	if (isatty(STDIN_FILENO))
-	{
-		printf("    Do you wish to save your current wallet before exiting? ");
-		consent = _readline("(y/n):", cli_state);
-		consent = strtok(consent, WHITESPACE);
-		if (consent && (consent[0] == 'y' || consent[0] == 'Y') &&
-		    consent[1] == '\0')
-		{
-			file_path = _readline("        File path at which to save wallet?",
-					      cli_state);
-			file_path = strtok(file_path, WHITESPACE);
-			printf("            *test* read path: '%s'\n", file_path);
-/*
-			cmd_wallet_save(file_path, cli_state);
-*/
-			free(file_path);
-		}
-		else
-			printf("        Not saving current wallet.\n");
-		free(consent);
-
-
-		printf("    Do you wish to save the current blockchain before exiting? ");
-		consent = _readline("(y/n):", cli_state);
-		consent = strtok(consent, WHITESPACE);
-		if (consent && (consent[0] == 'y' || consent[0] == 'Y') && consent[1] == '\0')
-		{
-			file_path = _readline("        File path at which to save blockchain?",
-					      cli_state);
-			file_path = strtok(file_path, WHITESPACE);
-			printf("            *test* read path: '%s'\n", file_path);
-/*
-			cmd_save(file_path, cli_state);
-*/
-			free(file_path);
-		}
-		else
-			printf("        Not saving current blockchain.\n");
-		free(consent);
-	}
+		offerBackupOnExit(cli_state);
 
 	if (st_list)
 		freeSTList(st_list);

@@ -8,6 +8,8 @@
 #include <stdlib.h>
 /* fprintf perror */
 #include <stdio.h>
+/* isatty */
+#include <unistd.h>
 
 
 /**
@@ -120,6 +122,10 @@ int main(int argc, char **argv)
 	/* script read failures set exit code to -2 */
 	if (cli_state->exit_code == 0)
 	        CLILoop(cli_state);
+
+	/* if not internal failure */
+	if (isatty(STDIN_FILENO) && cli_state->exit_code > -1)
+		offerBackupOnExit(cli_state);
 
 	retval = cli_state->exit_code;
 	freeCLIState(cli_state);
