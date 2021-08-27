@@ -38,12 +38,11 @@ void getArgScriptFd(char *file_path, cli_state_t *cli_state)
 	}
 	else
 	{
-		cli_state->arg_script_path = strdup(file_path);
-		if (!cli_state->arg_script_path)
+		cli_state->arg_script = strdup(file_path);
+		if (!cli_state->arg_script)
 		{
 			perror("getArgScriptFd: strdup error");
 			cli_state->exit_code = -1;
-			return;
 		}
 	}
 }

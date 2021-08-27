@@ -2,7 +2,6 @@
 #define HBLK_CLI_H
 
 #include "blockchain.h"
-
 #include <errno.h>
 
 
@@ -60,7 +59,10 @@ typedef struct st_list_s
 typedef struct cli_state_s
 {
 	char *exec_name;
-	char *arg_script_path;
+	char *arg_wallet;
+	char *arg_mempool;
+	char *arg_blockchain;
+	char *arg_script;
 	int arg_script_fd;
 	int stdin_bup;
 	unsigned int loop_ct;
@@ -72,7 +74,9 @@ typedef struct cli_state_s
 
 
 /* hblk_cli.c */
-cli_state_t *initCLIState(char *exec_name);
+void parseArgs(int argc, char *argv[], cli_state_t *cli_state);
+void initWlltBlkchnMpl(cli_state_t *cli_state);
+cli_state_t *initCLIState(void);
 void freeCLIState(cli_state_t *cli_state);
 /* int main(int argc, char **argv); */
 

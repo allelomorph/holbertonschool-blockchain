@@ -26,13 +26,10 @@
  */
 int cmd_wallet_load(char *path, cli_state_t *cli_state)
 {
-/*	struct stat st; */
-	uint8_t pub[EC_PUB_LEN];
-	char _path[PATH_MAX];
+	struct stat st;
+	char file_path[PATH_MAX];
 	EC_KEY *prev_wallet;
-/*
-	char *pub_path = WALLET_PUB_PATH_DFLT, *pri_path = WALLET_PRI_PATH_DFLT;
-*/
+	int end_slash, stat_ret1, stat_ret2;
 
 	if (!cli_state)
 	{
@@ -45,37 +42,36 @@ int cmd_wallet_load(char *path, cli_state_t *cli_state)
 		printf(TAB4 "No wallet directory path provided, using default\n");
 		path = WALLET_DIR_DFLT;
 	}
-/*
-        printf("path:'%s' strlen(path):%lu - 1:%lu path[strlen(path) - 1]:%c (path[strlen(path) - 1] == '/'):%i\n", path, strlen(path), strlen(path) - 1, path[strlen(path) - 1], (path[strlen(path) - 1] == '/'));
-*/
-	if (path[strlen(path) - 1] != '/')
+
+	end_slash = (path[strlen(path) - 1] == '/');
+        sprintf(file_path, "%s%s%s", path, end_slash ? "" : "/", PUB_FILENAME);
+	stat_ret1 = lstat(file_path, &st);
+	if (stat_ret1 == -1)
 	{
-		sprintf(_path, "%s/", path);
-		printf("path:'%s' _path:'%s'\n", path, _path);
-		path = _path;
+		printf(TAB4 TAB4 "'%s': %s\n",
+		       file_path, strerror(errno));
 	}
 
-	prev_wallet = cli_state->wallet;
-	cli_state->wallet = ec_load(path);
-	if (EC_KEY_check_key(cli_state->wallet))
+	sprintf(file_path, "%s%s%s", path, end_slash ? "" : "/", PRI_FILENAME);
+        stat_ret2 = lstat(file_path, &st);
+	if (stat_ret2 == -1)
 	{
-		printf(TAB4 TAB4 "Loaded wallet from '%s'\n", path);
-		EC_KEY_free(prev_wallet);
-		return (0);
+		printf(TAB4 TAB4 "'%s': %s\n",
+		       file_path, strerror(errno));
+	}
+
+	if (stat_ret1 != -1 && stat_ret2 != -1)
+	{
+		prev_wallet = cli_state->wallet;
+		cli_state->wallet = ec_load(path);
+		if (EC_KEY_check_key(cli_state->wallet))
+		{
+			printf(TAB4 "Loaded wallet from '%s'\n", path);
+			EC_KEY_free(prev_wallet);
+			return (0);
+		}
 	}
 
 	printf(TAB4 "Failed to load wallet from '%s'\n", path);
-	cli_state->wallet = ec_create();
-	if (EC_KEY_check_key(cli_state->wallet))
-	{
-		printf(TAB4 "Created new wallet for session, public key: ");
-		_print_hex_buffer(ec_to_pub(cli_state->wallet, pub),
-				  EC_PUB_LEN);
-		putchar('\n');
-		EC_KEY_free(prev_wallet);
-		return (0);
-	}
-
-	printf(TAB4 "Failed to create new wallet\n");
 	return (1);
 }
