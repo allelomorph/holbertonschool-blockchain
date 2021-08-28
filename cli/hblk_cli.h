@@ -97,6 +97,7 @@ st_list_t *lineToSTList(char *line, cli_state_t *cli_state);
 void freeSTList(st_list_t *st_list);
 
 /* cmd_exit.c */
+int getConsent(cli_state_t *cli_state);
 void offerBackupOnExit(cli_state_t *cli_state);
 void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state);
 
