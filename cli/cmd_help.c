@@ -73,7 +73,11 @@
 
 #define EXIT_HELP_SUMMARY TAB4 "exit - exits CLI session\n"
 #define EXIT_HELP EXIT_HELP_SUMMARY \
-	"\n" TAB4 TAB4 "Crtl + d has the same effect as this command, exiting the CLI with the return value of the last executed command, or -1 for internal CLI failure or -2 for script read failure. WHen in interactive mode, exit provides the option to save the current wallet, mempool, and blockchain.\n\n"
+	"\n" TAB4 TAB4 "Crtl + d has the same effect as this command, " \
+	"exiting the CLI with the\nreturn value of the last executed " \
+	"command, or -1 for internal CLI failure or -2\nfor script read " \
+	"failure. WHen in interactive mode, exit provides the option to\nsave" \
+	" the current wallet, mempool, and blockchain.\n\n"
 
 #define GENERAL_HELP_INTRO TAB4 "This command line interface is a means of " \
 	"using the simple blockchain\nfeatures implemented in " \
@@ -117,7 +121,8 @@ int cmd_help(char *command, char *arg2, cli_state_t *cli_state)
 	{
 		if (strncmp(cmds[i], command, strlen(cmds[i]) + 1) == 0)
 		{
-			printf("%s%s", RULER, help[i]);
+			/* printf(RULER); */
+			printf("%s", help[i]);
 			return (0);
 		}
 	}
