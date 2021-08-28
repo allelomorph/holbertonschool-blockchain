@@ -133,8 +133,9 @@ typedef struct block_s
  *   between 0 and 9
  * @hblk_endian: This byte is set to either 1 or 2 to signify little or big
  *   endianness, respectively. This affects interpretation of multi-byte fields
- * @hblk_blocks: Number of blocks in the blockchain
- * @hblk_unspent: Number of unspent transaction outputs in the blockchain
+ * @hblk_blocks: Number of blocks in the blockchain, endianness dependent
+ * @hblk_unspent: Number of unspent transaction outputs in the blockchain,
+ *   endianness dependent
  */
 typedef struct bc_file_hdr_s
 {
