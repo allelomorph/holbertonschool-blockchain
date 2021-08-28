@@ -168,5 +168,4 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 */
 	fprintf(stderr, TAB4 "'%s' is not a valid command, %s\n",
 		cmd, "enter `help` for list of commands");
-	cli_state->exit_code = -1;
 }

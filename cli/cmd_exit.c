@@ -32,7 +32,10 @@ int getConsent(cli_state_t *cli_state)
 	consent_tok = strtok(consent, WHITESPACE);
 	if (consent_tok && (consent_tok[0] == 'y' || consent_tok[0] == 'Y') &&
 	    consent_tok[1] == '\0')
+	{
+		free(consent);
 		return (1);
+	}
 
 	if (consent)
 		free(consent);
@@ -50,6 +53,7 @@ int getConsent(cli_state_t *cli_state)
 void offerBackupOnExit(cli_state_t *cli_state)
 {
 	char *file_path, *file_path_tok;
+	int ret;
 
 	if (!cli_state)
 	{
@@ -61,16 +65,15 @@ void offerBackupOnExit(cli_state_t *cli_state)
 	printf(TAB4 "Save your current wallet before exiting? ");
 	if (getConsent(cli_state))
 	{
-		file_path = _readline(TAB4 TAB4 \
-				      "File path to save wallet?",
-				      cli_state);
-		file_path_tok = strtok(file_path, WHITESPACE);
-		printf(TAB4 TAB4 TAB4 "*test* read path: '%s'\n", file_path_tok);
-/*
-		NULL file_path handled inside cmd_wallet_save
-		cmd_wallet_save(file_path_tok, cli_state);
-*/
-		free(file_path);
+		do {
+			file_path = _readline(TAB4 TAB4	\
+					      "File path to save wallet?",
+					      cli_state);
+			file_path_tok = strtok(file_path, WHITESPACE);
+			ret = cmd_wallet_save(file_path_tok, NULL, cli_state);
+			if (file_path)
+				free(file_path);
+		} while (ret != 0);
 	}
 	else
 		printf(TAB4 TAB4 "Not saving current wallet.\n");
@@ -96,17 +99,15 @@ void offerBackupOnExit(cli_state_t *cli_state)
 	printf(TAB4 "Save the current blockchain before exiting? ");
 	if (getConsent(cli_state))
 	{
-		file_path = _readline(TAB4 TAB4	\
-				      "File path to save blockchain?",
-				      cli_state);
-		file_path_tok = strtok(file_path, WHITESPACE);
-		printf(TAB4 TAB4 TAB4 "*test* read path: '%s'\n", file_path_tok);
-/*
-		NULL file_path handled inside cmd_save
-		cmd_save(file_path_tok, cli_state);
-*/
-		if (file_path)
-			free(file_path);
+		do {
+			file_path = _readline(TAB4 TAB4 \
+					      "File path to save blockchain?",
+					      cli_state);
+			file_path_tok = strtok(file_path, WHITESPACE);
+			ret = cmd_save(file_path_tok, NULL, cli_state);
+			if (file_path)
+				free(file_path);
+		} while (ret != 0);
 	}
 	else
 		printf(TAB4 TAB4 "Not saving current blockchain.\n");
