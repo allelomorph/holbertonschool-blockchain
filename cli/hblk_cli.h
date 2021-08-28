@@ -10,6 +10,9 @@
 
 #define TAB4 "    "
 
+#define FLAG_CT 3
+#define FLAG_ARRAY "wmb"
+
 /* new? wallet_info? new_wallet? mempool_load? mempool_save? new_mempool? */
 /* exit differs from cmd_ref_t.f_ptr typedef and is handled separately */
 #define CMD_FP_CT 3 /* not counting exit */

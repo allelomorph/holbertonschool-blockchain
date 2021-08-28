@@ -50,7 +50,8 @@ cli_state_t *initCLIState(void)
  */
 void parseArgs(int argc, char *argv[], cli_state_t *cli_state)
 {
-	int i;
+	char *arg_copy, *flags = FLAG_ARRAY;
+	int i, j, valid_flag;
 
 	if (!argv || !(*argv) || !cli_state)
 	{
@@ -71,7 +72,20 @@ void parseArgs(int argc, char *argv[], cli_state_t *cli_state)
 	{
 		if (argv[i][0] == '-')
 		{
-			if (i + 1 >= argc)
+			for (j = 0; j < FLAG_CT; j++)
+			{
+				if (argv[i][1] == flags[j])
+					valid_flag = 1;
+			}
+			if (!valid_flag)
+			{
+				fprintf(stderr,
+					"%s: unsupported flag '%s'\n",
+					argv[0], argv[i]);
+				cli_state->exit_code = -2;
+				return;
+			}
+			if (!(i + 1 < argc) || argv[i + 1][0] == '-')
 			{
 				fprintf(stderr,
 					"%s: missing parameter for flag '%s'\n",
@@ -79,44 +93,29 @@ void parseArgs(int argc, char *argv[], cli_state_t *cli_state)
 				cli_state->exit_code = -2;
 				return;
 			}
+			arg_copy = strdup(argv[i + 1]);
+			if (!arg_copy)
+			{
+				perror("parseArgs: strdup error");
+				cli_state->exit_code = -1;
+				return;
+			}
 			switch (argv[i][1])
 			{
 			case 'w':
-				i++;
-				cli_state->arg_wallet = strdup(argv[i]);
-				if (!cli_state->arg_wallet)
-				{
-					perror("parseArgs: strdup error");
-					cli_state->exit_code = -1;
-					return;
-				}
+				cli_state->arg_wallet = arg_copy;
+			        i++;
 				break;
 			case 'm':
+				cli_state->arg_mempool = arg_copy;
 				i++;
-				cli_state->arg_mempool = strdup(argv[i]);
-				if (!cli_state->arg_mempool)
-				{
-					perror("parseArgs: strdup error");
-					cli_state->exit_code = -1;
-					return;
-				}
 				break;
 			case 'b':
+				cli_state->arg_blockchain = arg_copy;
 				i++;
-				cli_state->arg_blockchain = strdup(argv[i]);
-				if (!cli_state->arg_blockchain)
-				{
-					perror("parseArgs: strdup error");
-					cli_state->exit_code = -1;
-					return;
-				}
 				break;
 			default:
-				fprintf(stderr,
-					"%s: unsupported flag '%s'\n",
-					argv[0], argv[i]);
-				cli_state->exit_code = -2;
-				return;
+				break;
 			}
 		}
 		else if (cli_state->arg_script == NULL &&
