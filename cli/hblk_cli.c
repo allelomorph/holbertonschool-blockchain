@@ -239,10 +239,6 @@ int main(int argc, char **argv)
 	if (cli_state->exit_code == 0)
 	        CLILoop(cli_state);
 
-	/* if not internal failure and in interactive mode */
-	if (cli_state->exit_code > -1 && isatty(STDIN_FILENO))
-		offerBackupOnExit(cli_state);
-
 	retval = cli_state->exit_code;
 	freeCLIState(cli_state);
 	return (retval);

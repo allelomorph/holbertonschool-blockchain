@@ -26,15 +26,14 @@ void CLILoop(cli_state_t *cli_state)
 		return;
 	}
 
+	setScriptFd(cli_state);
+	if (cli_state->exit_code != 0)
+		return;
+
 	cli_state->loop_ct = 1;
 	do {
-		if (!line)
-			setScriptFd(cli_state);
-
 		line = _readline(NULL, cli_state);
-		if (!line)
-			unsetScriptFd(cli_state);
-		else
+		if (line)
 		{
 			st_list = lineToSTList(line, cli_state);
 			if (st_list)
@@ -52,6 +51,12 @@ void CLILoop(cli_state_t *cli_state)
 		}
 
 	} while (line); /* freed pointers will not automatically == NULL */
+
+	/* if not internal failure and in interactive mode */
+	if (cli_state->exit_code > -1 && isatty(STDIN_FILENO))
+		offerBackupOnExit(cli_state);
+
+	unsetScriptFd(cli_state);
 }
 
 
