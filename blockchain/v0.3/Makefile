@@ -52,8 +52,10 @@ TX_SRC = tx_out_create.c \
 	coinbase_is_valid.c \
 	transaction_destroy.c \
 	update_unspent.c
+PROV_SRC = _endianness.c
 
-OBJ = $(BLKCHN_SRC:.c=.o) $(addprefix transaction/, $(TX_SRC:.c=.o))
+OBJ = $(BLKCHN_SRC:.c=.o) $(addprefix transaction/, $(TX_SRC:.c=.o)) \
+	$(addprefix provided/, $(PROV_SRC:.c=.o))
 
 .PHONY: clean oclean fclean re
 
