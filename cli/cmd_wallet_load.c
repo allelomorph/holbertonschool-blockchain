@@ -1,14 +1,13 @@
+/* ->blockchain.h->hblk_crypto.h:EC_KEY EC_KEY_free */
 #include "hblk_cli.h"
 /* printf fprintf sprintf */
 #include <stdio.h>
-/* free */
-#include <stdlib.h>
 /* lstat `struct stat` */
 #include <sys/types.h>
 #include <sys/stat.h>
-/* lstat isatty */
+/* lstat */
 #include <unistd.h>
-/* strtok strerror */
+/* strlen strerror */
 #include <string.h>
 /* PATH_MAX */
 #include <linux/limits.h>
@@ -20,17 +19,20 @@
  *
  * @path: user provided path to the folder from which to load the key pair,
  *   or NULL for the default folder
+ * @arg2: dummy arg to conform to cmd_ref_t.f_ptr typedef
  * @cli_state: pointer to struct containing information about the cli and
  *   blockchain in use
  *
+ * Return: 0 on success, 1 on failure
  */
-int cmd_wallet_load(char *path, cli_state_t *cli_state)
+int cmd_wallet_load(char *path, char *arg2, cli_state_t *cli_state)
 {
 	struct stat st;
 	char file_path[PATH_MAX];
 	EC_KEY *prev_wallet;
 	int end_slash, stat_ret1, stat_ret2;
 
+	(void)arg2;
 	if (!cli_state)
 	{
 		fprintf(stderr, "cmd_wallet_load: NULL cli_state parameter\n");

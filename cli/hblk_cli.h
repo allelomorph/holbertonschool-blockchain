@@ -8,10 +8,54 @@
 #define WHITESPACE " \t\v" /* full set " \t\n\v\f\r" */
 #define CLI_PRIMARY_PROMPT "hblk_cli $"
 
-#define CMD_CT 8
-#define CMD_NAME_ARRAY {"wallet_load", "wallet_save", "send", "mine", "info", \
-			"load", "save", /* wallet_info? */"exit"}
 #define TAB4 "    "
+
+/* new? wallet_info? new_wallet? mempool_load? mempool_save? new_mempool? */
+/* exit differs from cmd_ref_t.f_ptr typedef and is handled separately */
+#define CMD_FP_CT 3 /* not counting exit */
+#define CMD_FP_ARRAY { \
+        cmd_wallet_load, \
+        cmd_wallet_save, \
+		/* cmd_send, */ \
+		/* cmd_mine, */ \
+		/* cmd_info, */ \
+		/* cmd_load, */ \
+		/* cmd_save, */ \
+        cmd_help \
+}
+#define CMD_CT 4 /* counting exit */
+#define CMD_NAME_ARRAY { \
+        "wallet_load", \
+	"wallet_save", \
+		/* "send", */  \
+		/* "mine", */ \
+		/* "info", */ \
+		/* "load", */ \
+		/* "save", */ \
+        "help", \
+        "exit" \
+}
+#define CMD_HELP_ARRAY { \
+        WALLET_LOAD_HELP, \
+        WALLET_SAVE_HELP, \
+		/* SEND_HELP, */ \
+		/* MINE_HELP, */ \
+		/* INFO_HELP, */ \
+		/* LOAD_HELP, */ \
+		/* SAVE_HELP, */ \
+        HELP_HELP, \
+        EXIT_HELP \
+}
+#define CMD_HELP_SUMMARY_LIST WALLET_LOAD_HELP_SUMMARY \
+        WALLET_SAVE_HELP_SUMMARY \
+		/* SEND_HELP_SUMMARY */ \
+		/* MINE_HELP_SUMMARY */ \
+		/* INFO_HELP_SUMMARY */ \
+		/* LOAD_HELP_SUMMARY */ \
+		/* SAVE_HELP_SUMMARY */ \
+        HELP_HELP_SUMMARY \
+        EXIT_HELP_SUMMARY \
+
 
 #define SAVE_DIR_DFLT "hblk_save/"
 #define WALLET_DIR_DFLT SAVE_DIR_DFLT "wallet/"
@@ -72,6 +116,8 @@ typedef struct cli_state_s
 	llist_t *mempool;
 } cli_state_t;
 
+/* function pointer type for all builtin commands other than `exit` */
+typedef int (*cmd_fp_t)(char *arg1, char *arg2, cli_state_t *cli_state);
 
 /* hblk_cli.c */
 cli_state_t *initCLIState(void);
@@ -102,10 +148,13 @@ void offerBackupOnExit(cli_state_t *cli_state);
 void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state);
 
 /* cmd_help.c */
-int cmd_help(st_list_t *st_list, cli_state_t *cli_state);
+int cmd_help(char *command, char *arg2, cli_state_t *cli_state);
 
 /* cmd_wallet_load.c */
-int cmd_wallet_load(char *path, cli_state_t *cli_state);
+int cmd_wallet_load(char *path, char *arg2, cli_state_t *cli_state);
+
+/* cmd_wallet_save.c */
+int cmd_wallet_save(char *path, char *arg2, cli_state_t *cli_state);
 
 /* _print_hex_buffer.c */
 void _print_hex_buffer(uint8_t const *buf, size_t len);

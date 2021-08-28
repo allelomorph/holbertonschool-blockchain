@@ -67,12 +67,13 @@
 	" if <path> is not\ngiven. On exit from the CLI the user is given " \
 	"the option to save the blockchain.\n\n"
 
+#define HELP_HELP_SUMMARY TAB4 "help [<command>] - displays command instructions\n"
+#define HELP_HELP HELP_HELP_SUMMARY \
+	"\n" TAB4 TAB4 "Lists all commands when used without an argument.\n\n"
+
 #define EXIT_HELP_SUMMARY TAB4 "exit - exits CLI session\n"
 #define EXIT_HELP EXIT_HELP_SUMMARY \
-	"\n" TAB4 TAB4 "Exits CLI on both `exit` command and ctrl + d, " \
-	"providing the option to\nsave the current wallet and blockchain. " \
-	"CLI will exit with return value of last\nlexed and parsed " \
-	"command, or -1 for internal failure or -2 for script read failure.\n\n"
+	"\n" TAB4 TAB4 "Crtl + d has the same effect as this command, exiting the CLI with the return value of the last executed command, or -1 for internal CLI failure or -2 for script read failure. WHen in interactive mode, exit provides the option to save the current wallet, mempool, and blockchain.\n\n"
 
 #define GENERAL_HELP_INTRO TAB4 "This command line interface is a means of " \
 	"using the simple blockchain\nfeatures implemented in " \
@@ -80,77 +81,49 @@
 	" transactions and block mining done in Bitcoin core. The " \
 	"following\ncommands are implemented, and more information for each" \
 	" can be found with\n`help <command>`:\n\n"
-#define GENERAL_HELP WALLET_LOAD_HELP_SUMMARY \
-WALLET_SAVE_HELP_SUMMARY \
-SEND_HELP_SUMMARY \
-MINE_HELP_SUMMARY \
-INFO_HELP_SUMMARY \
-LOAD_HELP_SUMMARY \
-SAVE_HELP_SUMMARY \
-EXIT_HELP_SUMMARY \
-"\n"
 
 
 /**
  * cmd_help - executes command `help` from CLI REPL
  *
- * @st_list: list of lexed tokens passed as parameters to `help`
+ * @command: command for which to print help, print summary of all commands if
+ *   NULL
+ * @arg2: dummy arg to conform to cmd_ref_t.f_ptr typedef
  * @cli_state: pointer to struct containing information about the CLI and
  *   blockchain in use
  *
  * Return: 0 on success, 1 on failure
  */
-int cmd_help(st_list_t *st_list, cli_state_t *cli_state)
+int cmd_help(char *command, char *arg2, cli_state_t *cli_state)
 {
-	st_list_t *temp;
-	int retval = 0;
+	char *cmds[CMD_CT] = CMD_NAME_ARRAY;
+	char *help[CMD_CT] = CMD_HELP_ARRAY;
+	int i;
 
+	(void)arg2;
 	if (!cli_state)
 	{
 		fprintf(stderr, "cmd_help: NULL cli_state\n");
 		return (1);
 	}
 
-	if (!st_list)
+	if (!command)
 	{
-		printf("%s%s", GENERAL_HELP_INTRO, GENERAL_HELP);
-		return (retval);
+		printf("%s%s\n", GENERAL_HELP_INTRO, CMD_HELP_SUMMARY_LIST);
+		return (0);
 	}
 
-	for (temp = st_list; temp; temp = temp->next)
+	for (i = 0; i < CMD_CT; i++)
 	{
-		if      (strncmp("wallet_load", temp->token,
-				 strlen("wallet_load") + 1) == 0)
-			printf(/*"%s%s", RULER, */WALLET_LOAD_HELP);
-		else if (strncmp("wallet_save", temp->token,
-				 strlen("wallet_save") + 1) == 0)
-			printf(/*"%s%s", RULER, */WALLET_SAVE_HELP);
-		else if (strncmp("send", temp->token,
-				 strlen("send") + 1) == 0)
-			printf(/*"%s%s", RULER, */SEND_HELP);
-		else if (strncmp("mine", temp->token,
-				 strlen("mine") + 1) == 0)
-			printf(/*"%s%s", RULER, */MINE_HELP);
-		else if (strncmp("info", temp->token,
-				 strlen("info") + 1) == 0)
-			printf(/*"%s%s", RULER, */INFO_HELP);
-		else if (strncmp("load", temp->token,
-				 strlen("load") + 1) == 0)
-			printf(/*"%s%s", RULER, */LOAD_HELP);
-		else if (strncmp("save", temp->token,
-				 strlen("save") + 1) == 0)
-			printf(/*"%s%s", RULER, */SAVE_HELP);
-		else if (strncmp("exit", temp->token,
-				 strlen("wallet_load") + 1) == 0)
-			printf(/*"%s%s", RULER, */EXIT_HELP);
-		else
+		if (strncmp(cmds[i], command, strlen(cmds[i]) + 1) == 0)
 		{
-			printf(TAB4 "help: '%s' is not a valid command, %s\n",
-			       temp->token, "try one of the following:\n");
-			printf(GENERAL_HELP);
-			retval = 1;
+			printf("%s%s", RULER, help[i]);
+			return (0);
 		}
 	}
 
-	return (retval);
+	printf(TAB4 "help: '%s' is not a valid command, %s\n",
+	       command, "try one of the following:\n");
+	printf(CMD_HELP_SUMMARY_LIST);
+	return (1);
 }

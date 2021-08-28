@@ -142,7 +142,7 @@ void initWlltBlkchnMpl(cli_state_t *cli_state)
 		return;
 	}
 
-	if (cmd_wallet_load(cli_state->arg_wallet, cli_state) != 0)
+	if (cmd_wallet_load(cli_state->arg_wallet, NULL, cli_state) != 0)
 	{
 		cli_state->wallet = ec_create();
 		if (!EC_KEY_check_key(cli_state->wallet))
