@@ -1,9 +1,9 @@
 #include "hblk_cli.h"
 /* printf fprintf */
 #include <stdio.h>
-/* free */
+/* free exit */
 #include <stdlib.h>
-/* _exit isatty */
+/* isatty */
 #include <unistd.h>
 /* strtok */
 #include <string.h>
@@ -99,5 +99,5 @@ void cmd_exit(st_list_t *st_list, char *line, cli_state_t *cli_state)
 		free(line);
 	retval = cli_state->exit_code;
 	freeCLIState(cli_state);
-	_exit(retval);
+	exit(retval);
 }
