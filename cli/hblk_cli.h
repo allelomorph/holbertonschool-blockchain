@@ -18,11 +18,11 @@
 
 /* new? wallet_info? new_wallet? new_mempool? */
 /* exit differs from cmd_ref_t.f_ptr typedef and is handled separately */
-#define CMD_FP_CT 8 /* not counting exit */
+#define CMD_FP_CT 9 /* not counting exit */
 #define CMD_FP_ARRAY { \
         cmd_wallet_load, \
         cmd_wallet_save, \
-		/* cmd_send, */ \
+        cmd_send, \
 		/* cmd_mine, */ \
         cmd_info, \
         cmd_load, \
@@ -31,11 +31,11 @@
 	cmd_mempool_save, \
         cmd_help \
 }
-#define CMD_CT 9 /* counting exit */
+#define CMD_CT 10 /* counting exit */
 #define CMD_NAME_ARRAY { \
         "wallet_load", \
 	"wallet_save", \
-		/* "send", */  \
+        "send", \
 		/* "mine", */ \
 	"info", \
         "load", \
@@ -48,7 +48,7 @@
 #define CMD_HELP_ARRAY { \
         WALLET_LOAD_HELP, \
         WALLET_SAVE_HELP, \
-		/* SEND_HELP, */ \
+        SEND_HELP, \
 		/* MINE_HELP, */ \
         INFO_HELP, \
 	LOAD_HELP, \
@@ -60,7 +60,7 @@
 }
 #define CMD_HELP_SUMMARY_LIST WALLET_LOAD_HELP_SUMMARY \
         WALLET_SAVE_HELP_SUMMARY \
-		/* SEND_HELP_SUMMARY */ \
+	SEND_HELP_SUMMARY \
 		/* MINE_HELP_SUMMARY */ \
 	INFO_HELP_SUMMARY \
         LOAD_HELP_SUMMARY \
@@ -201,7 +201,19 @@ int cmd_mempool_load(char *path, char *arg2, cli_state_t *cli_state);
 int cmd_mempool_save(char *path, char *arg2, cli_state_t *cli_state);
 
 /* cmd_info.c */
+/*
+static int findAllSenderUnspent(unspent_tx_out_t *unspent_tx_out,
+				unsigned int idx, su_info_t *su_info);
+*/
 int cmd_info(char *arg1, char *arg2, cli_state_t *cli_state);
+
+/* cmd_send.c */
+/*
+static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
+			     unsigned int idx, su_info_t *su_info);
+*/
+uint8_t *pubKeyHexToByteArray(char *address);
+int cmd_send(char *amount, char *address, cli_state_t *cli_state);
 
 /* _print_hex_buffer.c */
 void _print_hex_buffer(uint8_t const *buf, size_t len);
