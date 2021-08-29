@@ -16,28 +16,28 @@
 #define HMPL_MAG "HMPL"
 #define HMPL_MAG_LEN 4
 
-/* new? wallet_info? new_wallet? mempool_load? mempool_save? new_mempool? */
+/* new? wallet_info? new_wallet? new_mempool? */
 /* exit differs from cmd_ref_t.f_ptr typedef and is handled separately */
-#define CMD_FP_CT 7 /* not counting exit */
+#define CMD_FP_CT 8 /* not counting exit */
 #define CMD_FP_ARRAY { \
         cmd_wallet_load, \
         cmd_wallet_save, \
 		/* cmd_send, */ \
 		/* cmd_mine, */ \
-		/* cmd_info, */ \
+        cmd_info, \
         cmd_load, \
         cmd_save, \
         cmd_mempool_load, \
 	cmd_mempool_save, \
         cmd_help \
 }
-#define CMD_CT 8 /* counting exit */
+#define CMD_CT 9 /* counting exit */
 #define CMD_NAME_ARRAY { \
         "wallet_load", \
 	"wallet_save", \
 		/* "send", */  \
 		/* "mine", */ \
-		/* "info", */ \
+	"info", \
         "load", \
         "save", \
         "mempool_load", \
@@ -50,7 +50,7 @@
         WALLET_SAVE_HELP, \
 		/* SEND_HELP, */ \
 		/* MINE_HELP, */ \
-		/* INFO_HELP, */ \
+        INFO_HELP, \
 	LOAD_HELP, \
         SAVE_HELP, \
         MEMPOOL_LOAD_HELP, \
@@ -62,7 +62,7 @@
         WALLET_SAVE_HELP_SUMMARY \
 		/* SEND_HELP_SUMMARY */ \
 		/* MINE_HELP_SUMMARY */ \
-		/* INFO_HELP_SUMMARY */ \
+	INFO_HELP_SUMMARY \
         LOAD_HELP_SUMMARY \
 	SAVE_HELP_SUMMARY \
 	MEMPOOL_LOAD_HELP_SUMMARY \
@@ -199,6 +199,9 @@ int cmd_mempool_load(char *path, char *arg2, cli_state_t *cli_state);
 
 /* cmd_mempool_save.c */
 int cmd_mempool_save(char *path, char *arg2, cli_state_t *cli_state);
+
+/* cmd_info.c */
+int cmd_info(char *arg1, char *arg2, cli_state_t *cli_state);
 
 /* _print_hex_buffer.c */
 void _print_hex_buffer(uint8_t const *buf, size_t len);
