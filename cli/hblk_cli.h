@@ -13,9 +13,12 @@
 #define FLAG_CT 3
 #define FLAG_ARRAY "wmb"
 
+#define HMPL_MAG "HMPL"
+#define HMPL_MAG_LEN 4
+
 /* new? wallet_info? new_wallet? mempool_load? mempool_save? new_mempool? */
 /* exit differs from cmd_ref_t.f_ptr typedef and is handled separately */
-#define CMD_FP_CT 5 /* not counting exit */
+#define CMD_FP_CT 7 /* not counting exit */
 #define CMD_FP_ARRAY { \
         cmd_wallet_load, \
         cmd_wallet_save, \
@@ -24,9 +27,11 @@
 		/* cmd_info, */ \
         cmd_load, \
         cmd_save, \
+        cmd_mempool_load, \
+	cmd_mempool_save, \
         cmd_help \
 }
-#define CMD_CT 6 /* counting exit */
+#define CMD_CT 8 /* counting exit */
 #define CMD_NAME_ARRAY { \
         "wallet_load", \
 	"wallet_save", \
@@ -35,6 +40,8 @@
 		/* "info", */ \
         "load", \
         "save", \
+        "mempool_load", \
+	"mempool_save", \
         "help", \
         "exit" \
 }
@@ -46,6 +53,8 @@
 		/* INFO_HELP, */ \
 	LOAD_HELP, \
         SAVE_HELP, \
+        MEMPOOL_LOAD_HELP, \
+        MEMPOOL_SAVE_HELP, \
         HELP_HELP, \
         EXIT_HELP \
 }
@@ -56,6 +65,8 @@
 		/* INFO_HELP_SUMMARY */ \
         LOAD_HELP_SUMMARY \
 	SAVE_HELP_SUMMARY \
+	MEMPOOL_LOAD_HELP_SUMMARY \
+        MEMPOOL_SAVE_HELP_SUMMARY \
         HELP_HELP_SUMMARY \
         EXIT_HELP_SUMMARY \
 
@@ -116,9 +127,29 @@ typedef struct cli_state_s
 	llist_t *mempool;
 } cli_state_t;
 
+/**
+ * struct mpl_file_hdr_s - mempool file header structure
+ *
+ * @hmpl_magic: Identifies the file as a valid serialized mempool format;
+ *   "HMPL" (ASCII 48 4d 50 4c); these four bytes constitute the magic number
+ * @hblk_version: Identifies the version at which compatible blockchains have
+ *   been serialized. The format is X.Y, where both X and Y are ASCII
+ *   characters between 0 and 9.
+ * @hmpl_endian: This byte is set to either 1 or 2 to signify little or big
+ *   endianness, respectively. This affects interpretation of multi-byte fields
+ * @hmpl_txs: Number of transactions in the mempool, endianness dependent
+ */
+typedef struct mpl_file_hdr_s
+{
+	int8_t   hmpl_magic[4];
+	int8_t   hblk_version[3];
+	uint8_t  hmpl_endian;
+	uint32_t hmpl_txs;
+} mpl_file_hdr_t;
 
 /* function pointer type for all builtin commands other than `exit` */
 typedef int (*cmd_fp_t)(char *arg1, char *arg2, cli_state_t *cli_state);
+
 
 /* hblk_cli.c */
 cli_state_t *initCLIState(void);
@@ -157,11 +188,17 @@ int cmd_wallet_load(char *path, char *arg2, cli_state_t *cli_state);
 /* cmd_wallet_save.c */
 int cmd_wallet_save(char *path, char *arg2, cli_state_t *cli_state);
 
-/* cmd_wallet_save.c */
+/* cmd_load.c */
 int cmd_load(char *path, char *arg2, cli_state_t *cli_state);
 
-/* cmd_wallet_save.c */
+/* cmd_save.c */
 int cmd_save(char *path, char *arg2, cli_state_t *cli_state);
+
+/* cmd_mempool_load.c */
+int cmd_mempool_load(char *path, char *arg2, cli_state_t *cli_state);
+
+/* cmd_mempool_save.c */
+int cmd_mempool_save(char *path, char *arg2, cli_state_t *cli_state);
 
 /* _print_hex_buffer.c */
 void _print_hex_buffer(uint8_t const *buf, size_t len);

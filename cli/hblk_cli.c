@@ -165,17 +165,19 @@ void initWlltBlkchnMpl(cli_state_t *cli_state)
 		}
 		printf(TAB4 "Created new blockchain for session\n");
 	}
-/*
-	if (!cli_state->arg_mempool || cmd_mempool_load(cli_state->arg_mempool, cli_state) != 0)
-*/
-	cli_state->mempool = llist_create(MT_SUPPORT_FALSE);
-	if (!cli_state->mempool)
+
+	if (!cli_state->arg_mempool ||
+	    cmd_mempool_load(cli_state->arg_mempool, NULL, cli_state) != 0)
 	{
-		printf(TAB4 "Failed to create new empty mempool\n");
-		cli_state->exit_code = -1;
-		return;
+		cli_state->mempool = llist_create(MT_SUPPORT_FALSE);
+		if (!cli_state->mempool)
+		{
+			printf(TAB4 "Failed to create new empty mempool\n");
+			cli_state->exit_code = -1;
+			return;
+		}
+		printf(TAB4 "Created new empty mempool for session\n");
 	}
-	printf(TAB4 "Created new empty mempool for session\n");
 }
 
 

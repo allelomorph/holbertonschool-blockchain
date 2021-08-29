@@ -81,17 +81,15 @@ void offerBackupOnExit(cli_state_t *cli_state)
 	printf(TAB4 "Save the current mempool before exiting? ");
 	if (getConsent(cli_state))
 	{
-		file_path = _readline(TAB4 TAB4	\
-				      "File path to save mempool?",
-				      cli_state);
-		file_path_tok = strtok(file_path, WHITESPACE);
-		printf(TAB4 TAB4 TAB4 "*test* read path: '%s'\n", file_path_tok);
-/*
-		NULL file_path handled inside cmd_save
-		cmd_mempool_save(file_path_tok, cli_state);
-*/
-		if (file_path)
-			free(file_path);
+		do {
+			file_path = _readline(TAB4 TAB4 \
+					      "File path to save mempool?",
+					      cli_state);
+			file_path_tok = strtok(file_path, WHITESPACE);
+			ret = cmd_mempool_save(file_path_tok, NULL, cli_state);
+			if (file_path)
+				free(file_path);
+		} while (ret != 0);
 	}
 	else
 		printf(TAB4 TAB4 "Not saving current mempool.\n");

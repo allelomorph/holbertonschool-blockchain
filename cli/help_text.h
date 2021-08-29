@@ -37,7 +37,7 @@
 	"block\n"
 #define MINE_HELP "\n" MINE_HELP_SUMMARY \
 	"\n" TAB4 TAB4 "Creates a new block, reverifies all mempool "	\
-	"transactions and adds valid\nones to the block, adds a coinbase " \
+	"transactions, adds the valid\nones to the block, adds a coinbase " \
 	"transaction, sets the block difficulty,\nhashes the block, and adds " \
 	"it to the blockchain.\n\n"
 
@@ -60,8 +60,17 @@
 	"session blockchain to file\n"
 #define SAVE_HELP "\n" SAVE_HELP_SUMMARY \
 	"\n" TAB4 TAB4 "Saves current session blockchain to the default path" \
-	" if <path> is not\ngiven. On exit from the CLI the user is given " \
-	"the option to save the blockchain.\n\n"
+	" if <path> is not\ngiven.\n\n"
+
+#define MEMPOOL_LOAD_HELP_SUMMARY TAB4 "mempool_load [<path>] - loads a new mempool into the CLI session\n"
+#define MEMPOOL_LOAD_HELP "\n" MEMPOOL_LOAD_HELP_SUMMARY \
+	"\n" TAB4 TAB4 "Attempts to load a mempool from the default path " \
+	"if <path> is not\ngiven. Not run automatically at startup, instead " \
+	"each session begins with an\nempty mempool.\n\n"
+
+#define MEMPOOL_SAVE_HELP_SUMMARY TAB4 "mempool_save [<path>] - saves the current CLI session mempool to file\n"
+#define MEMPOOL_SAVE_HELP "\n" MEMPOOL_SAVE_HELP_SUMMARY \
+	"\n" TAB4 TAB4 "Saves current session mempool to the default path if <path> is not given.\n\n"
 
 #define HELP_HELP_SUMMARY TAB4 "help [<command>] - displays command instructions\n"
 #define HELP_HELP "\n" HELP_HELP_SUMMARY \
@@ -72,11 +81,11 @@
 	"\n" TAB4 TAB4 "Crtl + d has the same effect as this command, " \
 	"exiting the CLI with the\nreturn value of the last executed " \
 	"command, or -1 for internal CLI failure or -2\nfor script read " \
-	"failure. WHen in interactive mode, exit provides the option to\nsave" \
+	"failure. When in interactive mode, exit provides the option to\nsave" \
 	" the current wallet, mempool, and blockchain.\n\n"
 
-#define GENERAL_HELP_INTRO TAB4 "This command line interface is a means of " \
-	"using the simple blockchain\nfeatures implemented in " \
+#define GENERAL_HELP_INTRO "\n" TAB4 "This command line interface is a means " \
+	"of using the simple blockchain\nfeatures implemented in " \
 	"libhblk_crypto.a and libhblk_blockchain.a, which mimic\nthe UXTO" \
 	" transactions and block mining done in Bitcoin core. The " \
 	"following\ncommands are implemented, and more information for each" \
