@@ -13,7 +13,7 @@
  *
  * @command: command for which to print help, print summary of all commands if
  *   NULL
- * @arg2: dummy arg to conform to cmd_ref_t.f_ptr typedef
+ * @arg2: dummy arg to conform to cmd_fp_t typedef
  * @cli_state: pointer to struct containing information about the CLI and
  *   blockchain in use
  *

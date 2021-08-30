@@ -66,8 +66,8 @@ static int findAllSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 /**
  * cmd_info - displays information about the current blockchain and mempool
  *
- * @arg1: dummy arg to conform to cmd_ref_t.f_ptr typedef
- * @arg2: dummy arg to conform to cmd_ref_t.f_ptr typedef
+ * @arg1: dummy arg to conform to cmd_fp_t typedef
+ * @arg2: dummy arg to conform to cmd_fp_t typedef
  * @cli_state: pointer to struct containing information about the cli and
  *   blockchain in use
  *

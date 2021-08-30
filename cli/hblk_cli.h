@@ -17,7 +17,7 @@
 #define HMPL_MAG_LEN 4
 
 /* new? wallet_info? new_wallet? new_mempool? */
-/* exit differs from cmd_ref_t.f_ptr typedef and is handled separately */
+/* exit differs from cmd_fp_t typedef and is handled separately */
 #define CMD_FP_CT 9 /* not counting exit */
 #define CMD_FP_ARRAY { \
         cmd_wallet_load, \

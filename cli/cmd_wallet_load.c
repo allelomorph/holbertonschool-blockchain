@@ -19,7 +19,7 @@
  *
  * @path: user provided path to the folder from which to load the key pair,
  *   or NULL for the default folder
- * @arg2: dummy arg to conform to cmd_ref_t.f_ptr typedef
+ * @arg2: dummy arg to conform to cmd_fp_t typedef
  * @cli_state: pointer to struct containing information about the cli and
  *   blockchain in use
  *

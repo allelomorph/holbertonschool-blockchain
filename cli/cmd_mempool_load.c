@@ -150,7 +150,7 @@ llist_t *mempool_deserialize(char const *path)
  *
  * @path: user provided path to the file from which to load the mempool,
  *   or NULL for the default
- * @arg2: dummy arg to conform to cmd_ref_t.f_ptr typedef
+ * @arg2: dummy arg to conform to cmd_fp_t typedef
  * @cli_state: pointer to struct containing information about the cli and
  *   blockchain in use
  *
