@@ -2,6 +2,8 @@
 #include "hblk_cli.h"
 /* printf fprintf */
 #include <stdio.h>
+/* memcmp */
+#include <string.h>
 
 /*
     Display the number of Blocks in the Blockchain
@@ -14,6 +16,52 @@
 	TAB4 TAB4 "* total unspent transaction outputs (UXTOs): %i\n" \
 	TAB4 TAB4 "* total transactions in mempool awaiting confirmation: %i\n" \
 	"\n"
+
+#ifdef XXX
+/**
+ * findAllSenderUnspent - used as `action` for llist_for_each to visit each
+ *   unspent output in the blockchain, and add unspent outputs
+ *   with a matching public key to a collated list of potential inputs
+ *
+ * @unspent_tx_out: pointer to unspent output in blockchain->unspent list,
+ *   as iterated through by llist_for_each
+ * @idx: index of `unspent_tx_out` in blockchain->unspent list, as
+ *   iterated through by llist_for_each
+ * @su_info: pointer to struct containing all parameters necessary to build a
+ *   second list of unspent transactions for a particular public key
+ *
+ * Return: 0 on incremental success (llist_for_each can continue,)
+ *   1 on total success (llist_for_each can end,)
+ *   and -2 on failure (-1 reserved for llist_for_each errors)
+ */
+static int findAllSenderUnspent(unspent_tx_out_t *unspent_tx_out,
+			     unsigned int idx, su_info_t *su_info)
+{
+	(void)idx;
+
+	if (!unspent_tx_out || !su_info)
+	{
+		fprintf(stderr, "findSenderUnspent: NULL parameter(s)\n");
+		return (-2);
+	}
+
+	if (memcmp(unspent_tx_out->out.pub, su_info->sender_pub,
+		   EC_PUB_LEN) == 0)
+	{
+		if (llist_add_node(su_info->sender_unspent,
+				   unspent_tx_out, ADD_NODE_REAR) != 0)
+		{
+			fprintf(stderr, "findSenderUnspent: %s\n",
+				"llist_add_node failure");
+			return (-2);
+		}
+
+		su_info->total_unspent_amt += unspent_tx_out->out.amount;
+	}
+
+	return (0);
+}
+#endif
 
 /**
  * cmd_info - displays information about the current blockchain and mempool
