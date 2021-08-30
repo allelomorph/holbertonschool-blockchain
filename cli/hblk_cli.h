@@ -9,6 +9,9 @@
 
 #define WHITESPACE " \t\v" /* full set " \t\n\v\f\r" */
 #define TAB4 "    "
+/* used when editing help_text.h and info_formats.h */
+#define RULER "1        ^-10      ^-20      ^-30      ^-40      ^-50      " \
+	"^-60      ^-70      ^-80\n"
 
 #define FLAG_CT 3
 #define FLAG_ARRAY "wmb"
