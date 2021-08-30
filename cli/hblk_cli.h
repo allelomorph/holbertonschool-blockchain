@@ -18,12 +18,12 @@
 
 /* new? wallet_info? new_wallet? new_mempool? */
 /* exit differs from cmd_fp_t typedef and is handled separately */
-#define CMD_FP_CT 9 /* not counting exit */
+#define CMD_FP_CT 10 /* not counting exit */
 #define CMD_FP_ARRAY { \
         cmd_wallet_load, \
         cmd_wallet_save, \
         cmd_send, \
-		/* cmd_mine, */ \
+        cmd_mine, \
         cmd_info, \
         cmd_load, \
         cmd_save, \
@@ -31,12 +31,12 @@
 	cmd_mempool_save, \
         cmd_help \
 }
-#define CMD_CT 10 /* counting exit */
+#define CMD_CT 11 /* counting exit */
 #define CMD_NAME_ARRAY { \
         "wallet_load", \
 	"wallet_save", \
         "send", \
-		/* "mine", */ \
+        "mine", \
 	"info", \
         "load", \
         "save", \
@@ -49,7 +49,7 @@
         WALLET_LOAD_HELP, \
         WALLET_SAVE_HELP, \
         SEND_HELP, \
-		/* MINE_HELP, */ \
+	MINE_HELP, \
         INFO_HELP, \
 	LOAD_HELP, \
         SAVE_HELP, \
@@ -61,7 +61,7 @@
 #define CMD_HELP_SUMMARY_LIST WALLET_LOAD_HELP_SUMMARY \
         WALLET_SAVE_HELP_SUMMARY \
 	SEND_HELP_SUMMARY \
-		/* MINE_HELP_SUMMARY */ \
+        MINE_HELP_SUMMARY \
 	INFO_HELP_SUMMARY \
         LOAD_HELP_SUMMARY \
 	SAVE_HELP_SUMMARY \
@@ -147,6 +147,23 @@ typedef struct mpl_file_hdr_s
 	uint32_t hmpl_txs;
 } mpl_file_hdr_t;
 
+/**
+ * struct mtb_info_s - mempool-to-block info
+ *
+ * Description: Used to contain all the parameters necessary for validating
+ *   mempool transactions and adding them to the new block to be mined.
+ *   Necessary for llist_for_each, as it only takes one void pointer as an
+ *   outside parameter to its `action` function.
+ *
+ * @new_block: newly created block to contain the mempool transactions
+ * @unspent: list of all unspent outputs in the blockchain
+ */
+typedef struct mtb_info_s
+{
+	block_t *new_block;
+	llist_t *unspent;
+} mtb_info_t;
+
 /* function pointer type for all builtin commands other than `exit` */
 typedef int (*cmd_fp_t)(char *arg1, char *arg2, cli_state_t *cli_state);
 
@@ -215,7 +232,7 @@ static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 uint8_t *pubKeyHexToByteArray(char *address);
 int cmd_send(char *amount, char *address, cli_state_t *cli_state);
 
-/* _print_hex_buffer.c */
-void _print_hex_buffer(uint8_t const *buf, size_t len);
+/* cmd_mine.c */
+int cmd_mine(char *arg1, char *arg2, cli_state_t *cli_state);
 
 #endif /* HBLK_CLI_H */
