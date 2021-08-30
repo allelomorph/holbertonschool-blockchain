@@ -126,11 +126,11 @@ static int validateTxInput(tx_in_t *tx_in, unsigned int idx,
 	{
 		fprintf(stderr, "validateTxInput: input signature does %s\n",
 			"not match referenced unspent output public key");
-		free(owner);
+		EC_KEY_free(owner);
 		return (-3);
 	}
 	iv_info->tl_input_amt += unspent_tx_out->out.amount;
-	free(owner);
+	EC_KEY_free(owner);
 	return (0);
 }
 
