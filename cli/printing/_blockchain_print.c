@@ -15,7 +15,7 @@
  *
  * @block: pointer to block in list, as iterated through by
  *   llist_for_each
- * @idx: index of `block` in list, as iterated through by llist_for_each
+ * @index: index of `block` in list, as iterated through by llist_for_each
  * @indent: indentation string to use in printing
  *
  * Return: 0 on incremental success (llist_for_each can continue,)
@@ -72,7 +72,7 @@ static int _block_print(block_t const *block, unsigned int index,
  *
  * @block: pointer to block in list, as iterated through by
  *   llist_for_each
- * @idx: index of `block` in list, as iterated through by llist_for_each
+ * @index: index of `block` in list, as iterated through by llist_for_each
  * @indent: indentation string to use in printing
  *
  * Return: 0 on incremental success (llist_for_each can continue,)

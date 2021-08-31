@@ -46,7 +46,7 @@ int cmd_wallet_load(char *path, char *arg2, cli_state_t *cli_state)
 	}
 
 	end_slash = (path[strlen(path) - 1] == '/');
-        sprintf(file_path, "%s%s%s", path, end_slash ? "" : "/", PUB_FILENAME);
+	sprintf(file_path, "%s%s%s", path, end_slash ? "" : "/", PUB_FILENAME);
 	stat_ret1 = lstat(file_path, &st);
 	if (stat_ret1 == -1)
 	{
@@ -55,7 +55,7 @@ int cmd_wallet_load(char *path, char *arg2, cli_state_t *cli_state)
 	}
 
 	sprintf(file_path, "%s%s%s", path, end_slash ? "" : "/", PRI_FILENAME);
-        stat_ret2 = lstat(file_path, &st);
+	stat_ret2 = lstat(file_path, &st);
 	if (stat_ret2 == -1)
 	{
 		printf(TAB4 TAB4 "'%s': %s\n",

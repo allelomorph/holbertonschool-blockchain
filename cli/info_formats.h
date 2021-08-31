@@ -1,13 +1,16 @@
+#ifndef INFO_FORMATS_H
+#define INFO_FORMATS_H
+
 /* TAB4  RULER */
 #include "hblk_cli.h"
 
 /*
-  0x04 t4 requirements:
-
-    Display the number of Blocks in the Blockchain
-    Display the number of unspent transaction output
-    Display the number of pending transactions in the local transaction pool
-*/
+ * 0x04 t4 requirements:
+ *
+ *  Display the number of Blocks in the Blockchain
+ *  Display the number of unspent transaction output
+ *  Display the number of pending transactions in the local transaction pool
+ */
 
 #define INFO_WALLET_FMT_HDR "\n" \
 	TAB4 "Current status of session wallet:\n"
@@ -31,3 +34,6 @@
 #define INFO_BLKCHN_FMT \
 	TAB4 TAB4 "* total unspent transaction outputs (UXTOs): %i\n" \
 	TAB4 TAB4 "* blockchain height (block total incl. Genesis Block): %i\n"
+
+
+#endif /* INFO_FORMATS_H */

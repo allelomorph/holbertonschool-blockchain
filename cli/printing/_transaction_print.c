@@ -108,11 +108,13 @@ int _transaction_print_loop(transaction_t const *transaction,
 
 	printf("%stransaction: {\n", indent);
 
-	printf("%s" TAB4 "inputs [%u]: [\n", indent, llist_size(transaction->inputs));
+	printf("%s" TAB4 "inputs [%u]: [\n", indent,
+	       llist_size(transaction->inputs));
 	llist_for_each(transaction->inputs, (node_func_t)_tx_in_print,
 		(void *)indent);
 	printf("%s" TAB4 "],\n", indent);
-	printf("%s" TAB4 "outputs [%u]: [\n", indent, llist_size(transaction->outputs));
+	printf("%s" TAB4 "outputs [%u]: [\n", indent,
+	       llist_size(transaction->outputs));
 	llist_for_each(transaction->outputs, (node_func_t)_tx_out_print,
 		(void *) indent);
 	printf("%s" TAB4 "],\n", indent);

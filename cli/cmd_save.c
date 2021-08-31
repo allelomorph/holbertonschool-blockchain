@@ -28,7 +28,7 @@ int cmd_save(char *path, char *arg2, cli_state_t *cli_state)
 {
 	struct stat st;
 	char dir_path[PATH_MAX];
-        int64_t i;
+	int64_t i;
 
 	(void)arg2;
 	if (!cli_state)

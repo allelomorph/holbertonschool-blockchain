@@ -109,7 +109,7 @@ int print_info_wallet(int full, llist_t **wallet_unspent,
 	free(pub_buf);
 	if (!component)
 		printf(INFO_FMT_FTR);
-        if (full)
+	if (full)
 		*wallet_unspent = su_info.sender_unspent;
 	else
 		llist_destroy(su_info.sender_unspent, 0, NULL);
@@ -248,12 +248,12 @@ int print_info_mempool_full(int component, cli_state_t *cli_state)
 	if (print_info_mempool(0, cli_state) != 0)
 		return (1);
 
-        printf("Mempool transactions [%d]: [\n",
-                llist_size(cli_state->mempool));
-        llist_for_each(cli_state->mempool,
+	printf("Mempool transactions [%d]: [\n",
+	       llist_size(cli_state->mempool));
+	llist_for_each(cli_state->mempool,
 		       (node_func_t)_transaction_print_loop,
 		       (void *)TAB4);
-        printf("]\n");
+	printf("]\n");
 
 	if (!component)
 		printf(INFO_FMT_FTR);
@@ -376,7 +376,7 @@ int cmd_info(char *arg1, char *arg2, cli_state_t *cli_state)
 		printf(TAB4 "%s", usage);
 		return (1);
 	}
-        if (strncmp("full", arg1, strlen("full") + 1) == 0)
+	if (strncmp("full", arg1, strlen("full") + 1) == 0)
 		return (print_info_full(cli_state));
 
 	printf(TAB4 "%s", usage);

@@ -36,7 +36,7 @@ st_list_t *lineToSTList(char *line, cli_state_t *cli_state)
 	}
 	head->token = strtok(line, WHITESPACE);
 
-        for (temp = head; temp; temp = temp->next)
+	for (temp = head; temp; temp = temp->next)
 	{
 		next_token = strtok(NULL, WHITESPACE);
 		if (next_token)

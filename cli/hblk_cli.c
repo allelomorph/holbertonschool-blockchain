@@ -60,7 +60,7 @@ void parseArgs(int argc, char *argv[], cli_state_t *cli_state)
 		return;
 	}
 
-        cli_state->exec_name = strdup(argv[0]);
+	cli_state->exec_name = strdup(argv[0]);
 	if (!cli_state->exec_name)
 	{
 		perror("parseArgs: strdup error");
@@ -104,7 +104,7 @@ void parseArgs(int argc, char *argv[], cli_state_t *cli_state)
 			{
 			case 'w':
 				cli_state->arg_wallet = arg_copy;
-			        i++;
+				i++;
 				break;
 			case 'm':
 				cli_state->arg_mempool = arg_copy;
@@ -210,7 +210,7 @@ void freeCLIState(cli_state_t *cli_state)
 	if (cli_state->blockchain)
 		blockchain_destroy(cli_state->blockchain);
 
-        llist_destroy(cli_state->mempool, 1, (node_dtor_t)transaction_destroy);
+	llist_destroy(cli_state->mempool, 1, (node_dtor_t)transaction_destroy);
 
 	free(cli_state);
 }
@@ -229,17 +229,17 @@ int main(int argc, char **argv)
 	cli_state_t *cli_state;
 	int retval;
 
-        cli_state = initCLIState();
+	cli_state = initCLIState();
 	if (!cli_state)
 		return (-1);
 
-        parseArgs(argc, argv, cli_state);
+	parseArgs(argc, argv, cli_state);
 
 	if (cli_state->exit_code == 0)
 		initWlltBlkchnMpl(cli_state);
 
 	if (cli_state->exit_code == 0)
-	        CLILoop(cli_state);
+		CLILoop(cli_state);
 
 	retval = cli_state->exit_code;
 	freeCLIState(cli_state);

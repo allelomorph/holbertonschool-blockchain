@@ -9,18 +9,7 @@
 /* atoi */
 #include <stdlib.h>
 
-/*
-Implement the command send
 
-    Usage: send <amount> <address>, where:
-        <amount> is the number of coins to send (Integer)
-        <address> is the EC public key of the receiver
-    Description: Send coins
-        Create a new transaction
-        Verify the transaction validity
-        Add transaction to a local list (transaction pool)
-        Do not update list of unspent
-*/
 /**
  * findSenderUnspent - used as `action` for llist_for_each to visit each
  *   unspent output in the blockchain, and add unspent outputs
@@ -81,7 +70,7 @@ uint8_t *pubKeyHexToByteArray(char *address)
 {
 	uint8_t *pub;
 	unsigned int scan;
-        size_t i, j, len, upper, case_detected;
+	size_t i, j, len, upper, case_detected;
 
 	if (!address)
 	{
@@ -145,7 +134,7 @@ uint8_t *pubKeyHexToByteArray(char *address)
 	{
 		if (sscanf(address + j, upper ? "%02X" : "%02x", &scan) == -1)
 		{
-		        perror("pubKeyHexToByteArray: sscanf");
+			perror("pubKeyHexToByteArray: sscanf");
 			free(pub);
 			return (NULL);
 		}
@@ -229,12 +218,12 @@ int cmd_send(char *amount, char *address, cli_state_t *cli_state)
 	pub = pubKeyHexToByteArray(address);
 	if (!pub)
 	{
-		printf(TAB4 TAB4 "Expecting address to be a hex string representing %i bytes\n",
-		       EC_PUB_LEN);
+		printf(TAB4 TAB4 "Expecting address to be %s %i bytes\n",
+		       "a hex string representing", EC_PUB_LEN);
 		return (1);
 	}
 
-        receiver = ec_from_pub(pub);
+	receiver = ec_from_pub(pub);
 	free(pub);
 	if (!receiver)
 	{
@@ -262,7 +251,7 @@ int cmd_send(char *amount, char *address, cli_state_t *cli_state)
 		return (1);
 	}
 
-	printf(TAB4 "Verified transaction added to mempool, sending %s to provided public key\n",
-	       amount);
+	printf(TAB4 "%s, sending %s to provided public key\n",
+	       "Verified transaction added to mempool", amount);
 	return (0);
 }

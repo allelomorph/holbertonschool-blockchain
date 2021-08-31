@@ -121,7 +121,7 @@ llist_t *mempool_deserialize(char const *path)
 		return (NULL);
 	}
 
-        mempool = llist_create(MT_SUPPORT_FALSE);
+	mempool = llist_create(MT_SUPPORT_FALSE);
 	if (!mempool)
 	{
 		fprintf(stderr,
@@ -135,7 +135,7 @@ llist_t *mempool_deserialize(char const *path)
 			     header.hmpl_endian) != 0)
 	{
 		close(fd);
-	        llist_destroy(mempool, 1, (node_dtor_t)transaction_destroy);
+		llist_destroy(mempool, 1, (node_dtor_t)transaction_destroy);
 		return (NULL);
 	}
 
@@ -196,7 +196,7 @@ int cmd_mempool_load(char *path, char *arg2, cli_state_t *cli_state)
 
 	printf(TAB4 "Loaded mempool from '%s'\n", path);
 	llist_destroy(cli_state->mempool, 1,
-        	      (node_dtor_t)transaction_destroy);
+		      (node_dtor_t)transaction_destroy);
 	cli_state->mempool = new_mempool;
 	return (0);
 }

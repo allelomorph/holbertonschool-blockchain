@@ -53,7 +53,7 @@ int cmd_wallet_save(char *path, char *arg2, cli_state_t *cli_state)
 		       strerror(errno));
 		return (1);
 	}
-        if (!S_ISDIR(st.st_mode))
+	if (!S_ISDIR(st.st_mode))
 	{
 		printf(TAB4 "Failed to save wallet to '%s': %s\n", path,
 		       "Not a directory");

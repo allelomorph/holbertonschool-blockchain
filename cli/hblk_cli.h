@@ -20,63 +20,64 @@
 /* exit differs from cmd_fp_t typedef and is handled separately */
 #define CMD_FP_CT 10 /* not counting exit */
 #define CMD_FP_ARRAY { \
-        cmd_wallet_load, \
-        cmd_wallet_save, \
-        cmd_send, \
-        cmd_mine, \
-        cmd_info, \
-        cmd_load, \
-        cmd_save, \
-        cmd_mempool_load, \
+	cmd_wallet_load, \
+	cmd_wallet_save, \
+	cmd_send, \
+	cmd_mine, \
+	cmd_info, \
+	cmd_load, \
+	cmd_save, \
+	cmd_mempool_load, \
 	cmd_mempool_save, \
-        cmd_help \
+	cmd_help \
 }
 #define CMD_CT 11 /* counting exit */
 #define CMD_NAME_ARRAY { \
-        "wallet_load", \
+	"wallet_load", \
 	"wallet_save", \
-        "send", \
-        "mine", \
+	"send", \
+	"mine", \
 	"info", \
-        "load", \
-        "save", \
-        "mempool_load", \
+	"load", \
+	"save", \
+	"mempool_load", \
 	"mempool_save", \
-        "help", \
-        "exit" \
+	"help", \
+	"exit" \
 }
 #define CMD_HELP_ARRAY { \
-        WALLET_LOAD_HELP, \
-        WALLET_SAVE_HELP, \
-        SEND_HELP, \
+	WALLET_LOAD_HELP, \
+	WALLET_SAVE_HELP, \
+	SEND_HELP, \
 	MINE_HELP, \
-        INFO_HELP, \
+	INFO_HELP, \
 	LOAD_HELP, \
-        SAVE_HELP, \
-        MEMPOOL_LOAD_HELP, \
-        MEMPOOL_SAVE_HELP, \
-        HELP_HELP, \
-        EXIT_HELP \
+	SAVE_HELP, \
+	MEMPOOL_LOAD_HELP, \
+	MEMPOOL_SAVE_HELP, \
+	HELP_HELP, \
+	EXIT_HELP \
 }
-#define CMD_HELP_SUMMARY_LIST WALLET_LOAD_HELP_SUMMARY \
-        WALLET_SAVE_HELP_SUMMARY \
+#define CMD_HELP_SUMMARY_LIST (\
+	WALLET_LOAD_HELP_SUMMARY \
+	WALLET_SAVE_HELP_SUMMARY \
 	SEND_HELP_SUMMARY \
-        MINE_HELP_SUMMARY \
+	MINE_HELP_SUMMARY \
 	INFO_HELP_SUMMARY \
-        LOAD_HELP_SUMMARY \
+	LOAD_HELP_SUMMARY \
 	SAVE_HELP_SUMMARY \
 	MEMPOOL_LOAD_HELP_SUMMARY \
-        MEMPOOL_SAVE_HELP_SUMMARY \
-        HELP_HELP_SUMMARY \
-        EXIT_HELP_SUMMARY \
+	MEMPOOL_SAVE_HELP_SUMMARY \
+	HELP_HELP_SUMMARY \
+	EXIT_HELP_SUMMARY)
 
 #define HMPL_MAG "HMPL"
 #define HMPL_MAG_LEN 4
 
 #define SAVE_DIR_DFLT "hblk_save/"
 #define WALLET_DIR_DFLT SAVE_DIR_DFLT "wallet/"
-#define WALLET_PUB_PATH_DFLT WALLET_DIR_DFLT PUB_FILENAME
-#define WALLET_PRI_PATH_DFLT WALLET_DIR_DFLT PRI_FILENAME
+#define WALLET_PUB_PATH_DFLT (WALLET_DIR_DFLT PUB_FILENAME)
+#define WALLET_PRI_PATH_DFLT (WALLET_DIR_DFLT PRI_FILENAME)
 #define MEMPOOL_PATH_DFLT SAVE_DIR_DFLT "save.hmpl"
 #define BLKCHN_PATH_DFLT SAVE_DIR_DFLT "save.hblk"
 
@@ -99,8 +100,11 @@ typedef struct st_list_s
 /**
  * struct cli_state_s - stores state of cli and blockchain in use
  *
- * @exec_name: name of cli executable
- * @arg_script_path: name of main(argv[1]) script if in non-interactive mode
+ * @exec_name: path of cli executable
+ * @arg_wallet: path of wallet directory passed from command line
+ * @arg_mempool: path of mempool file passed from command line
+ * @arg_blockchain: path of blockchain file passed from command line
+ * @arg_script: path of non-interactive mode script passed from command line
  * @arg_script_fd: -1 by default, or fd of main(argv[1]) script
  * @stdin_bup: -1 by default, stores backup of stdin fd when executing script
  * @loop_ct: amount of lines entered and fully parsed
@@ -238,9 +242,9 @@ int cmd_info(char *arg1, char *arg2, cli_state_t *cli_state);
 
 /* cmd_send.c */
 /*
-static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
-			     unsigned int idx, su_info_t *su_info);
-*/
+ * static int findSenderUnspent(unspent_tx_out_t *unspent_tx_out,
+ *			        unsigned int idx, su_info_t *su_info);
+ */
 uint8_t *pubKeyHexToByteArray(char *address);
 int cmd_send(char *amount, char *address, cli_state_t *cli_state);
 
@@ -269,7 +273,7 @@ void _print_hex_buffer(uint8_t const *buf, size_t len);
 
 /* printing/_transaction_print_brief.c */
 int _transaction_print_brief_loop(transaction_t const *transaction,
-			          unsigned int idx, char const *indent);
+				  unsigned int idx, char const *indent);
 void _transaction_print_brief(transaction_t const *transaction);
 
 /* printing/_transaction_print.c */

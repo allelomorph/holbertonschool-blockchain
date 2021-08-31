@@ -130,7 +130,7 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 {
 	char *cmd = NULL, *arg_1 = NULL, *arg_2 = NULL;
 	char *cmds[CMD_CT] = CMD_NAME_ARRAY;
-        cmd_fp_t f_ptrs[CMD_FP_CT] = CMD_FP_ARRAY;
+	cmd_fp_t f_ptrs[CMD_FP_CT] = CMD_FP_ARRAY;
 	int i;
 
 	if (!st_head || !line || !cli_state)
@@ -149,8 +149,8 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 	}
 
 	/* `exit` differs from builtin function pointer type cmd_fp_t */
-        if (strncmp("exit", cmd, strlen("exit") + 1) == 0)
-	        cmd_exit(st_head, line, cli_state);
+	if (strncmp("exit", cmd, strlen("exit") + 1) == 0)
+		cmd_exit(st_head, line, cli_state);
 
 	for (i = 0; i < CMD_FP_CT; i++)
 	{
@@ -161,11 +161,7 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 			return;
 		}
 	}
-/*
-	printf(TAB4 "'%s' is not a valid command, %s\n",
-	       cmd, "try one of the following:");
-	printf(GENERAL_HELP);
-*/
+
 	fprintf(stderr, TAB4 "'%s' is not a valid command, %s\n",
 		cmd, "enter `help` for list of commands");
 }

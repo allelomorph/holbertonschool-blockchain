@@ -7,78 +7,7 @@
 /* time */
 #include <time.h>
 
-/*
-Implement the command mine
 
-    Usage: mine
-    Description: Mine a block
-        Create a new Block using the Blockchain API
-        IF transactions are available in the local transaction pool, include the transactions 1 by 1 in the Block
-            Verify the transaction using the list of unspent outputs.
-            If the transaction is not valid, do not include it in the Block, and delete it
-            Update the list of unspent outputs after a transaction is processed
-        Set the difficulty of the Block using the difficulty adjustment method
-        Inject a coinbase transaction as the first transaction in the Block
-        Mine the Block (proof of work)
-        Verify Block validity
-        Add the Block to the Blockchain
-*/
-/*
-the above is a bit off from hwo things were done in 0x03: a block needed to
-have all its transactions added, verified, the entire block hashed, and then
-that block hash is given as a parameter to update_unspent, see example from
-0x03 t14 checker main_0.c:
-
-static block_t *_add_block(blockchain_t *blockchain, block_t const *prev,
-char const *data, EC_KEY *miner)
-{
-	block_t *block;
-	transaction_t *coinbase;
-
-	block = block_create(prev, (int8_t *)data, (uint32_t)strlen(data));
-	block->info.difficulty = 20;
-	block->info.timestamp = 1234567890;
-
-	coinbase = coinbase_create(miner, block->info.index);
-	llist_add_node(block->transactions, coinbase, ADD_NODE_FRONT);
-
-	block_mine(block);
-
-	if (block_is_valid(block, prev, blockchain->unspent) == 0)
-	{
-		printf("Block mined: [%u] ", block->info.difficulty);
-		_print_hex_buffer(block->hash, SHA256_DIGEST_LENGTH);
-		printf("\n");
-
-		blockchain->unspent = update_unspent(block->transactions,
-						     block->hash, blockchain->unspent);
-
-		llist_add_node(blockchain->chain, block, ADD_NODE_REAR);
-	}
-	else
-	{
-		printf("Invalid Block with index: %u\n", block->info.index);
-	}
-
-	return (block);
-}
-
-so more this way:
-    Description: Mine a block
-        Create a new Block using the Blockchain API
-        For each tx in the mempool:
-            Verify the transaction using the list of unspent outputs.
-            If the transaction is not valid, and delete it
-        Set the difficulty of the Block using the difficulty adjustment method
-        Inject a coinbase transaction as the first transaction in the Block
-	Add the remaining verified mempool transactions to the block
-        Mine the Block (proof of work)
-        Verify Block validity
-	Update the list of unspent outputs after a transaction is processed
-        Add the Block to the Blockchain
-
-*/
-/* ../blockchain/v0.3/provided/_print_hex_buffer.c */
 void _print_hex_buffer(uint8_t const *buf, size_t len);
 
 

@@ -1,3 +1,6 @@
+#ifndef HELP_TEXT_H
+#define HELP_TEXT_H
+
 /* TAB4 RULER */
 #include "hblk_cli.h"
 
@@ -136,3 +139,5 @@
 	"following\ncommands are implemented, and more information for each" \
 	" can be found with\n`help <command>`:\n" \
 	"\n"
+
+#endif /* HELP_TEXT_H */

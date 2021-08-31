@@ -20,7 +20,7 @@
  *   and -2 on failure (-1 reserved for llist_for_each errors)
  */
 int _transaction_print_brief_loop(transaction_t const *transaction,
-			          unsigned int idx, char const *indent)
+					  unsigned int idx, char const *indent)
 {
 	tx_out_t const *out;
 

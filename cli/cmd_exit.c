@@ -66,9 +66,9 @@ void offerBackupOnExit(cli_state_t *cli_state)
 	if (getConsent(cli_state))
 	{
 		do {
-			file_path = _readline(TAB4 TAB4	\
-					      "File path to save wallet?",
-					      cli_state);
+			file_path = _readline(
+				TAB4 TAB4 "File path to save wallet?",
+				cli_state);
 			file_path_tok = strtok(file_path, WHITESPACE);
 			ret = cmd_wallet_save(file_path_tok, NULL, cli_state);
 			if (file_path)
@@ -82,9 +82,9 @@ void offerBackupOnExit(cli_state_t *cli_state)
 	if (getConsent(cli_state))
 	{
 		do {
-			file_path = _readline(TAB4 TAB4 \
-					      "File path to save mempool?",
-					      cli_state);
+			file_path = _readline(
+				TAB4 TAB4 "File path to save mempool?",
+				cli_state);
 			file_path_tok = strtok(file_path, WHITESPACE);
 			ret = cmd_mempool_save(file_path_tok, NULL, cli_state);
 			if (file_path)
@@ -98,9 +98,9 @@ void offerBackupOnExit(cli_state_t *cli_state)
 	if (getConsent(cli_state))
 	{
 		do {
-			file_path = _readline(TAB4 TAB4 \
-					      "File path to save blockchain?",
-					      cli_state);
+			file_path = _readline(
+				TAB4 TAB4 "File path to save blockchain?",
+				cli_state);
 			file_path_tok = strtok(file_path, WHITESPACE);
 			ret = cmd_save(file_path_tok, NULL, cli_state);
 			if (file_path)

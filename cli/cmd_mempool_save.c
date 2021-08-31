@@ -129,8 +129,8 @@ int mempool_serialize(const llist_t *mempool, const char *path)
 
 
 /**
- * cmd_mempool_save - saves a blockchain mempool from the current CLI session to a
- *   given path
+ * cmd_mempool_save - saves a blockchain mempool from the current CLI session
+ *   to a given path
  *
  * @path: user provided path to the file from which to load the blockchain
  *   mempool, or NULL for the default
@@ -144,7 +144,7 @@ int cmd_mempool_save(char *path, char *arg2, cli_state_t *cli_state)
 {
 	struct stat st;
 	char dir_path[PATH_MAX];
-        int64_t i;
+	int64_t i;
 
 	(void)arg2;
 	if (!cli_state)
