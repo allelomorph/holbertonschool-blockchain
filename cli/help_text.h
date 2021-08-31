@@ -51,17 +51,24 @@
 	"it to the blockchain.\n" \
 	"\n"
 
-#define INFO_HELP_SUMMARY TAB4 "info [<aspect> / full] [full] - displays information about the current CLI\nsession\n"
+#define INFO_HELP_SUMMARY TAB4 "info [<aspect> / full] [full] - displays " \
+	"information about the current CLI\nsession\n"
 #define INFO_HELP "\n" INFO_HELP_SUMMARY \
 	"\n" \
-	TAB4 TAB4 "info wallet: public key, number of UTXOs, total coin of UTXOs\n" \
-	TAB4 TAB4 "info wallet full: `info wallet` plus a full list of wallet's unspent UTXOs\n" \
-	TAB4 TAB4 "info mempool: number of pending transactions in the local memory pool\n" \
-	TAB4 TAB4 "info mempool full: `info mempool` plus a full list of transactions in the\nlocal memory pool\n" \
+	TAB4 TAB4 "info wallet: public key, number of UTXOs, total coin of " \
+	"UTXOs\n" \
+	TAB4 TAB4 "info wallet full: `info wallet` plus a full list of " \
+	"wallet's unspent UTXOs\n" \
+	TAB4 TAB4 "info mempool: number of pending transactions in the local" \
+	" memory pool\n" \
+	TAB4 TAB4 "info mempool full: `info mempool` plus a full list of " \
+	"transactions in the\nlocal memory pool\n" \
 	TAB4 TAB4 "info blockchain: number of UTXOs and blockchain height\n" \
-	TAB4 TAB4 "info blockchain full: `info blockchain` plus a full list of all UTXOs and\nblocks in the chain\n" \
+	TAB4 TAB4 "info blockchain full: `info blockchain` plus a full list " \
+	"of all UTXOs and\nblocks in the chain\n" \
 	TAB4 TAB4 "info: `info wallet`, `info mempool`, `info blockchain`\n" \
-	TAB4 TAB4 "info full: `info wallet full`, `info mempool full`,\n`info blockchain full`\n" \
+	TAB4 TAB4 "info full: `info wallet full`, `info mempool full`,\n" \
+	"`info blockchain full`\n" \
 	"\n"
 
 #define LOAD_HELP_SUMMARY TAB4 "load [<path>] - loads a new blockchain into " \
@@ -83,7 +90,8 @@
 	" if <path> is not\ngiven.\n" \
 	"\n"
 
-#define MEMPOOL_LOAD_HELP_SUMMARY TAB4 "mempool_load [<path>] - loads a new mempool into the CLI session\n"
+#define MEMPOOL_LOAD_HELP_SUMMARY TAB4 "mempool_load [<path>] - loads a new " \
+	"mempool into the CLI session\n"
 #define MEMPOOL_LOAD_HELP "\n" \
 	MEMPOOL_LOAD_HELP_SUMMARY \
 	"\n" \
@@ -92,14 +100,17 @@
 	"each session begins with an\nempty mempool.\n" \
 	"\n"
 
-#define MEMPOOL_SAVE_HELP_SUMMARY TAB4 "mempool_save [<path>] - saves the current CLI session mempool to file\n"
+#define MEMPOOL_SAVE_HELP_SUMMARY TAB4 "mempool_save [<path>] - saves the " \
+	"current CLI session mempool to file\n"
 #define MEMPOOL_SAVE_HELP "\n" \
 	MEMPOOL_SAVE_HELP_SUMMARY \
 	"\n" \
-	TAB4 TAB4 "Saves current session mempool to the default path if <path> is not\ngiven.\n" \
+	TAB4 TAB4 "Saves current session mempool to the default path if " \
+	"<path> is not\ngiven.\n" \
 	"\n"
 
-#define HELP_HELP_SUMMARY TAB4 "help [<command>] - displays command instructions\n"
+#define HELP_HELP_SUMMARY TAB4 "help [<command>] - displays command " \
+	"instructions\n"
 #define HELP_HELP "\n" \
 	HELP_HELP_SUMMARY \
 	"\n" \

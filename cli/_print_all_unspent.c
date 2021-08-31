@@ -3,6 +3,8 @@
 #include <unistd.h>
 
 #include "blockchain.h"
+/* TAB4 */
+#include "hblk_cli.h"
 
 void _print_hex_buffer(uint8_t const *buf, size_t len);
 
@@ -51,7 +53,7 @@ void _print_all_unspent(llist_t *unspent)
 {
         printf("Unspent transaction outputs [%u]: [\n", llist_size(unspent));
 
-        llist_for_each(unspent, (node_func_t)_print_unspent, "\t");
+        llist_for_each(unspent, (node_func_t)_print_unspent, TAB4);
 
         printf("]\n");
 }
