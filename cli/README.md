@@ -1,10 +1,5 @@
-[(459) 0x04. Blockchain - CLI project outline](./PROJECT.md)
-
----
-
 # `hblk_cli` - Holberton blockchain command line interpreter
-This command line interface is a means of using the simple blockchain features implemented in projects [(443) 0x00. Blockchain - Crypto](../crypto/), [(456) 0x01. Blockchain - Data structures](../blockchain/v0.1/), [(457) 0x02. Blockchain - Block mining](../blockchain/v0.2/), and [(458) 0x03. Blockchain - Transactions](../blockchain/v0.3/),
-I, which mimic the UXTO transactions and block mining done in Bitcoin core.
+This command line interface is a means of using the simple blockchain features implemented in projects [(443) 0x00. Blockchain - Crypto](../crypto/), [(456) 0x01. Blockchain - Data structures](../blockchain/v0.1/), [(457) 0x02. Blockchain - Block mining](../blockchain/v0.2/), and [(458) 0x03. Blockchain - Transactions](../blockchain/v0.3/), which mimic the UXTO transactions and block mining done in Bitcoin core. Built to satisfy the [(459) 0x04. Blockchain - CLI](./PROJECT.md) project requirements.
 
 Currently there is no networking functionality to connect nodes, so the blockchain is only a simplified model for educational purposes.
 
@@ -15,7 +10,7 @@ Version 1.0 of the CLI was built from 08-25-2021 to 08-31-2021 as a solo student
 This project was built mostly conforming to the default Holberton school C guidelines, including the following:
 * `Ubuntu 14.04.6 LTS, Trusty Tahr`
 * `gcc (Ubuntu 4.8.4-2ubuntu1~14.04.4) 4.8.4`
-* gcc flags `-Wall -Werror -Wextra -pedantic` (implicitly `-std=gnu90`)\
+* gcc flags `-Wall -Werror -Wextra -pedantic` (implicitly `-std=gnu90`)
 
 In addition, the following should be installed:
 * `libssl-dev/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
