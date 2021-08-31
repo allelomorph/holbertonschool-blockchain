@@ -262,7 +262,7 @@ int cmd_send(char *amount, char *address, cli_state_t *cli_state)
 		return (1);
 	}
 
-	printf(TAB4 "Verified transaction added to mempool, sending %s to %s\n",
-	       amount, address);
+	printf(TAB4 "Verified transaction added to mempool, sending %s to provided public key\n",
+	       amount);
 	return (0);
 }
