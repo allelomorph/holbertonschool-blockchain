@@ -7,12 +7,6 @@
 #include <string.h>
 
 
-void _print_all_unspent(llist_t *unspent);
-int _transaction_print_loop(transaction_t const *transaction,
-			    unsigned int idx, char const *indent);
-void _blockchain_print(blockchain_t const *blockchain);
-
-
 /**
  * findAllSenderUnspent - used as `action` for llist_for_each to visit each
  *   unspent output in the blockchain, and add unspent outputs

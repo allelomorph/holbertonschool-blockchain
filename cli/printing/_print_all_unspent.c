@@ -1,40 +1,45 @@
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+/* adapted from (458) 0x03. Blockchain - Transactions, t14 main_0.c */
 
 #include "blockchain.h"
 /* TAB4 */
 #include "hblk_cli.h"
+/* printf */
+#include <stdio.h>
 
-void _print_hex_buffer(uint8_t const *buf, size_t len);
 
 /**
- * _print_unspent - Print an unspent transaction output
+ * _print_unspent - used as `action` for llist_for_each to
+ *   visit each UTXO in a list, and print its contents
  *
- * @unspent: Pointer to the unspent transaction output to print
- * @idx: Unused
- * @indent:  Indentation
+ * @unspent: pointer to UTXO in list, as iterated through by
+ *   llist_for_each
+ * @idx: index of `unspent` in list, as iterated through by llist_for_each
+ * @indent: indentation string to use in printing
  *
- * Return: 0
+ * Return: 0 on incremental success (llist_for_each can continue,)
+ *   and -2 on failure (-1 reserved for llist_for_each errors)
  */
 static int _print_unspent(const unspent_tx_out_t *unspent, unsigned int idx,
 			  const char *indent)
 {
         (void)idx;
 
+	if (!unspent)
+		return (-2);
+
         printf("%s{\n", indent);
 
-        printf("%s\tblock_hash: ", indent);
+        printf("%s" TAB4 "block_hash: ", indent);
         _print_hex_buffer(unspent->block_hash, SHA256_DIGEST_LENGTH);
         printf("\n");
 
-        printf("%s\ttx_id: ", indent);
+        printf("%s" TAB4 "tx_id: ", indent);
         _print_hex_buffer(unspent->tx_id, SHA256_DIGEST_LENGTH);
         printf("\n");
 
-        printf("%s\tamount: %u\n", indent, unspent->out.amount);
+        printf("%s" TAB4 "amount: %u\n", indent, unspent->out.amount);
 
-        printf("%s\tpub: ", indent);
+        printf("%s" TAB4 "pub: ", indent);
         _print_hex_buffer(unspent->out.pub, EC_PUB_LEN);
         printf("\n");
 
