@@ -11,8 +11,16 @@ CC = gcc
 CFLAGS = -Wall -Werror -Wextra -pedantic
 
 # OpenSSLGlobalCleanup.c temporarily omitted for project grading of task 8
-SRC = sha256.c ec_create.c ec_to_pub.c ec_from_pub.c \
-	ec_save.c ec_load.c ec_sign.c ec_verify.c OpenSSLGlobalCleanup.c
+SRC = sha256.c \
+	ec_create.c \
+	ec_to_pub.c \
+	ec_from_pub.c \
+	ec_save.c \
+	ec_load.c \
+	ec_sign.c \
+	ec_verify.c \
+	OpenSSLGlobalCleanup.c
+
 OBJ = $(SRC:.c=.o)
 
 .PHONY: libhblk_crypto.a clean oclean flcean
@@ -21,8 +29,10 @@ OBJ = $(SRC:.c=.o)
 libhblk_crypto.a: $(OBJ)
 	ar -rcs libhblk_crypto.a $(OBJ)
 
+all: libhblk_crypto.a
+
 clean:
-	$(RM) *~ $(NAME)
+	$(RM) *~ libhblk_crypto.a
 
 oclean:
 	$(RM) $(OBJ)
