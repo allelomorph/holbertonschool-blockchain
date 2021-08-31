@@ -16,6 +16,7 @@ This project was built mostly conforming to the default Holberton school C guide
 * `Ubuntu 14.04.6 LTS, Trusty Tahr`
 * `gcc (Ubuntu 4.8.4-2ubuntu1~14.04.4) 4.8.4`
 * gcc flags `-Wall -Werror -Wextra -pedantic` (implicitly `-std=gnu90`)\
+
 In addition, the following should be installed:
 * `libssl-dev/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
 * `libssl1.0.0/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
@@ -73,16 +74,16 @@ Version 1.0 of the CLI has the following builin commands:
 
 | command | arguments | description |
 | ------- | --------- | ----------- |
-| wallet_load | \[<path>\] | loads a new wallet into the CLI session |
-| wallet_save | \[<path>\] | saves wallet from CLI session to a directory |
-| send | <amount> <address> | sends <amount> coins to <address>; valid transaction enters mempool |
+| wallet_load | \[\<path>\] | loads a new wallet into the CLI session |
+| wallet_save | \[\<path>\] | saves wallet from CLI session to a directory |
+| send | \<amount> \<address> | sends <amount> coins to <address>; valid transaction enters mempool |
 | mine | | hashes current mempool into a new block |
-| info | \[<aspect> / full\] \[full\] | displays information about the current CLI session |
-| load | \[<path>\] | loads a new blockchain into the CLI session |
-| save | \[<path>\] | saves the current CLI session blockchain to file |
-| mempool_load | \[<path>\] | loads a new mempool into the CLI session |
-| mempool_save | \[<path>\] | saves the current CLI session mempool to file |
-| help | \[<command>\] | displays command instructions |
+| info | \[\<aspect> / full\] \[full\] | displays information about the current CLI session |
+| load | \[\<path>\] | loads a new blockchain into the CLI session |
+| save | \[\<path>\] | saves the current CLI session blockchain to file |
+| mempool_load | \[\<path>\] | loads a new mempool into the CLI session |
+| mempool_save | \[\<path>\] | saves the current CLI session mempool to file |
+| help | \[\<command>\] | displays command instructions |
 | exit | | exits CLI session |
 
 ## Included Files
