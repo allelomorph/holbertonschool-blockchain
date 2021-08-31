@@ -6,10 +6,12 @@
 /* memcmp */
 #include <string.h>
 
+
 void _print_all_unspent(llist_t *unspent);
 int _transaction_print_loop(transaction_t const *transaction,
 			    unsigned int idx, char const *indent);
 void _blockchain_print(blockchain_t const *blockchain);
+
 
 /**
  * findAllSenderUnspent - used as `action` for llist_for_each to visit each
@@ -28,7 +30,7 @@ void _blockchain_print(blockchain_t const *blockchain);
  *   and -2 on failure (-1 reserved for llist_for_each errors)
  */
 static int findAllSenderUnspent(unspent_tx_out_t *unspent_tx_out,
-			     unsigned int idx, su_info_t *su_info)
+				unsigned int idx, su_info_t *su_info)
 {
 	(void)idx;
 
@@ -56,7 +58,19 @@ static int findAllSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 }
 
 
-int print_info_wallet(llist_t **wallet_unspent, int full,
+/**
+ * print_info_wallet - prints information about the current session wallet
+ *
+ * @full: non-zero if printing as header to `info wallet full`
+ * @wallet_unspent: double pointer to store pointer to the list of wallet's
+ *   UTXOs; modified by reference
+ * @component: non-zero if printing as part of `info`
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
+int print_info_wallet(int full, llist_t **wallet_unspent,
 		      int component, cli_state_t *cli_state)
 {
 	char *pub_buf;
@@ -109,6 +123,15 @@ int print_info_wallet(llist_t **wallet_unspent, int full,
 }
 
 
+/**
+ * print_info_mempool - prints information about the current session mempool
+ *
+ * @component: non-zero if printing as part of `info`
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
 int print_info_mempool(int component, cli_state_t *cli_state)
 {
 	if (!cli_state)
@@ -125,6 +148,16 @@ int print_info_mempool(int component, cli_state_t *cli_state)
 }
 
 
+/**
+ * print_info_blockchain - prints information about the current session
+ *   blockchain
+ *
+ * @component: non-zero if printing as part of `info`
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
 int print_info_blockchain(int component, cli_state_t *cli_state)
 {
 	if (!cli_state)
@@ -142,6 +175,15 @@ int print_info_blockchain(int component, cli_state_t *cli_state)
 }
 
 
+/**
+ * print_info - prints information about the current session wallet, mempool,
+ *   and blockchain
+ *
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
 int print_info(cli_state_t *cli_state)
 {
 	if (!cli_state)
@@ -150,7 +192,7 @@ int print_info(cli_state_t *cli_state)
 		return (1);
 	}
 
-	if (print_info_wallet(NULL, 0, 1, cli_state) != 0 ||
+	if (print_info_wallet(0, NULL, 1, cli_state) != 0 ||
 	    print_info_mempool(1, cli_state) != 0 ||
 	    print_info_blockchain(1, cli_state) != 0)
 		return (1);
@@ -160,6 +202,16 @@ int print_info(cli_state_t *cli_state)
 }
 
 
+/**
+ * print_info_wallet_full - prints information about the current session
+ *   wallet, including a list of every UTXO
+ *
+ * @component: non-zero if printing as part of `info full`
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
 int print_info_wallet_full(int component, cli_state_t *cli_state)
 {
 	llist_t *wallet_unspent;
@@ -170,7 +222,7 @@ int print_info_wallet_full(int component, cli_state_t *cli_state)
 		return (1);
 	}
 
-	if (print_info_wallet(&wallet_unspent, 1, 0, cli_state) != 0)
+	if (print_info_wallet(1, &wallet_unspent, 0, cli_state) != 0)
 		return (1);
 	_print_all_unspent(wallet_unspent);
 	if (!component)
@@ -181,6 +233,16 @@ int print_info_wallet_full(int component, cli_state_t *cli_state)
 }
 
 
+/**
+ * print_info_mempool_full - prints information about the current session
+ *   mempool, including a list of every transaction
+ *
+ * @component: non-zero if printing as part of `info full`
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
 int print_info_mempool_full(int component, cli_state_t *cli_state)
 {
 	if (!cli_state)
@@ -205,6 +267,16 @@ int print_info_mempool_full(int component, cli_state_t *cli_state)
 }
 
 
+/**
+ * print_info_blockchain_full - prints information about the current session
+ *   blockchain, including lists of every UTXO and every block
+ *
+ * @component: non-zero if printing as part of `info full`
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
 int print_info_blockchain_full(int component, cli_state_t *cli_state)
 {
 	if (!cli_state)
@@ -225,6 +297,15 @@ int print_info_blockchain_full(int component, cli_state_t *cli_state)
 }
 
 
+/**
+ * print_info_full - prints information about the current session wallet,
+ *   mempool, and blockchain, listing out the contents of each
+ *
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
 int print_info_full(cli_state_t *cli_state)
 {
 	if (!cli_state)
@@ -257,7 +338,8 @@ int print_info_full(cli_state_t *cli_state)
  */
 int cmd_info(char *arg1, char *arg2, cli_state_t *cli_state)
 {
-	char *usage = "Usage: info [full] / info [wallet/mempool/blockchain] [full]\n";
+	char *usage =
+		"Usage: info [full]/info [wallet/mempool/blockchain] [full]\n";
 
 	if (!cli_state)
 	{
@@ -270,7 +352,7 @@ int cmd_info(char *arg1, char *arg2, cli_state_t *cli_state)
 	if (strncmp("wallet", arg1, strlen("wallet") + 1) == 0)
 	{
 		if (!arg2)
-			return (print_info_wallet(NULL, 0, 0, cli_state));
+			return (print_info_wallet(0, NULL, 0, cli_state));
 
 		if (strncmp("full", arg2, strlen("full") + 1) == 0)
 			return (print_info_wallet_full(0, cli_state));

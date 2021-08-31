@@ -16,10 +16,7 @@
 #define FLAG_CT 3
 #define FLAG_ARRAY "wmb"
 
-#define HMPL_MAG "HMPL"
-#define HMPL_MAG_LEN 4
-
-/* new? wallet_info? new_wallet? new_mempool? */
+/* add new <aspect> to refresh wallet/mempool/blockchain from CLI? */
 /* exit differs from cmd_fp_t typedef and is handled separately */
 #define CMD_FP_CT 10 /* not counting exit */
 #define CMD_FP_ARRAY { \
@@ -72,6 +69,9 @@
         MEMPOOL_SAVE_HELP_SUMMARY \
         HELP_HELP_SUMMARY \
         EXIT_HELP_SUMMARY \
+
+#define HMPL_MAG "HMPL"
+#define HMPL_MAG_LEN 4
 
 #define SAVE_DIR_DFLT "hblk_save/"
 #define WALLET_DIR_DFLT SAVE_DIR_DFLT "wallet/"
@@ -222,9 +222,18 @@ int cmd_mempool_save(char *path, char *arg2, cli_state_t *cli_state);
 
 /* cmd_info.c */
 /*
-static int findAllSenderUnspent(unspent_tx_out_t *unspent_tx_out,
-				unsigned int idx, su_info_t *su_info);
-*/
+ * static int findAllSenderUnspent(unspent_tx_out_t *unspent_tx_out,
+ *				unsigned int idx, su_info_t *su_info);
+ */
+int print_info_wallet(int full, llist_t **wallet_unspent,
+		      int component, cli_state_t *cli_state);
+int print_info_mempool(int component, cli_state_t *cli_state);
+int print_info_blockchain(int component, cli_state_t *cli_state);
+int print_info(cli_state_t *cli_state);
+int print_info_wallet_full(int component, cli_state_t *cli_state);
+int print_info_mempool_full(int component, cli_state_t *cli_state);
+int print_info_blockchain_full(int component, cli_state_t *cli_state);
+int print_info_full(cli_state_t *cli_state);
 int cmd_info(char *arg1, char *arg2, cli_state_t *cli_state);
 
 /* cmd_send.c */
