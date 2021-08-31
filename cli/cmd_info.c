@@ -56,13 +56,14 @@ static int findAllSenderUnspent(unspent_tx_out_t *unspent_tx_out,
 }
 
 
-int print_info_wallet(int component, cli_state_t *cli_state)
+int print_info_wallet(llist_t **wallet_unspent, int full,
+		      int component, cli_state_t *cli_state)
 {
 	char *pub_buf;
 	su_info_t su_info;
 	size_t i, j;
 
-	if (!cli_state)
+	if (!cli_state || (full && !wallet_unspent))
 	{
 		fprintf(stderr, "print_info_wallet: NULL parameter\n");
 		return (1);
@@ -96,10 +97,14 @@ int print_info_wallet(int component, cli_state_t *cli_state)
 	printf(INFO_WALLET_FMT_HDR);
 	printf(INFO_WALLET_FMT, pub_buf, llist_size(su_info.sender_unspent),
 	       su_info.total_unspent_amt);
+
+	free(pub_buf);
 	if (!component)
 		printf(INFO_FMT_FTR);
-	/* cli_state->wallet_unspent = su_info.sender_unspent; */
-	free(pub_buf);
+        if (full)
+		*wallet_unspent = su_info.sender_unspent;
+	else
+		llist_destroy(su_info.sender_unspent, 0, NULL);
 	return (0);
 }
 
@@ -145,7 +150,7 @@ int print_info(cli_state_t *cli_state)
 		return (1);
 	}
 
-	if (print_info_wallet(1, cli_state) != 0 ||
+	if (print_info_wallet(NULL, 0, 1, cli_state) != 0 ||
 	    print_info_mempool(1, cli_state) != 0 ||
 	    print_info_blockchain(1, cli_state) != 0)
 		return (1);
@@ -157,18 +162,21 @@ int print_info(cli_state_t *cli_state)
 
 int print_info_wallet_full(int component, cli_state_t *cli_state)
 {
+	llist_t *wallet_unspent;
+
 	if (!cli_state)
 	{
 		fprintf(stderr, "print_info_wallet_full: NULL parameter\n");
 		return (1);
 	}
 
-/* state ptr to sender_unspent so we don't have to collect the same data? */
-	if (print_info_wallet(1, cli_state) != 0)
+	if (print_info_wallet(&wallet_unspent, 1, 0, cli_state) != 0)
 		return (1);
-/*	_print_all_unspent(cli_state->wallet_unspent); */
+	_print_all_unspent(wallet_unspent);
 	if (!component)
 		printf(INFO_FMT_FTR);
+
+	llist_destroy(wallet_unspent, 0, NULL);
 	return (0);
 }
 
@@ -181,14 +189,14 @@ int print_info_mempool_full(int component, cli_state_t *cli_state)
 		return (1);
 	}
 
-	if (print_info_mempool(1, cli_state) != 0)
+	if (print_info_mempool(0, cli_state) != 0)
 		return (1);
 
         printf("Mempool transactions [%d]: [\n",
                 llist_size(cli_state->mempool));
         llist_for_each(cli_state->mempool,
 		       (node_func_t)_transaction_print_loop,
-		       (void *)"\t");
+		       (void *)TAB4);
         printf("]\n");
 
 	if (!component)
@@ -205,7 +213,7 @@ int print_info_blockchain_full(int component, cli_state_t *cli_state)
 		return (1);
 	}
 
-	if (print_info_blockchain(1, cli_state) != 0)
+	if (print_info_blockchain(0, cli_state) != 0)
 		return (1);
 
 	_print_all_unspent(cli_state->blockchain->unspent);
@@ -262,7 +270,7 @@ int cmd_info(char *arg1, char *arg2, cli_state_t *cli_state)
 	if (strncmp("wallet", arg1, strlen("wallet") + 1) == 0)
 	{
 		if (!arg2)
-			return (print_info_wallet(0, cli_state));
+			return (print_info_wallet(NULL, 0, 0, cli_state));
 
 		if (strncmp("full", arg2, strlen("full") + 1) == 0)
 			return (print_info_wallet_full(0, cli_state));
