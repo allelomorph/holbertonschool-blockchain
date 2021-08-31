@@ -98,10 +98,11 @@ Saves current session wallet (EC key pair) to the folder at \<path>, or a defaul
 ### `send` \<amount> \<address>
   * \<amount> is the number of coins to send (currently whole numbers only)
   * \<address> is the EC public key of the recipient
+
 Creates a new transaction, verifies it (ensures that there are sufficient unspent transaction outputs in the current session wallet to fund the expenditure, and adds it to the mempool, or list of verified transactions awaiting confirmation via mining. To send coin, the wallet must first earn coin by mining, or receive coin from other wallets.
 
 ### `mine`
-Creates a new block, reverifies all mempool transactions, adds the valid ones to the block, adds a coinbase transaction, sets the block difficulty, hashes the block, and adds it to the blockchain. 
+Creates a new block, reverifies all mempool transactions, adds the valid ones to the block, adds a coinbase transaction, sets the block difficulty (see [Known Issues](#known-issues--future-improvements),) hashes the block, and adds it to the blockchain.
 
 ### `info` \[\<aspect> / full\] \[full\]
 * `info wallet`: public key, number of UTXOs, total coin of UTXOs
@@ -163,6 +164,12 @@ command, with -1 for internal CLI failure or -2 for script read failure. When in
 
 ## Release History
 * 1.0 - First release - 31 Aug 2021
+
+## Known Issues / Future Improvements
+* `libhblk_crypto.a` defines a type `sig_t` which conflicts with attempts to `#include <signal.h>`. This prevents creating a signal handler for SIGINT as would normally be done for a CLI shell. In later revisions, `sig_t` could be renamed `sign_t` or `signt_t`.
+* `libhblk_crypto.a` functions don't consistently free all data in every possible failure case, which can cause the CLI to leak memory in the rare cases that its own user input filters don't screen out bad inputs.
+* `blockchain.h` and `transaction.h`, used in compiling `libhblk_blockchain.a`, have a slightly convoluted circular reference to each other to accommodate the automated grading of previous stages of the blockchain project. The overall referencing of these two headers could be improved.
+* Currently there is no way to adjust the expected rate of block generation or the number of new blocks after which to readjust hashing difficulty. These values are set to 1 block per second (`BLOCK_GENERATION_INTERVAL`) and every 5 blocks (`DIFFICULTY_ADJUSTMENT_INTERVAL`) in `blockchain.h`. With a BGI of 1 second, blocks can't be generated fast enough in CLI interactive mode to increase the hashing difficulty, so it always trends to 0. As a result, the starting difficulty is simply set to 0 by the Genesis Block until another solution is found.
 
 ---
 
