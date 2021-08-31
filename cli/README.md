@@ -19,14 +19,18 @@ In addition, the following should be installed:
 * `/usr/local/lib/libllist.so` and `/usr/local/include/llist.h`, see [llist source](https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/llist)
 
 ## Installation
-First, clone this repository and navigate to `cli/`:
+
+### Source
+First, clone this repository with:
 ```bash
 git clone https://github.com/allelomorph/holbertonschool-blockchain
+```
+
+### Compilation
+Navigate to `cli/`:
+```bash
 cd holbertonschool-blockchain/cli/
 ```
-Then compile as below.
-
-## Compilation
 A Makefile is included, so building from `holbertonschool-blockchain/cli/` can be easily automated with:
 ```bash
 make
