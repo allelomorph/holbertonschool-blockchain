@@ -1,117 +1,122 @@
 # (459) 0x04. Blockchain - CLI
 Specializations > System programming & Algorithm > Blockchain
 
----
-
-### Project author
-Alexandre Gautier
-
-### Assignment dates
-08-25-2021 to 08-31-2021
-
-### Description
-Creating a REPL command line interface for the features built in 0x00 - 0x03, which can make transactions, mine blocks, and save/load the blockchain.
-
-### Provided file(s)
-<!--
-[`provided/`](./provided/) (all originally [here](https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/blockchain/v0.1/provided)):
-* [`_blockchain_destroy.c`](./provided/_blockchain_destroy.c)
-* [`_blockchain_print.c`](./provided/_blockchain_print.c)
-* [`_endianness.c`](./provided/_endianness.c)
-* [`endianness.h`](./provided/endianness.h)
-* [`_genesis.c`](./provided/_genesis.c)
-
-[`test/`](./test/):
-* [`blockchain_create-main.c`](./test/blockchain_create-main.c)
-* [`blockchain_deserialize-main.c`](./test/blockchain_deserialize-main.c)
-* [`blockchain_destroy-main.c`](./test/blockchain_destroy-main.c)
-* [`blockchain_serialize-main.c`](./test/blockchain_serialize-main.c)
-* [`block_create-main.c`](./test/block_create-main.c)
-* [`block_destroy-main.c`](./test/block_destroy-main.c)
-* [`block_hash-main.c`](./test/block_hash-main.c)
-* [`block_is_valid-main.c`](./test/block_is_valid-main.c)
--->
-<!-- also add llist/ ? -->
+## [Project outline](./PROJECT.md)
 
 ---
 
-## Mandatory Tasks
+# `hblk_cli` - Holberton blockchain command line interpreter
+This command line interface is a means of using the simple blockchain features implemented in projects [(443) 0x00. Blockchain - Crypto](../crypto/), [(456) 0x01. Blockchain - Data structures](../blockchain/v0.1/), [(457) 0x02. Blockchain - Block mining](../blockchain/v0.2/), and [(458) 0x03. Blockchain - Transactions](../blockchain/v0.3/),
+I, which mimic the UXTO transactions and block mining done in Bitcoin core.
 
-### :white_large_square: 0. CLI - Create/Load Wallet
-At startup, your CLI must either create a wallet (EC key pair), or load it from a folder.
+Currently there is no networking functionality to connect nodes, so the blockchain is only a simplified model for educational purposes.
 
-Implement the command `wallet_load`
-* Usage: `wallet_load <path>`, where:
-    * `<path>` is the path to the folder from which to load the key pair (string)
-* Description: Load wallet (EC key pair)
-<!--
-File(s): [``](./)\ -->
+## Development
+Version 1.0 of the CLI was built from 08-25-2021 to 08-31-2021 as a solo student project by Samuel Pomeroy, the final stage of a blockchain project arc in a System Programming & Algorithm specialization year of CS education. This project drew on experience with previous projects from that same curriculum, most notably the `dash` clone ["Cascara 2.0"](https://github.com/allelomorph/shell_v2).
 
-### :white_large_square: 1. CLI - Save Wallet
-Implement the command `wallet_save`
-* Usage: `wallet_save <path>`, where:
-    * `<path>` is the path to the folder in which to save the key pair (string)
-* Description: Save wallet (EC key pair)
-<!--
-File(s): [``](./)\ -->
+## Requirements / Build Environment
+This project was built mostly conforming to the default Holberton school C guidelines, including the following:
+* `Ubuntu 14.04.6 LTS, Trusty Tahr`
+* `gcc (Ubuntu 4.8.4-2ubuntu1~14.04.4) 4.8.4`
+* gcc flags `-Wall -Werror -Wextra -pedantic` (GNU C90)
+In addition, the following should be installed:
+* `libssl-dev/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
+* `libssl1.0.0/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
+* `openssl/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
 
-### :white_large_square: 2. CLI - send
-Implement the command `send`
-* Usage: `send <amount> <address>`, where:
-    * `<amount>` is the number of coins to send (Integer)
-    * `<address>` is the EC public key of the receiver
-* Description: Send coins
-    * Create a new transaction
-    * Verify the transaction validity
-    * Add transaction to a local list (transaction pool)
-    * Do not update list of unspent
-<!--
-File(s): [``](./)\-->
+## Installation
+First, clone [this repository](https://github.com/allelomorph/holbertonschool-blockchain). Then compile as below.
 
-### :white_large_square: 3. CLI - mine
-Implement the command `mine`
-* Usage: `mine`
-* Description: Mine a block
-    * Create a new Block using the Blockchain API
-    * **If** transactions are available in the local transaction pool, include the transactions **1 by 1** in the Block
-        * Verify the transaction using the list of unspent outputs.
-        * If the transaction is not valid, do not include it in the Block, and delete it
-        * Update the list of unspent outputs after a transaction is processed
-    * Set the difficulty of the Block using the difficulty adjustment method
-    * Inject a coinbase transaction **as the first** transaction in the Block
-    * Mine the Block (proof of work)
-    * Verify Block validity
-    * Add the Block to the Blockchain
-<!--
-File(s): [``](./)\-->
+## Compilation
+A Makefile is included, so if you have `make` or a compatible program, while in the cloned repository building will be automated with:
+```bash
+make
+```
+If you wish to compile manually, it can be done with:
+```bash
+gcc -Wall -Werror -Wextra -pedantic -I. -I../blockchain/v0.3/ -I../blockchain/v0.3/transaction/ -I../crypto/ -o hblk_cli hblk_cli.* cli_loop.c scripts.c lexing.c cleanup.c cmd_*.c printing/*.c -L../crypto/ -L../blockchain/v0.3/ -u OpenSSLGlobalCleanup -lhblk_blockchain -lhblk_crypto -lssl -lcrypto -lllist -pthread -Wno-overlength-strings
+```
 
-### :white_large_square: 4. CLI - info
-Implement the command `info`
-* Usage: `info`
-* Description: Display information about the Blockchain, at least the following:
-    * Display the number of Blocks in the Blockchain
-    * Display the number of unspent transaction output
-    * Display the number of pending transactions in the local transaction pool
-<!--
-File(s): [``](./)\-->
+## Use
 
-### :white_large_square: 5. CLI - load
-Implement the command `load`
-* Usage: `load <path>`
-* Description: Load a Blockchain from a file
-    * Override the local Blockchain
-<!--
-File(s): [``](./)\-->
+### Interactive mode
+To use in interactive REPL mode, simply lauch the executable with:
+```bash
+./hblk_cli
+```
+Interactive mode can be exited with either `exit` or ctrl + d.
 
-### :white_large_square: 6. CLI - save
-Implement the command `save`
-* Usage: `save <path>`
-* Description: Save the local Blockchain into a file
-    * If the file exists, override it
-<!--
-File(s): [``](./)\-->
+### Non-Interactive mode
+The shell can also be run non-interactively by either piping in commands via the parent shell:
+```bash
+echo "<commands>" | ./hblk_cli
+```
+or by passing a script as an argument:
+```bash
+./hblk_cli <script name>
+```
+
+### Flags
+In either mode, flags can be passed to the CLI as arguments:
+| flag  | name | effect |
+| ----- | ---- | ------ |
+| `-w` | wallet | The CLI attempts to load a wallet (EC key pair) from the directory path provided after this flag (see `wallet_load` below.) |
+| `-m` | mempool | The CLI attempts to load a mempool file from the path provided after this flag (see `mempool_load` below.) |
+| `-b` | blockchain | The CLI attempts to load a blockchain file from the path provided after this flag (see `load` below.)  |
+
+## Parseable Syntax
+Currently the CLI has very simple lexing of command lines, and only tokenizes by whitespace, expecting one command per line of input. No control operators or special characters are implemented.
+
+## Builtin Commands
+Version 1.0 of the CLI has the following builin commands:
+
+| command | arguments | description |
+| ------- | --------- | ----------- |
+| wallet_load | [<path>] | loads a new wallet into the CLI session |
+| wallet_save | [<path>] | saves wallet from CLI session to a directory |
+| send | <amount> <address> | sends <amount> coins to <address>; valid transaction enters mempool |
+| mine | | hashes current mempool into a new block |
+| info | [<aspect> / full] [full] | displays information about the current CLI session |
+| load | [<path>] | loads a new blockchain into the CLI session |
+| save | [<path>] | saves the current CLI session blockchain to file |
+| mempool_load | [<path>] | loads a new mempool into the CLI session |
+| mempool_save | [<path>] | saves the current CLI session mempool to file |
+| help | [<command>] | displays command instructions |
+| exit | | exits CLI session |
+
+## Included Files
+
+| file | file contents |
+| ---- | ------------- |
+| cleanup.c | functions used in freeing CLI data structures |
+| cli_loop.c | the primary REPL loop and its subroutines |
+| cmd_exit.c | the command `exit` and its subroutines |
+| cmd_help.c | the command `help` and its subroutines  |
+| cmd_info.c | the command `info` and its subroutines |
+| cmd_load.c | the command `load` and its subroutines |
+| cmd_mempool_load.c | the command `mempool_load` and its subroutines |
+| cmd_mempool_save.c |  the command `mempool_save` and its subroutines |
+| cmd_mine.c |  the command `mine` and its subroutines |
+| cmd_save.c |  the command `save` and its subroutines |
+| cmd_send.c |  the command `send` and its subroutines |
+| cmd_wallet_load.c | the command `wallet_load` and its subroutines |
+| cmd_wallet_save.c | the command `wallet_save` and its subroutines |
+| hblk_cli.c | main entry point and its subroutines |
+| hblk_cli.h | primary header for CLI functions, macros, and structures |
+| help_text.h | auxillary header for string constants used in help text |
+| info_formats.h | auxillary header for string constants used in `info` output |
+| lexing.c | functions used in lexing commands |
+| printing/_blockchain_print.c | functions used in formatted printing of the blockchain |
+| printing/_print_all_unspent.c | functions used in formatted printing of unspent transaction outputs |
+| printing/_print_hex_buffer.c | functions used in printing byte arrays |
+| printing/_transaction_print_brief.c | functions used in abridged formatted printing of transactions |
+| printing/_transaction_print.c | functions used in formatted printing of transactions |
+| scripts.c | functions used in handling scripts in non-interactive mode |
+
+## Release History
+* 1.0 - First release - 31 Aug 2021
 
 ---
 
-## Student
+## Author
 * **Samuel Pomeroy** - [allelomorph](github.com/allelomorph)
