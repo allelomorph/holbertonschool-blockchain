@@ -46,7 +46,7 @@ LDFLAGS = -u OpenSSLGlobalCleanup $(addprefix -I, $(HDR_DIRS)) \
 LNKD_LIBS = hblk_blockchain hblk_crypto ssl crypto llist
 LDLIBS = $(addprefix -l, $(LNKD_LIBS)) -pthread
 
-HEADERS = hblk_cli.h
+HEADERS = hblk_cli.h help_text.h info_formats.h
 CLI_SRC = cleanup.c \
 	cli_loop.c \
 	cmd_exit.c \
@@ -71,16 +71,22 @@ PRINT_SRC = _blockchain_print.c \
 
 OBJ = $(CLI_SRC:.c=.o) $(addprefix printing/, $(PRINT_SRC:.c=.o))
 
-.PHONY: clean oclean fclean re
+.PHONY: llist all clean oclean fclean re
 
-hblk_cli: $(HEADERS) $(OBJ) ../crypto/libhblk_crypto.a ../blockchain/v0.3/libhblk_blockchain.a
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
+hblk_cli: $(HEADERS) $(OBJ) \
+	../crypto/libhblk_crypto.a ../blockchain/v0.3/libhblk_blockchain.a \
+	/usr/local/lib/libllist.so /usr/local/include/llist.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
 
 ../crypto/libhblk_crypto.a:
 	$(MAKE) -C ../crypto/ libhblk_crypto.a oclean
 
 ../blockchain/v0.3/libhblk_blockchain.a:
 	$(MAKE) -C ../blockchain/v0.3/ libhblk_blockchain.a oclean
+
+/usr/local/lib/libllist.so:
+/usr/local/include/llist.h:
+	sudo ../llist/install.bash
 
 all: hblk_cli
 

@@ -28,7 +28,7 @@ cd holbertonschool-blockchain/
 ```
 
 ### Prerequisities
-* `llist.so` and `llist.h` can be installed with the script included in `llist/`:
+* `llist.so` and `llist.h` are installed by `make`, but can be installed manually with the script in `llist/`:
 ```bash
 llist/install.bash
 ```
