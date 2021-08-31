@@ -21,15 +21,28 @@ In addition, the following should be installed:
 ## Installation
 
 ### Source
-First, clone this repository with:
+First, clone this repository and enter the repo directory:
 ```bash
 git clone https://github.com/allelomorph/holbertonschool-blockchain
+cd holbertonschool-blockchain/
 ```
+
+### Prerequisities
+* `llist.so` and `llist.h` can be installed with the script included in `llist/`:
+```bash
+llist/install.bash
+```
+* If the OpenSSL packages listed above do not appear with `apt list --installed`, use:
+```bash
+sudo apt-get install libssl
+sudo apt-get install libssl-dev
+```
+* `pthread` should come installed with Ubuntu 14.04
 
 ### Compilation
 Navigate to `cli/`:
 ```bash
-cd holbertonschool-blockchain/cli/
+cd cli/
 ```
 A Makefile is included, so building from `holbertonschool-blockchain/cli/` can be easily automated with:
 ```bash
