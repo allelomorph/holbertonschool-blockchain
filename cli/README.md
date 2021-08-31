@@ -1,7 +1,4 @@
-# (459) 0x04. Blockchain - CLI
-Specializations > System programming & Algorithm > Blockchain
-
-## [Project outline](./PROJECT.md)
+[(459) 0x04. Blockchain - CLI project outline](./PROJECT.md)
 
 ---
 
@@ -12,20 +9,24 @@ I, which mimic the UXTO transactions and block mining done in Bitcoin core.
 Currently there is no networking functionality to connect nodes, so the blockchain is only a simplified model for educational purposes.
 
 ## Development
-Version 1.0 of the CLI was built from 08-25-2021 to 08-31-2021 as a solo student project by Samuel Pomeroy, the final stage of a blockchain project arc in a System Programming & Algorithm specialization year of CS education. This project drew on experience with previous projects from that same curriculum, most notably the `dash` clone ["Cascara 2.0"](https://github.com/allelomorph/shell_v2).
+Version 1.0 of the CLI was built from 08-25-2021 to 08-31-2021 as a solo student project by Samuel Pomeroy - the final stage of a blockchain project arc in his second year of CS education focusing on C, system programming & algorithms. This project drew on experience with other projects from that same curriculum, most notably the `dash` clone [Cascara 2.0](https://github.com/allelomorph/shell_v2).
 
 ## Requirements / Build Environment
 This project was built mostly conforming to the default Holberton school C guidelines, including the following:
 * `Ubuntu 14.04.6 LTS, Trusty Tahr`
 * `gcc (Ubuntu 4.8.4-2ubuntu1~14.04.4) 4.8.4`
-* gcc flags `-Wall -Werror -Wextra -pedantic` (GNU C90)
+* gcc flags `-Wall -Werror -Wextra -pedantic` (implicitly `-std=gnu90`)\
 In addition, the following should be installed:
 * `libssl-dev/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
 * `libssl1.0.0/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
 * `openssl/trusty-updates,trusty-security,now 1.0.1f-1ubuntu2.27`
 
 ## Installation
-First, clone [this repository](https://github.com/allelomorph/holbertonschool-blockchain). Then compile as below.
+First, clone this repository:
+```bash
+git clone https://github.com/allelomorph/holbertonschool-blockchain
+```
+Then compile as below.
 
 ## Compilation
 A Makefile is included, so if you have `make` or a compatible program, while in the cloned repository building will be automated with:
@@ -72,16 +73,16 @@ Version 1.0 of the CLI has the following builin commands:
 
 | command | arguments | description |
 | ------- | --------- | ----------- |
-| wallet_load | [<path>] | loads a new wallet into the CLI session |
-| wallet_save | [<path>] | saves wallet from CLI session to a directory |
+| wallet_load | \[<path>\] | loads a new wallet into the CLI session |
+| wallet_save | \[<path>\] | saves wallet from CLI session to a directory |
 | send | <amount> <address> | sends <amount> coins to <address>; valid transaction enters mempool |
 | mine | | hashes current mempool into a new block |
-| info | [<aspect> / full] [full] | displays information about the current CLI session |
-| load | [<path>] | loads a new blockchain into the CLI session |
-| save | [<path>] | saves the current CLI session blockchain to file |
-| mempool_load | [<path>] | loads a new mempool into the CLI session |
-| mempool_save | [<path>] | saves the current CLI session mempool to file |
-| help | [<command>] | displays command instructions |
+| info | \[<aspect> / full\] \[full\] | displays information about the current CLI session |
+| load | \[<path>\] | loads a new blockchain into the CLI session |
+| save | \[<path>\] | saves the current CLI session blockchain to file |
+| mempool_load | \[<path>\] | loads a new mempool into the CLI session |
+| mempool_save | \[<path>\] | saves the current CLI session mempool to file |
+| help | \[<command>\] | displays command instructions |
 | exit | | exits CLI session |
 
 ## Included Files
