@@ -17,7 +17,7 @@
 #       `-std=gnu90`, which along with the strict `-W`... and `-pedantic` flags,
 #       throws errors for string constants over 509 characters. This is avoided
 #       by using `-Wno-overlength-strings` to turn off the implicitly included
-#       `-Woverlength-strings`. `-std=gnu991 would also work, as in C99, the
+#       `-Woverlength-strings`. `-std=gnu99 would also work, as in C99, the
 #       limit was raised to 4095.
 #   - OpenSSLGlobalCleanup is an __attribute__ ((destructor)) function in
 #       libhblk_crypto.a which deallocates internal OpenSSL tables after main
