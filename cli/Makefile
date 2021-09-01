@@ -73,9 +73,9 @@ OBJ = $(CLI_SRC:.c=.o) $(addprefix printing/, $(PRINT_SRC:.c=.o))
 
 .PHONY: llist all clean oclean fclean re
 
-hblk_cli: $(HEADERS) $(OBJ) \
+hblk_cli: /usr/local/lib/libllist.so /usr/local/include/llist.h \
 	../crypto/libhblk_crypto.a ../blockchain/v0.3/libhblk_blockchain.a \
-	/usr/local/lib/libllist.so /usr/local/include/llist.h
+	$(HEADERS) $(OBJ)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
 
 ../crypto/libhblk_crypto.a:
@@ -86,7 +86,7 @@ hblk_cli: $(HEADERS) $(OBJ) \
 
 /usr/local/lib/libllist.so:
 /usr/local/include/llist.h:
-	sudo ../llist/install.bash
+	cd ../llist/ && sudo ./install.bash && cd -
 
 all: hblk_cli
 

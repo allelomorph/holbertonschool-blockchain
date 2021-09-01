@@ -9,6 +9,8 @@ Version 1.0 of the CLI was built from 08-25-2021 to 08-31-2021 as a solo student
 ## Requirements / Build Environment
 This project was built mostly conforming to the default Holberton school C guidelines, including the following:
 * `Ubuntu 14.04.6 LTS, Trusty Tahr`
+* `git version 1.9.1` or higher
+* `GNU Make 3.81` or higher
 * `gcc (Ubuntu 4.8.4-2ubuntu1~14.04.4) 4.8.4`
 * gcc flags `-Wall -Werror -Wextra -pedantic` (implicitly `-std=gnu90`)
 
@@ -28,16 +30,17 @@ cd holbertonschool-blockchain/
 ```
 
 ### Prerequisities
-* `llist.so` and `llist.h` are installed by `make`, but can be installed manually with the script in `llist/`:
-```bash
-llist/install.bash
-```
 * If the OpenSSL packages listed above do not appear with `apt list --installed`, use:
 ```bash
-sudo apt-get install libssl
+sudo apt-get install libssl1.0.0
 sudo apt-get install libssl-dev
 ```
-* `pthread` should come installed with Ubuntu 14.04
+* `llist.so` and `llist.h` are installed by the Makefile, but can be installed manually with the script in `llist/`:
+```bash
+cd llist/
+./install.bash
+```
+* `/usr/include/pthread.h` and `/usr/lib/x86_64-linux-gnu/libpthread.so` should come already installed in Ubuntu 14.04
 
 ### Compilation
 Navigate to `cli/`:
