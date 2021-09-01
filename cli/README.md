@@ -95,7 +95,7 @@ Version 1.0 of the CLI has the following builin commands:
 | ------- | --------- | ------- |
 | `wallet_load` | \[\<path>\] | loads a new wallet into the CLI session |
 | `wallet_save` | \[\<path>\] | saves wallet from CLI session to a directory |
-| `send` | \<amount> \<address> | sends <amount> coins to <address>; valid transaction enters mempool |
+| `send` | \<amount> \<address> | sends \<amount> coin to \<address>; valid transaction enters mempool |
 | `mine` | | hashes current mempool into a new block |
 | `info` | \[\<aspect> / full\] \[full\] | displays information about the current CLI session |
 | `load` | \[\<path>\] | loads a new blockchain into the CLI session |
