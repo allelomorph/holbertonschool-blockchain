@@ -75,7 +75,7 @@ OBJ = $(CLI_SRC:.c=.o) $(addprefix printing/, $(PRINT_SRC:.c=.o))
 hblk_cli: /usr/local/lib/libllist.so /usr/local/include/llist.h \
 	../crypto/libhblk_crypto.a ../blockchain/v0.3/libhblk_blockchain.a \
 	$(HEADERS) $(OBJ)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
 
 ../crypto/libhblk_crypto.a:
 	$(MAKE) -C ../crypto/ libhblk_crypto.a oclean
