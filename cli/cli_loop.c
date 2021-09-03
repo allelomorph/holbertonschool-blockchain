@@ -148,20 +148,23 @@ void checkBuiltins(st_list_t *st_head, char *line, cli_state_t *cli_state)
 			arg_2 = st_head->next->next->token;
 	}
 
-	/* `exit` differs from builtin function pointer type cmd_fp_t */
-	if (strncmp("exit", cmd, strlen("exit") + 1) == 0)
-		cmd_exit(st_head, line, cli_state);
-
-	for (i = 0; i < CMD_FP_CT; i++)
+	if (cmd)
 	{
-		if (strncmp(cmds[i], cmd, strlen(cmds[i]) + 1) == 0)
-		{
-			cli_state->exit_code =
-				f_ptrs[i](arg_1, arg_2, cli_state);
-			return;
-		}
-	}
+		/* `exit` differs from builtin function pointer type cmd_fp_t */
+		if (strncmp("exit", cmd, strlen("exit") + 1) == 0)
+			cmd_exit(st_head, line, cli_state);
 
-	fprintf(stderr, TAB4 "'%s' is not a valid command, %s\n",
-		cmd, "enter `help` for list of commands");
+		for (i = 0; i < CMD_FP_CT; i++)
+		{
+			if (strncmp(cmds[i], cmd, strlen(cmds[i]) + 1) == 0)
+			{
+				cli_state->exit_code =
+					f_ptrs[i](arg_1, arg_2, cli_state);
+				return;
+			}
+		}
+
+		fprintf(stderr, TAB4 "'%s' is not a valid command, %s\n",
+			cmd, "enter `help` for list of commands");
+	}
 }
