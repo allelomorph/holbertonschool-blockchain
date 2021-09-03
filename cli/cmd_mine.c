@@ -8,9 +8,6 @@
 #include <time.h>
 
 
-void _print_hex_buffer(uint8_t const *buf, size_t len);
-
-
 /**
  * mempoolTxToBlock - used as `action` for llist_for_each to visit each
  *   pending transaction in a mempool, and add the verified ones to a

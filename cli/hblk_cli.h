@@ -18,7 +18,7 @@
 
 /* add new <aspect> to refresh wallet/mempool/blockchain from CLI? */
 /* exit differs from cmd_fp_t typedef and is handled separately */
-#define CMD_FP_CT 10 /* not counting exit */
+#define CMD_FP_CT 11 /* not counting exit */
 #define CMD_FP_ARRAY { \
 	cmd_wallet_load, \
 	cmd_wallet_save, \
@@ -29,9 +29,10 @@
 	cmd_save, \
 	cmd_mempool_load, \
 	cmd_mempool_save, \
+	cmd_new, \
 	cmd_help \
 }
-#define CMD_CT 11 /* counting exit */
+#define CMD_CT 12 /* counting exit */
 #define CMD_NAME_ARRAY { \
 	"wallet_load", \
 	"wallet_save", \
@@ -42,6 +43,7 @@
 	"save", \
 	"mempool_load", \
 	"mempool_save", \
+	"new", \
 	"help", \
 	"exit" \
 }
@@ -55,6 +57,7 @@
 	SAVE_HELP, \
 	MEMPOOL_LOAD_HELP, \
 	MEMPOOL_SAVE_HELP, \
+	NEW_HELP, \
 	HELP_HELP, \
 	EXIT_HELP \
 }
@@ -68,6 +71,7 @@
 	SAVE_HELP_SUMMARY \
 	MEMPOOL_LOAD_HELP_SUMMARY \
 	MEMPOOL_SAVE_HELP_SUMMARY \
+	NEW_HELP_SUMMARY \
 	HELP_HELP_SUMMARY \
 	EXIT_HELP_SUMMARY)
 
@@ -250,6 +254,12 @@ int cmd_send(char *amount, char *address, cli_state_t *cli_state);
 
 /* cmd_mine.c */
 int cmd_mine(char *arg1, char *arg2, cli_state_t *cli_state);
+
+/* cmd_new.c */
+int cmd_new_wallet(cli_state_t *cli_state);
+int cmd_new_blockchain(cli_state_t *cli_state);
+int cmd_new_mempool(cli_state_t *cli_state);
+int cmd_new(char *aspect, char *arg2, cli_state_t *cli_state);
 
 /* printing/_blockchain_print.c */
 /*

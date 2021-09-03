@@ -143,40 +143,31 @@ void initWlltBlkchnMpl(cli_state_t *cli_state)
 
 	if (cmd_wallet_load(cli_state->arg_wallet, NULL, cli_state) != 0)
 	{
-		cli_state->wallet = ec_create();
-		if (!EC_KEY_check_key(cli_state->wallet))
+		if (cmd_new_wallet(cli_state) != 0)
 		{
-			printf(TAB4 "Failed to create new wallet\n");
 			cli_state->exit_code = -1;
 			return;
 		}
-		printf(TAB4 "Created new wallet for session\n");
 	}
 
 	if (!cli_state->arg_blockchain ||
 	    cmd_load(cli_state->arg_blockchain, NULL, cli_state) != 0)
 	{
-		cli_state->blockchain = blockchain_create();
-		if (!cli_state->blockchain)
+		if (cmd_new_blockchain(cli_state) != 0)
 		{
-			printf(TAB4 "Failed to create new blockchain\n");
 			cli_state->exit_code = -1;
 			return;
 		}
-		printf(TAB4 "Created new blockchain for session\n");
 	}
 
 	if (!cli_state->arg_mempool ||
 	    cmd_mempool_load(cli_state->arg_mempool, NULL, cli_state) != 0)
 	{
-		cli_state->mempool = llist_create(MT_SUPPORT_FALSE);
-		if (!cli_state->mempool)
+		if (cmd_new_mempool(cli_state) != 0)
 		{
-			printf(TAB4 "Failed to create new empty mempool\n");
 			cli_state->exit_code = -1;
 			return;
 		}
-		printf(TAB4 "Created new empty mempool for session\n");
 	}
 }
 

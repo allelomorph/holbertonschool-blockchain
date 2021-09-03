@@ -55,6 +55,7 @@ CLI_SRC = cleanup.c \
 	cmd_mempool_load.c \
 	cmd_mempool_save.c \
 	cmd_mine.c \
+	cmd_new.c \
 	cmd_save.c \
 	cmd_send.c \
 	cmd_wallet_load.c \

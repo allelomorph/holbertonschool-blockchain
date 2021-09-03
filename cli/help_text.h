@@ -120,11 +120,19 @@
 	TAB4 TAB4 "Lists all commands when used without an argument.\n" \
 	"\n"
 
+#define NEW_HELP_SUMMARY TAB4 "new <apsect> - refreshes session data\n"
+#define NEW_HELP "\n" \
+	NEW_HELP_SUMMARY \
+	"\n" \
+	TAB4 TAB4 "When used with `wallet`, `blockchain`, or `mempool`, " \
+	"discards the current\nsession data and creates a new replacement.\n" \
+	"\n"
+
 #define EXIT_HELP_SUMMARY TAB4 "exit - exits CLI session\n"
 #define EXIT_HELP "\n" \
 	EXIT_HELP_SUMMARY \
 	"\n" \
-	TAB4 TAB4 "Crtl + d has the same effect as this command, "     \
+	TAB4 TAB4 "Crtl + d has the same effect as this command, " \
 	"exiting the CLI with the\nreturn value of the last executed " \
 	"command, or -1 for internal CLI failure or -2\nfor script read " \
 	"failure. When in interactive mode, exit provides the option to\nsave" \
@@ -132,7 +140,7 @@
 	"\n"
 
 #define GENERAL_HELP_INTRO "\n" \
-	TAB4 "This command line interface is a means "		   \
+	TAB4 "This command line interface is a means " \
 	"of using the simple blockchain\nfeatures implemented in " \
 	"libhblk_crypto.a and libhblk_blockchain.a, which mimic\nthe UXTO" \
 	" transactions and block mining done in Bitcoin core. The " \
