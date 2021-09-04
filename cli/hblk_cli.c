@@ -50,8 +50,8 @@ cli_state_t *initCLIState(void)
  */
 void parseArgs(int argc, char *argv[], cli_state_t *cli_state)
 {
-	char *arg_copy, *flags = FLAG_ARRAY;
-	int i, j, valid_flag;
+	char *flags = FLAG_ARRAY;
+	int i, j, valid_flag = 0;
 
 	if (!argv || !(*argv) || !cli_state)
 	{
@@ -85,34 +85,46 @@ void parseArgs(int argc, char *argv[], cli_state_t *cli_state)
 				cli_state->exit_code = -2;
 				return;
 			}
-			if (!(i + 1 < argc) || argv[i + 1][0] == '-')
-			{
-				fprintf(stderr,
-					"%s: missing parameter for flag '%s'\n",
-					argv[0], argv[i]);
-				cli_state->exit_code = -2;
-				return;
-			}
-			arg_copy = strdup(argv[i + 1]);
-			if (!arg_copy)
-			{
-				perror("parseArgs: strdup error");
-				cli_state->exit_code = -1;
-				return;
-			}
 			switch (argv[i][1])
 			{
 			case 'w':
-				cli_state->arg_wallet = arg_copy;
-				i++;
+				if (!(i + 1 < argc) || argv[i + 1][0] == '-')
+				{
+					cli_state->arg_wallet =
+						strdup(WALLET_DIR_DFLT);
+				}
+				else
+				{
+					cli_state->arg_wallet =
+						strdup(argv[i + 1]);
+					i++;
+				}
 				break;
 			case 'm':
-				cli_state->arg_mempool = arg_copy;
-				i++;
+				if (!(i + 1 < argc) || argv[i + 1][0] == '-')
+				{
+					cli_state->arg_mempool =
+						strdup(MEMPOOL_PATH_DFLT);
+				}
+				else
+				{
+					cli_state->arg_mempool =
+						strdup(argv[i + 1]);
+					i++;
+				}
 				break;
 			case 'b':
-				cli_state->arg_blockchain = arg_copy;
-				i++;
+				if (!(i + 1 < argc) || argv[i + 1][0] == '-')
+				{
+					cli_state->arg_blockchain =
+						strdup(BLKCHN_PATH_DFLT);
+				}
+				else
+				{
+					cli_state->arg_blockchain =
+						strdup(argv[i + 1]);
+					i++;
+				}
 				break;
 			default:
 				break;

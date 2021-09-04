@@ -81,9 +81,9 @@ For script format, see [Parseable Syntax](#parseable-syntax).
 In either mode, flags can be passed to the CLI as arguments to determine behavior at startup:
 | flag  | name | effect |
 | ----- | ---- | ------ |
-| `-w` | wallet | CLI attempts to load a wallet (EC key pair) from the directory path provided after this flag (see [`wallet_load`](#wallet_load-path).) |
-| `-m` | mempool | CLI attempts to load a mempool file from the path provided after this flag (see [`mempool_load`](#mempool_load-path).) |
-| `-b` | blockchain | CLI attempts to load a blockchain file from the path provided after this flag (see [`load`](#load-path).) |
+| `-w` | wallet | CLI attempts to load a wallet (EC key pair) from the directory path following this flag, or the default if none is provided (see [`wallet_load`](#wallet_load-path).) |
+| `-m` | mempool | CLI attempts to load a mempool file from the path following this flag, or the default if none is provided (see [`mempool_load`](#mempool_load-path).) |
+| `-b` | blockchain | CLI attempts to load a blockchain file from the path follwing this flag, or the default if none is provided (see [`load`](#load-path).) |
 
 ## Parseable Syntax
 Currently the CLI has very simple lexing of command lines, and only tokenizes by whitespace, expecting one command per line of input. No control operators or special characters are implemented.
