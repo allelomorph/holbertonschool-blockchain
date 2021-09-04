@@ -117,6 +117,9 @@ typedef struct st_list_s
  * @blockchain: blockchain created in session or loaded from file
  * @mempool: list of transactions that have been verified but not
  *   confirmed(mined)
+ * @unspent_cache: temproary list of unspent outputs used to track pending
+ *   transactions in the mempool, refreshed every time a block is mined and
+ *   canonical utxo list blockchain->unspent is updated
  *
  * Description: used to hold anything that needs to be gqlobally visible to
  * various functions to ensure consistent error messages, storage access,
@@ -136,6 +139,7 @@ typedef struct cli_state_s
 	EC_KEY *wallet;
 	blockchain_t *blockchain;
 	llist_t *mempool;
+	llist_t *unspent_cache;
 } cli_state_t;
 
 /**
@@ -182,7 +186,12 @@ typedef int (*cmd_fp_t)(char *arg1, char *arg2, cli_state_t *cli_state);
 /* hblk_cli.c */
 cli_state_t *initCLIState(void);
 void parseArgs(int argc, char *argv[], cli_state_t *cli_state);
-void initWlltBlkchnMpl(cli_state_t *cli_state);
+/*
+ * static int copyUnspent(unspent_tx_out_t *utxo,
+ *		          unsigned int idx, llist_t *unspent_cache)
+ */
+int refreshUnspentCache(cli_state_t *cli_state);
+void initSession(cli_state_t *cli_state);
 void freeCLIState(cli_state_t *cli_state);
 /* int main(int argc, char **argv); */
 

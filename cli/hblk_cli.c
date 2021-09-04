@@ -2,7 +2,7 @@
 /* ->blockchain.h->llist.h:llist_destroy */
 /* ->blockchain.h->transaction.h:transaction_destroy */
 #include "hblk_cli.h"
-/* strdup */
+/* strdup memcpy */
 #include <string.h>
 /* free */
 #include <stdlib.h>
@@ -138,17 +138,126 @@ void parseArgs(int argc, char *argv[], cli_state_t *cli_state)
 
 
 /**
- * initWlltBlkchnMpl - initializes or loads wallet, mempool, and blockchain
- *   from files
+ * copyUnspent - used as `action` for llist_for_each to visit each
+ *   unspent output in the blockchain, and copy its nodes into the unspent
+ *   output cache
+ *
+ * @utxo: pointer to unspent output in blockchain->unspent list,
+ *   as iterated through by llist_for_each
+ * @idx: index of `unspent_tx_out` in blockchain->unspent list, as
+ *   iterated through by llist_for_each
+ * @unspent_cache: pointer to list of unspent output cache
+ *
+ * Return: 0 on incremental success (llist_for_each can continue,)
+ *   1 on total success (llist_for_each can end,)
+ *   and -2 on failure (-1 reserved for llist_for_each errors)
+ */
+static int copyUnspent(unspent_tx_out_t *utxo,
+		       unsigned int idx, llist_t *unspent_cache)
+{
+	unspent_tx_out_t *utxo_copy;
+
+	(void)idx;
+
+	if (!utxo || !unspent_cache)
+	{
+		fprintf(stderr, "copyUnspent: NULL parameter(s)\n");
+		return (-2);
+	}
+
+	utxo_copy = unspent_tx_out_create(utxo->block_hash,
+					  utxo->tx_id, &(utxo->out));
+	if (!utxo_copy)
+	{
+		fprintf(stderr, "copyUnspent: unspent_tx_out_create failure\n");
+		return (-2);
+	}
+
+	if (llist_add_node(unspent_cache, utxo_copy, ADD_NODE_REAR) != 0)
+	{
+		free(utxo_copy);
+		fprintf(stderr, "copyUnspent: %s\n",
+			"llist_add_node failure");
+		return (-2);
+	}
+
+	return (0);
+}
+
+
+/**
+ * refreshUnspentCache - sets new unspent transaction output cache to track
+ *   pending transactions in the mempool
+ *
+ * @cli_state: pointer to struct containing information about the cli and
+ *   blockchain in use
+ *
+ * Return: 0 on success, 1 on failure
+ */
+int refreshUnspentCache(cli_state_t *cli_state)
+{
+	uint8_t dummy_block_hash[SHA256_DIGEST_LENGTH] = {0};
+	int new_block_idx;
+
+	if (!cli_state)
+	{
+		fprintf(stderr, "refreshUnspentCache: NULL parameter\n");
+		return (1);
+	}
+
+	new_block_idx = llist_size(cli_state->blockchain->chain);
+	if (new_block_idx == -1)
+	{
+		fprintf(stderr, "refreshUnspentCache: llist_size failure\n");
+		return (1);
+	}
+	memcpy(dummy_block_hash, (uint32_t *)&new_block_idx, sizeof(uint32_t));
+
+	if (cli_state->unspent_cache)
+		llist_destroy(cli_state->unspent_cache, 1, NULL);
+
+	cli_state->unspent_cache = llist_create(MT_SUPPORT_FALSE);
+	if (!cli_state->unspent_cache)
+	{
+		fprintf(stderr, "refreshUnspentCache: llist_create failure\n");
+		return (1);
+	}
+
+	/* copy blockchain->unspent */
+	if (llist_for_each(cli_state->blockchain->unspent,
+			   (node_func_t)copyUnspent,
+			   cli_state->unspent_cache) != 0)
+	{
+		llist_destroy(cli_state->unspent_cache, 1, NULL);
+		fprintf(stderr, "refreshUnspentCache: llist_for_each failure\n");
+		return (1);
+	}
+
+	/* update unspent cache per each tx in mempool */
+	if (!update_unspent(cli_state->mempool, dummy_block_hash,
+			    cli_state->unspent_cache))
+	{
+		llist_destroy(cli_state->unspent_cache, 1, NULL);
+		fprintf(stderr, "refreshUnspentCache: update_unspent failure\n");
+		return (1);
+	}
+
+	return (0);
+}
+
+
+/**
+ * initSession - initializes or loads wallet, mempool, and blockchain
+ *   from files, initializes utxo cache
  *
  * @cli_state: pointer to struct containing information about the cli and
  *   blockchain in use
  */
-void initWlltBlkchnMpl(cli_state_t *cli_state)
+void initSession(cli_state_t *cli_state)
 {
 	if (!cli_state)
 	{
-		fprintf(stderr, "initWlltBlkchnMpl: NULL parameter\n");
+		fprintf(stderr, "initSession: NULL parameter\n");
 		cli_state->exit_code = -1;
 		return;
 	}
@@ -181,6 +290,9 @@ void initWlltBlkchnMpl(cli_state_t *cli_state)
 			return;
 		}
 	}
+
+	if (refreshUnspentCache(cli_state) != 0)
+		cli_state->exit_code = -1;
 }
 
 
@@ -215,6 +327,8 @@ void freeCLIState(cli_state_t *cli_state)
 
 	llist_destroy(cli_state->mempool, 1, (node_dtor_t)transaction_destroy);
 
+	llist_destroy(cli_state->unspent_cache, 1, NULL);
+
 	free(cli_state);
 }
 
@@ -239,7 +353,7 @@ int main(int argc, char **argv)
 	parseArgs(argc, argv, cli_state);
 
 	if (cli_state->exit_code == 0)
-		initWlltBlkchnMpl(cli_state);
+		initSession(cli_state);
 
 	if (cli_state->exit_code == 0)
 		CLILoop(cli_state);
