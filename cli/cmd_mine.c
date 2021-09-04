@@ -135,6 +135,13 @@ int cmd_mine(char *arg1, char *arg2, cli_state_t *cli_state)
 		return (1);
 	}
 
+	if (refreshUnspentCache(cli_state) != 0)
+	{
+		fprintf(stderr, "cmd_mine: refreshUnspentCache failure\n");
+		block_destroy(new_block);
+		return (1);
+	}
+
 	if (llist_add_node(cli_state->blockchain->chain,
 			   new_block, ADD_NODE_REAR) != 0)
 	{

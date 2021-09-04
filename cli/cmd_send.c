@@ -201,7 +201,7 @@ int cmd_send(char *amount, char *address, cli_state_t *cli_state)
 	}
 	su_info.send_amt = (uint32_t)amt;
 	su_info.total_unspent_amt = 0;
-	if (llist_for_each(cli_state->blockchain->unspent,
+	if (llist_for_each(cli_state->unspent_cache,
 			   (node_func_t)findSenderUnspent, &su_info) < 0)
 	{
 		fprintf(stderr, "cmd_send: llist_for_each failure\n");
@@ -210,7 +210,8 @@ int cmd_send(char *amount, char *address, cli_state_t *cli_state)
 	llist_destroy(su_info.sender_unspent, 0, NULL);
 	if (su_info.total_unspent_amt < (uint32_t)amt)
 	{
-		printf(TAB4 TAB4 "Wallet unspent output total %u insufficient to send %i\n",
+		printf(TAB4 TAB4 "%s total %u insufficient to send %i\n",
+		       "Wallet confirmed unspent output",
 		       su_info.total_unspent_amt, amt);
 		return (1);
 	}
@@ -232,18 +233,18 @@ int cmd_send(char *amount, char *address, cli_state_t *cli_state)
 	}
 
 	tx = transaction_create(cli_state->wallet, receiver, amt,
-				cli_state->blockchain->unspent);
-	if (!tx || !transaction_is_valid(tx, cli_state->blockchain->unspent))
+				cli_state->unspent_cache);
+	EC_KEY_free(receiver);
+	if (!tx || !transaction_is_valid(tx, cli_state->unspent_cache) ||
+	    llist_for_each(tx->inputs, (node_func_t)delRfrncdOutput,
+			   cli_state->unspent_cache) < 0)
 	{
-
 		if (tx)
 			transaction_destroy(tx);
-		EC_KEY_free(receiver);
 		printf(TAB4 "Failed to create transaction\n");
 		return (1);
 	}
 
-	EC_KEY_free(receiver);
 	if (llist_add_node(cli_state->mempool, tx, ADD_NODE_REAR) == -1)
 	{
 		transaction_destroy(tx);

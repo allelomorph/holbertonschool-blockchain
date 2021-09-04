@@ -98,7 +98,7 @@ static int addUnspentOutput(tx_out_t *tx_out, unsigned int idx,
  * Return: 0 in incremental success (llist_for_each can continue,)
  *   and -2 on failure (-1 reserved for llist_for_each errors)
  */
-static int delRfrncdOutput(tx_in_t *tx_in, unsigned int idx,
+int delRfrncdOutput(tx_in_t *tx_in, unsigned int idx,
 			   llist_t *all_unspent)
 {
 	uint8_t *hash;

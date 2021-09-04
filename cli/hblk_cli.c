@@ -196,22 +196,11 @@ static int copyUnspent(unspent_tx_out_t *utxo,
  */
 int refreshUnspentCache(cli_state_t *cli_state)
 {
-	uint8_t dummy_block_hash[SHA256_DIGEST_LENGTH] = {0};
-	int new_block_idx;
-
 	if (!cli_state)
 	{
 		fprintf(stderr, "refreshUnspentCache: NULL parameter\n");
 		return (1);
 	}
-
-	new_block_idx = llist_size(cli_state->blockchain->chain);
-	if (new_block_idx == -1)
-	{
-		fprintf(stderr, "refreshUnspentCache: llist_size failure\n");
-		return (1);
-	}
-	memcpy(dummy_block_hash, (uint32_t *)&new_block_idx, sizeof(uint32_t));
 
 	if (cli_state->unspent_cache)
 		llist_destroy(cli_state->unspent_cache, 1, NULL);
@@ -230,15 +219,6 @@ int refreshUnspentCache(cli_state_t *cli_state)
 	{
 		llist_destroy(cli_state->unspent_cache, 1, NULL);
 		fprintf(stderr, "refreshUnspentCache: llist_for_each failure\n");
-		return (1);
-	}
-
-	/* update unspent cache per each tx in mempool */
-	if (!update_unspent(cli_state->mempool, dummy_block_hash,
-			    cli_state->unspent_cache))
-	{
-		llist_destroy(cli_state->unspent_cache, 1, NULL);
-		fprintf(stderr, "refreshUnspentCache: update_unspent failure\n");
 		return (1);
 	}
 
