@@ -53,10 +53,11 @@ static int _print_unspent(const unspent_tx_out_t *unspent, unsigned int idx,
  * _print_all_unspent - Print a list of unspent transaction outputs
  *
  * @unspent: List of unspent transaction outputs to print
+ * @title: title of unspent list to print before first node
  */
-void _print_all_unspent(llist_t *unspent)
+void _print_all_unspent(llist_t *unspent, char *title)
 {
-	printf("Unspent transaction outputs [%u]: [\n", llist_size(unspent));
+	printf("%s [%u]: [\n", title, llist_size(unspent));
 
 	llist_for_each(unspent, (node_func_t)_print_unspent, TAB4);
 

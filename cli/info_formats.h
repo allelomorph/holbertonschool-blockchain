@@ -28,11 +28,17 @@
 	TAB4 TAB4 "* number of unspent outputs (UTXOs): %i\n" \
 	TAB4 TAB4 "* total coin of unspent outputs (UTXOs): %u\n"
 
+#define UNSPENT_CACHE_INTRO \
+	TAB4 "Note: UTXOs listed are those confirmed in previous blocks " \
+	"minus those\nreferenced as inputs in current mempool transactions.\n"
+
 #define INFO_MEMPOOL_FMT \
 	TAB4 TAB4 "* total transactions in mempool awaiting confirmation: %i\n"
 
 #define INFO_BLKCHN_FMT \
-	TAB4 TAB4 "* total unspent transaction outputs (UXTOs): %i\n" \
+	TAB4 TAB4 "* total unspent outputs:\n" \
+	TAB4 TAB4 TAB4 "* (before mempool transactions are confirmed): %i\n" \
+	TAB4 TAB4 TAB4 "* (after mempool transactions are confirmed): %i\n" \
 	TAB4 TAB4 "* blockchain height (block total incl. Genesis Block): %i\n"
 
 

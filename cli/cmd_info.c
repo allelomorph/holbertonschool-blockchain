@@ -86,7 +86,7 @@ int print_info_wallet(int full, llist_t **wallet_unspent,
 		fprintf(stderr, "print_info_wallet: llist_create failure\n");
 		return (1);
 	}
-	if (llist_for_each(cli_state->blockchain->unspent,
+	if (llist_for_each(cli_state->unspent_cache,
 			   (node_func_t)findAllSenderUnspent, &su_info) != 0)
 	{
 		fprintf(stderr, "print_info_wallet: llist_for_each failure\n");
@@ -161,7 +161,9 @@ int print_info_blockchain(int component, cli_state_t *cli_state)
 	}
 
 	printf(INFO_BLKCHN_FMT_HDR);
-	printf(INFO_BLKCHN_FMT, llist_size(cli_state->blockchain->unspent),
+	printf(INFO_BLKCHN_FMT,
+	       llist_size(cli_state->blockchain->unspent),
+	       llist_size(cli_state->unspent_cache),
 	       llist_size(cli_state->blockchain->chain));
 	if (!component)
 		printf(INFO_FMT_FTR);
@@ -218,7 +220,8 @@ int print_info_wallet_full(int component, cli_state_t *cli_state)
 
 	if (print_info_wallet(1, &wallet_unspent, 0, cli_state) != 0)
 		return (1);
-	_print_all_unspent(wallet_unspent);
+	printf(UNSPENT_CACHE_INTRO);
+	_print_all_unspent(wallet_unspent, "Wallet UTXOs");
 	if (!component)
 		printf(INFO_FMT_FTR);
 
@@ -281,10 +284,10 @@ int print_info_blockchain_full(int component, cli_state_t *cli_state)
 
 	if (print_info_blockchain(0, cli_state) != 0)
 		return (1);
-
-	_print_all_unspent(cli_state->blockchain->unspent);
+	_print_all_unspent(cli_state->blockchain->unspent,
+			   "UTXOs before mempool");
+	_print_all_unspent(cli_state->unspent_cache, "UTXOs after mempool:");
 	_blockchain_print(cli_state->blockchain);
-
 	if (!component)
 		printf(INFO_FMT_FTR);
 	return (0);

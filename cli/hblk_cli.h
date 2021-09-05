@@ -285,7 +285,7 @@ void _blockchain_print_brief(blockchain_t const *blockchain);
  * static int _print_unspent(const unspent_tx_out_t *unspent, unsigned int idx,
  *			     const char *indent);
  */
-void _print_all_unspent(llist_t *unspent);
+void _print_all_unspent(llist_t *unspent, char *title);
 
 /* printing/_print_hex_buffer.c */
 void _print_hex_buffer(uint8_t const *buf, size_t len);
