@@ -246,7 +246,7 @@ void transaction_destroy(transaction_t *transaction);
  *			    uo_info_t *uo_info);
  */
 int delRfrncdOutput(tx_in_t *tx_in, unsigned int idx,
-		    llist_t *all_unspent);
+		    llist_t *unspent);
 /*
  * static int updateRfrncdOutputs(transaction_t *tx, unsigned int idx,
  *			       uo_info_t *uo_info);

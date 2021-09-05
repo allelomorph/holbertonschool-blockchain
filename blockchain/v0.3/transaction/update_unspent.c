@@ -93,20 +93,20 @@ static int addUnspentOutput(tx_out_t *tx_out, unsigned int idx,
  *
  * @tx_in: pointer to input containing references to match
  * @idx: index of tx_in in a transaction->inputs list
- * @all_unspent: list of all unspent outputs to be amended
+ * @unspent: list of all unspent outputs to be amended
  *
  * Return: 0 in incremental success (llist_for_each can continue,)
  *   and -2 on failure (-1 reserved for llist_for_each errors)
  */
 int delRfrncdOutput(tx_in_t *tx_in, unsigned int idx,
-			   llist_t *all_unspent)
+		    llist_t *unspent)
 {
 	uint8_t *hash;
 	int i, end, hashes_zeroed;
 
 	(void)idx;
 
-	if (!tx_in || !all_unspent)
+	if (!tx_in || !unspent)
 	{
 		fprintf(stderr,
 			"delRfrncdOutput: NULL parameter(s)\n");
@@ -116,15 +116,15 @@ int delRfrncdOutput(tx_in_t *tx_in, unsigned int idx,
 	/* tx_in->block_hash and tx_in->tx_id */
 	hash = tx_in->block_hash;
 	end = SHA256_DIGEST_LENGTH * 2;
-	for (i = 0; i < end; i++)
-		hashes_zeroed = (hash[i] == 0);
+	for (i = 0, hashes_zeroed = 1; i < end; i++)
+		hashes_zeroed &= (hash[i] == 0);
 
-	/* coinbase tx inputs by definition have no referenced ouputs */
+	/* coinbase tx inputs by definition have no referenced outputs */
 	if (hashes_zeroed)
 		return (0);
 
-	if (llist_remove_node(all_unspent, (node_ident_t)matchUnspentOut,
-				tx_in, 1, NULL) < 0)
+	if (llist_remove_node(unspent, (node_ident_t)matchUnspentOut,
+			      tx_in, 1, NULL) < 0)
 	{
 		fprintf(stderr, "delRfrncdOutput: llist_remove_node: %s\n",
 			strE_LLIST(llist_errno));
