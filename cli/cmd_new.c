@@ -72,6 +72,10 @@ int cmd_new_blockchain(cli_state_t *cli_state)
 		blockchain_destroy(cli_state->blockchain);
 	cli_state->blockchain = new_blockchain;
 	printf(TAB4 "Created new blockchain for session\n");
+
+	if (refreshUnspentCache(cli_state) != 0)
+		return (1);
+
 	return (0);
 }
 
@@ -108,6 +112,10 @@ int cmd_new_mempool(cli_state_t *cli_state)
 	}
 	cli_state->mempool = new_mempool;
 	printf(TAB4 "Created new empty mempool for session\n");
+
+	if (refreshUnspentCache(cli_state) != 0)
+		return (1);
+
 	return (0);
 }
 
