@@ -192,6 +192,14 @@ command, with -1 for internal CLI failure or -2 for script read failure. When in
 * `libhblk_crypto.a` functions don't consistently free all data in every possible failure case, which can cause the CLI to leak memory in the rare cases that its own user input filters don't screen out bad inputs.
 * `blockchain.h` and `transaction.h`, used in compiling `libhblk_blockchain.a`, have a slightly convoluted circular reference to each other to accommodate the automated grading of previous stages of the blockchain project. The overall referencing of these two headers could be improved.
 * Currently there is no way to adjust the expected rate of block generation or the number of new blocks after which to readjust hashing difficulty. These values are set to 1 block per second (`BLOCK_GENERATION_INTERVAL`) and every 5 blocks (`DIFFICULTY_ADJUSTMENT_INTERVAL`) in `blockchain.h`. With a BGI of 1 second, blocks can't be generated fast enough in CLI interactive mode to increase the hashing difficulty, so it always trends to 0. As a result, the starting difficulty is simply set to 0 by the Genesis Block until another solution is found.
+* The unspent_cache auxillary UTXO list used for validating transactions entering the mempool currently has a memory leak that can occur in several situations, for example after executing the following script:
+```
+mine
+send 10 042835908c04f2b9a75153da5e4a4660222a5970cfdda92a1abb38c140a2d65f7ef6e55663284f8a5bbc7b6eb8e78f0b98cd2b2790df2b63c6551f7cb6a9fa9aeb
+mine
+send 10 042835908c04f2b9a75153da5e4a4660222a5970cfdda92a1abb38c140a2d65f7ef6e55663284f8a5bbc7b6eb8e78f0b98cd2b2790df2b63c6551f7cb6a9fa9aeb
+send 10 042835908c04f2b9a75153da5e4a4660222a5970cfdda92a1abb38c140a2d65f7ef6e55663284f8a5bbc7b6eb8e78f0b98cd2b2790df2b63c6551f7cb6a9fa9aeb
+```
 
 ---
 
