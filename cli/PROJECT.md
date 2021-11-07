@@ -21,7 +21,7 @@ Creating a REPL command line interface for the features built in 0x00 - 0x03, wh
 
 ## Mandatory Tasks
 
-### :white_large_square: 0. CLI - Create/Load Wallet
+### :white_check_mark: 0. CLI - Create/Load Wallet
 At startup, your CLI must either create a wallet (EC key pair), or load it from a folder.
 
 Implement the command `wallet_load`
@@ -31,7 +31,7 @@ Implement the command `wallet_load`
 <!--
 File(s): [``](./)\ -->
 
-### :white_large_square: 1. CLI - Save Wallet
+### :white_check_mark: 1. CLI - Save Wallet
 Implement the command `wallet_save`
 * Usage: `wallet_save <path>`, where:
     * `<path>` is the path to the folder in which to save the key pair (string)
@@ -39,7 +39,7 @@ Implement the command `wallet_save`
 <!--
 File(s): [``](./)\ -->
 
-### :white_large_square: 2. CLI - send
+### :white_check_mark: 2. CLI - send
 Implement the command `send`
 * Usage: `send <amount> <address>`, where:
     * `<amount>` is the number of coins to send (Integer)
@@ -52,7 +52,7 @@ Implement the command `send`
 <!--
 File(s): [``](./)\-->
 
-### :white_large_square: 3. CLI - mine
+### :white_check_mark: 3. CLI - mine
 Implement the command `mine`
 * Usage: `mine`
 * Description: Mine a block
@@ -69,7 +69,7 @@ Implement the command `mine`
 <!--
 File(s): [``](./)\-->
 
-### :white_large_square: 4. CLI - info
+### :white_check_mark: 4. CLI - info
 Implement the command `info`
 * Usage: `info`
 * Description: Display information about the Blockchain, at least the following:
@@ -79,7 +79,7 @@ Implement the command `info`
 <!--
 File(s): [``](./)\-->
 
-### :white_large_square: 5. CLI - load
+### :white_check_mark: 5. CLI - load
 Implement the command `load`
 * Usage: `load <path>`
 * Description: Load a Blockchain from a file
@@ -87,7 +87,7 @@ Implement the command `load`
 <!--
 File(s): [``](./)\-->
 
-### :white_large_square: 6. CLI - save
+### :white_check_mark: 6. CLI - save
 Implement the command `save`
 * Usage: `save <path>`
 * Description: Save the local Blockchain into a file
