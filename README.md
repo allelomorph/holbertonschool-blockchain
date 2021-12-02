@@ -1,7 +1,18 @@
 # holbertonschool-blockchain
 
 ## Description
-Final project cycle of the Holberton school System Programming & Algorithm specialization curriculum.
+Final project cycle of the Holberton school "Low-Level and Algorithms" specialization curriculum, building a simplified analog of the Bitcoin UTXO model.
+
+## General C project requirements
+
+### Compilation conditions
+* Ubuntu 14.04 LTS
+* gcc 4.8.4
+* flags `-Wall -Werror -Wextra -pedantic`
+
+### Linters
+* [betty-style](https://github.com/holbertonschool/Betty/blob/master/betty-style.pl)
+* [betty-doc](https://github.com/holbertonschool/Betty/blob/master/betty-doc.pl)
 
 ---
 
