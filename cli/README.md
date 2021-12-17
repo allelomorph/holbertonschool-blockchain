@@ -102,7 +102,7 @@ Version 1.0 of the CLI has the following builtin commands:
 | `save` | \[\<path>\] | saves the current CLI session blockchain to file |
 | `mempool_load` | \[\<path>\] | loads a new mempool into the CLI session |
 | `mempool_save` | \[\<path>\] | saves the current CLI session mempool to file |
-| `new` | \<aspect>\ | refreshes session data |
+| `new` | \<aspect> | refreshes session data |
 | `help` | \[\<command>\] | displays command instructions |
 | `exit` | | exits CLI session |
 
@@ -143,7 +143,7 @@ Attempts to load a mempool from the default path if \<path> is not given. By def
 ### `mempool_save` \[\<path>\]
 Saves current session mempool to the default path if \<path> is not given.
 
-### `new` \<aspect>\
+### `new` \<aspect>
 When used with `wallet`, `blockchain`, or `mempool`, discards the current session data and creates a new replacement.
 
 ### `help` \[\<command>\]
@@ -187,7 +187,7 @@ command, with -1 for internal CLI failure or -2 for script read failure. When in
 * 1.0 - First release - 31 Aug 2021
 
 ## Known Issues / Future Improvements
-* Makefile makes help_text.h and info_formats.h dependencies of the final linking of ./hblk_cli, not compilation of cmd_help.o or cmd_info.o, so updating just these headers does not affect help or info output.
+* Makefile makes `help_text.h` and `info_formats.h` dependencies of the final linking of `./hblk_cli`, not compilation of `cmd_help.o` or `cmd_info.o`, so updating just these headers does not affect help or info output.
 * `libhblk_crypto.a` defines a type `sig_t` which conflicts with attempts to `#include <signal.h>`. This prevents creating a signal handler for SIGINT as would normally be done for a CLI shell. In later revisions, `sig_t` could be renamed `sign_t` or `signt_t`.
 * `libhblk_crypto.a` functions don't consistently free all data in every possible failure case, which can cause the CLI to leak memory in the rare cases that its own user input filters don't screen out bad inputs.
 * `blockchain.h` and `transaction.h`, used in compiling `libhblk_blockchain.a`, have a slightly convoluted circular reference to each other to accommodate the automated grading of previous stages of the blockchain project. The overall referencing of these two headers could be improved.
