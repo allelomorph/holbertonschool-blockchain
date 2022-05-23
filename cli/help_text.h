@@ -142,7 +142,7 @@
 #define GENERAL_HELP_INTRO "\n" \
 	TAB4 "This command line interface is a means " \
 	"of using the simple blockchain\nfeatures implemented in " \
-	"libhblk_crypto.a and libhblk_blockchain.a, which mimic\nthe UXTO" \
+	"libhblk_crypto.a and libhblk_blockchain.a, which mimic\nthe UTXO" \
 	" transactions and block mining done in Bitcoin core. The " \
 	"following\ncommands are implemented, and more information for each" \
 	" can be found with\n`help <command>`:\n" \

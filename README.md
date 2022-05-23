@@ -26,7 +26,7 @@ Introduction to data structures used to store each block's info profile and payl
 Introduction to block mining, block difficulty, and proof of work.
 
 ### [(458) 0x03. Blockchain - Transactions](./blockchain/v0.3/)
-Introduction to UXTO and coinbase transactions.
+Introduction to UTXO and coinbase transactions.
 
 ### [(459) 0x04. Blockchain - CLI](./cli/PROJECT.md)
 Creating a REPL command line interface for the features built in 0x00 - 0x03, which can make transactions, mine blocks, and save/load the blockchain.

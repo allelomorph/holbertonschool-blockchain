@@ -10,7 +10,7 @@ Alexandre Gautier
 08-09-2021 to 08-25-2021
 
 ### Description
-Introduction to UXTO and coinbase transactions.
+Introduction to UTXO and coinbase transactions.
 
 ### Provided file(s)
 [`provided/`](./provided/) (all originally [here](https://github.com/holbertonschool/holbertonschool-blockchain/tree/master/blockchain/v0.3/provided)):
